@@ -24,7 +24,7 @@
                             {{ $user->company->description }}
                         </div>
                         <div class="mt-3">
-                            <b>На сервисе: </b> {{ $user->on_service }}
+                            <b>На сервисе: </b> {{ $user->on_service }} 
                         </div>
                     @endif
                 </div>
