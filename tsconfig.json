@@ -1,16 +1,39 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "strict": true,
-        "module": "es2015",
-        "moduleResolution": "node",
-        "experimentalDecorators": true,
-        "sourceMap": true
+      "target": "esnext",
+      "module": "esnext",
+    //   "strict": true,
+      "jsx": "preserve",
+      "importHelpers": true,
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "baseUrl": ".",
+      "types": [
+        "webpack-env"
+      ],
+      "paths": {
+        "@/*": [
+          "src/*"
+        ]
+      },
+      "lib": [
+        "esnext",
+        "dom",
+        "dom.iterable",
+        "scripthost"
+      ]
     },
     "include": [
         "resources/js/**/*"
     ],
     "files": [
-        "./ts-shim.d.ts"
+        "./ts-shim.d.ts", "./resources/js/__global.ts"
+    ],
+    "exclude": [
+      "node_modules"
     ]
-}
+  }
+  
