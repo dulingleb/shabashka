@@ -12,6 +12,7 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
+  console.log('TEST')
   export default {}
 </script> 
