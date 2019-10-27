@@ -6,4 +6,8 @@ export default class UserService {
     get user(): User {
         return this._user
     }
+
+    async getTestUsers(): Promise<User[]> {
+        return [];
+    }
 }
