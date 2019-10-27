@@ -27,6 +27,7 @@ export default {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+
     > .container {
       flex-grow: 1;
     }
