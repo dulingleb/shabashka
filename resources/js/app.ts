@@ -1,28 +1,18 @@
 import './bootstrap'
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { NavbarPlugin, FormPlugin, FormInputPlugin, ButtonPlugin } from 'bootstrap-vue'
 
-Vue.use(VueRouter)
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+import router from './app.router'
 import App from './views/App.vue'
-import Hello from './views/Hello.vue'
-import Home from './views/Home.vue'
 
-const router = new VueRouter({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/hello',
-      name: 'hello',
-      component: Hello,
-    },
-  ],
-});
+Vue.use(NavbarPlugin)
+Vue.use(FormPlugin)
+Vue.use(FormInputPlugin)
+Vue.use(ButtonPlugin)
 
 const app = new Vue({
   el: '#app',
