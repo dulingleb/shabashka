@@ -16,7 +16,6 @@ import Footer from "../common/components/Footer.vue";
 
 import apiService from '../common/api.service'
 
-
 export default {
   props: ['csrfToken'],
   components: {

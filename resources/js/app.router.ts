@@ -17,19 +17,19 @@ export default new VueRouter({
       component: Home
     },
     {
-        path: '/hello',
-        name: 'hello',
-        component: Hello,
-      },
-      {
-        path: '/login',
-        name: 'login',
-        component: Login,
-      },
-      {
-        path: '/register',
-        name: 'register',
-        component: Register,
-      },
-  ],
-});
+      path: '/hello',
+      name: 'hello',
+      component: Hello
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
+    }
+  ]
+})
