@@ -5,6 +5,8 @@ Vue.use(VueRouter)
 
 import Hello from './views/Hello.vue'
 import Home from './views/Home.vue'
+import Login from './views/Login.vue'
+import Register from './views/Reg.vue'
 
 export default new VueRouter({
   mode: 'history',
@@ -15,9 +17,19 @@ export default new VueRouter({
       component: Home
     },
     {
-      path: '/hello',
-      name: 'hello',
-      component: Hello,
-    },
+        path: '/hello',
+        name: 'hello',
+        component: Hello,
+      },
+      {
+        path: '/login',
+        name: 'login',
+        component: Login,
+      },
+      {
+        path: '/register',
+        name: 'register',
+        component: Register,
+      },
   ],
 });
