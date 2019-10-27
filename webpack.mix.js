@@ -11,6 +11,8 @@ const mix = require('laravel-mix');
  |
  */
 
+const TSLintPlugin = require('tslint-webpack-plugin');
+
 mix.ts('resources/js/app.ts', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .webpackConfig({
@@ -19,7 +21,10 @@ mix.ts('resources/js/app.ts', 'public/js')
             {
               test: /\.tsx?$/,
               loader: "ts-loader",
-              options: { appendTsSuffixTo: [/\.vue$/] },
+              options: {
+                appendTsSuffixTo: [/\.vue$/],
+                transpileOnly : true
+              },
               exclude: /node_modules/
             },
             {
@@ -27,12 +32,20 @@ mix.ts('resources/js/app.ts', 'public/js')
                 exclude: /node_modules|vue\/src/,
                 loader: "ts-loader",
                 options: {
-                  appendTsSuffixTo: [/\.vue$/]
+                  appendTsSuffixTo: [/\.vue$/],
+                  transpileOnly : true
                 }
               },
           ]
         },
         resolve: {
           extensions: ["*", ".js", ".jsx", ".vue", ".ts", ".tsx"]
-        }
+        },
+        plugins: [
+          new TSLintPlugin({
+              files: [
+                './resources/js/**/*.ts'
+              ]
+          })
+      ]
       });
