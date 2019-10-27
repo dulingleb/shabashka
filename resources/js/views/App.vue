@@ -1,5 +1,6 @@
  <template>
   <div>
+    <app-header></app-header>
     <h1>Vue Router Demo App</h1>
 
     <p>
@@ -12,7 +13,17 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
-  console.log('TEST')
-  export default {}
+  import Header from '../common/components/Header.vue';
+
+  export default {
+    components: {
+      'app-header': Header
+    }
+  }
 </script> 
+
+<style lang="scss" scoped>
+
+</style>
