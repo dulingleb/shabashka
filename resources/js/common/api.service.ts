@@ -3,15 +3,16 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-export default class ApiService {
-    private _apiPrefix = 'api'
+
+class ApiService {
+    private _api = 'api';
 
     init(): void {
         Vue.use(VueAxios, axios)
     }
 
-    get apiPrefix(): string {
-        return this._apiPrefix
+    get api(): string {
+        return this._api;
     }
 
     // TODO: Add token in headers
@@ -23,7 +24,7 @@ export default class ApiService {
     
       async query(resource: string, params: any) {
         try {
-              return Vue.axios.get(resource, params);
+              return Vue.axios.get(`${this.api}/${resource}`, params);
           }
           catch (error) {
               console.log(`[RWV] QUERY ApiService ${error}`);
@@ -32,7 +33,8 @@ export default class ApiService {
     
       async get(resource: string, slug = "") {
         try {
-              return Vue.axios.get(`${resource}/${slug}`);
+            const res = await Vue.axios.get(`${this.api}/${resource}/${slug}`);
+            return res.data;
           }
           catch (error) {
             console.log(`[RWV] GET ApiService ${error}`);
@@ -41,7 +43,7 @@ export default class ApiService {
     
       post(resource: string, params: any) {
         try {
-            return Vue.axios.post(`${resource}`, params);
+            return Vue.axios.post(`${this.api}/${resource}`, params);
         }
         catch (error) {
             console.log(`[RWV] POST ApiService ${error}`)
@@ -50,7 +52,7 @@ export default class ApiService {
     
       update(resource: string, slug: string, params:any) {
         try {
-            return Vue.axios.put(`${resource}/${slug}`, params);
+            return Vue.axios.put(`${this.api}/${resource}/${slug}`, params);
         }
         catch (error) {
             console.log(`[RWV] UPDATE ApiService ${error}`)
@@ -59,7 +61,7 @@ export default class ApiService {
     
       put(resource: string, params: any) {
         try {
-            return Vue.axios.put(`${resource}`, params);
+            return Vue.axios.put(`${this.api}/${resource}`, params);
         }
         catch (error) {
             console.log(`[RWV] PUT ApiService ${error}`)
@@ -68,7 +70,7 @@ export default class ApiService {
     
       delete(resource: string) {
         try {
-            return Vue.axios.delete(resource);
+            return Vue.axios.delete(`${this.api}/${resource}`);
         }
         catch (error) {
             console.log(`[RWV] DELETE ApiService ${error}`)
@@ -76,3 +78,6 @@ export default class ApiService {
       }
 
 }
+
+const apiService = new ApiService();
+export default apiService;

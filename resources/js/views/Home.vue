@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import Aside from "../common/components/Aside.vue";
+import userService from "../common/user.service";
 import axios from 'axios';
 
 export default {
@@ -40,14 +41,12 @@ export default {
     this.fetchData();
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       this.error = this.users = null;
       this.loading = true;
-      axios
-        .get('/api/users')
-        .then(response => {
-          console.log(response);
-        });
+      const users = await userService.getTestUsers();
+      this.users = users;
+      this.loading = false;
     }
   },
   components: {
