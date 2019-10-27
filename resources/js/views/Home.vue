@@ -27,7 +27,6 @@
 <script lang="ts">
 import Aside from "../common/components/Aside.vue";
 import userService from "../common/user.service";
-import axios from 'axios';
 
 export default {
   data() {

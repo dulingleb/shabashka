@@ -7,8 +7,12 @@ import VueAxios from 'vue-axios'
 class ApiService {
     private _api = 'api';
 
-    init(): void {
+    init(csrfToken = ''): void {
         Vue.use(VueAxios, axios)
+
+        csrfToken
+            ? Vue.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+            : console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
     }
 
     get api(): string {
@@ -20,62 +24,67 @@ class ApiService {
         // Vue.axios.defaults.headers.common[
         //   "Authorization"
         // ] = `Token ${JwtService.getToken()}`;
-      }
-    
-      async query(resource: string, params: any) {
+    }
+
+    async query(resource: string, params: any) {
         try {
-              return Vue.axios.get(`${this.api}/${resource}`, params);
-          }
-          catch (error) {
-              console.log(`[RWV] QUERY ApiService ${error}`);
-          }
-      }
-    
-      async get(resource: string, slug = "") {
+            const res = await Vue.axios.get(`${this.api}/${resource}`, params);
+            return res.data;
+        }
+        catch (error) {
+            throw new Error(`[RWV] QUERY ApiService ${error}`);
+        }
+    }
+
+    async get(resource: string, slug = "") {
         try {
             const res = await Vue.axios.get(`${this.api}/${resource}/${slug}`);
             return res.data;
-          }
-          catch (error) {
-            console.log(`[RWV] GET ApiService ${error}`);
-          }
-      }
-    
-      post(resource: string, params: any) {
-        try {
-            return Vue.axios.post(`${this.api}/${resource}`, params);
         }
         catch (error) {
-            console.log(`[RWV] POST ApiService ${error}`)
+            throw new Error(`[RWV] GET ApiService ${error}`);
         }
-      }
-    
-      update(resource: string, slug: string, params:any) {
+    }
+
+    async post(resource: string, params: any) {
         try {
-            return Vue.axios.put(`${this.api}/${resource}/${slug}`, params);
+            const res = await Vue.axios.post(`${this.api}/${resource}`, params);
+            return res.data;
         }
         catch (error) {
-            console.log(`[RWV] UPDATE ApiService ${error}`)
+            throw new Error(`[RWV] POST ApiService ${error}`)
         }
-      }
-    
-      put(resource: string, params: any) {
+    }
+
+    async update(resource: string, slug: string, params: any) {
         try {
-            return Vue.axios.put(`${this.api}/${resource}`, params);
+            const res = await Vue.axios.put(`${this.api}/${resource}/${slug}`, params);
+            return res.data;
         }
         catch (error) {
-            console.log(`[RWV] PUT ApiService ${error}`)
+            throw new Error(`[RWV] UPDATE ApiService ${error}`)
         }
-      }
-    
-      delete(resource: string) {
+    }
+
+    async put(resource: string, params: any) {
         try {
-            return Vue.axios.delete(`${this.api}/${resource}`);
+            const res = await Vue.axios.put(`${this.api}/${resource}`, params);
+            return res.data;
         }
         catch (error) {
-            console.log(`[RWV] DELETE ApiService ${error}`)
+            throw new Error(`[RWV] PUT ApiService ${error}`)
         }
-      }
+    }
+
+    async delete(resource: string) {
+        try {
+            const res = await Vue.axios.delete(`${this.api}/${resource}`);
+            return res.data;
+        }
+        catch (error) {
+            throw new Error(`[RWV] DELETE ApiService ${error}`)
+        }
+    }
 
 }
 
