@@ -9,7 +9,7 @@
 </head>
 <body>
   <div id="app">
-    <app></app>
+    <app csrf-token='{{ csrf_token() }}'></app>
   </div>
 
   <script src="{{ mix('js/app.js') }}"></script>
