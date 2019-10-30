@@ -17,10 +17,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users', function () {
-    return factory('App\User', 10)->make();
-});
-
-Route::get('/test-err', function () {
-    abort(500, 'TEST ERR');
-});
+Route::get('task', 'TaskController@index');
