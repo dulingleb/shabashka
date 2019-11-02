@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Func\Filter;
 use App\Task;
 use Illuminate\Http\Request;
@@ -39,6 +40,13 @@ class TaskController extends Controller
             "success" => true,
             "data" => $data,
             "total" => $total
+        ]);
+    }
+
+    public function categories(){
+        return response()->json([
+            'success' => true,
+            'data' => Category::all()
         ]);
     }
 
