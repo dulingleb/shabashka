@@ -18,7 +18,10 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            return response()->json([
+                'success' => false,
+                'error' => "Страница доступна только для не зарегестрированных"
+            ], 401);
         }
 
         return $next($request);

@@ -9,9 +9,50 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+
+    public function register(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:2|max:12',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:6|max:64',
+            'c_password' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        $input = $request->all();
+        $input['password'] = bcrypt($input['password']);
+        $user = User::create($input);
+        return response()->json([
+            'success' => true,
+            'token' => $user->createToken(config('app.name'))->accessToken
+        ], 200);
+    }
+
+    public function login(Request $request){
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            $user = Auth::user();
+            return response()->json([
+                'success' => true,
+                'token' => $user->createToken(config('app.name'))->accessToken
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Неверный email или парль',
+                'error'=>'Unauthorised'
+            ], 401);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -51,8 +92,13 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+
         $user->load('company')->load('reviews');
-        return view('user.profile.index', compact('user'));
+
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ], 200);
     }
 
     /**
