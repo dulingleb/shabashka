@@ -1,5 +1,5 @@
  <template>
-  <div>
+  <header>
     <b-navbar toggleable="lg" type="dark" variant="info">
       <div class="container">
         <b-navbar-brand :to="{ name: 'home' }">Shabashki</b-navbar-brand>
@@ -18,34 +18,46 @@
               <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
             </b-nav-form>
 
-            <b-nav-item-dropdown text="Lang" right>
-              <b-dropdown-item href="#">EN</b-dropdown-item>
-              <b-dropdown-item href="#">ES</b-dropdown-item>
-              <b-dropdown-item href="#">RU</b-dropdown-item>
-              <b-dropdown-item href="#">FA</b-dropdown-item>
-            </b-nav-item-dropdown>
+            <b-navbar-nav right>
+              <b-nav-item v-if="user" :to="{ name: 'login' }">{{ user }}</b-nav-item>
+              <b-nav-item v-if="!user" :to="{ name: 'login' }">Вход</b-nav-item>
+            </b-navbar-nav>
 
-            <b-nav-item-dropdown right>
+            <b-nav-item-dropdown right v-if="user">
               <!-- Using 'button-content' slot -->
               <template v-slot:button-content>
                 <em>User</em>
               </template>
-              <b-dropdown-item :to="{ name: 'login' }">Profile</b-dropdown-item>
-              <b-dropdown-item :to="{ name: 'register' }">Sign Out</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'login' }">Профиль</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'register' }">Выход </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
       </div>
     </b-navbar>
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
-export default {
-  name: "app-header",
-  components: {}
-};
+  import userService from "../user.service"
+
+  export default {
+    name: "app-header",
+    data() {
+      return {
+        user: null
+      }
+    },
+    created() {
+      this.user = userService.user
+      console.log('this.user', this.user)
+    },
+    components: {}
+  };
 </script> 
 
 <style lang="scss" scoped>
+  header {
+    box-shadow: 0px 0px 12px -5px black;
+  }
 </style>

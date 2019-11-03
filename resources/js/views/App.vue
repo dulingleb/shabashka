@@ -34,8 +34,10 @@ export default {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: #fdfff6;
 
     > .container {
+      padding: 20px 0;
       flex-grow: 1;
     }
   }
