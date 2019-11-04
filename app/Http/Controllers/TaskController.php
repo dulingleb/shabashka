@@ -30,7 +30,7 @@ class TaskController extends Controller
                 'title' => $task->title,
                 'description' => $task->description,
                 'price' => $task->price,
-                'category' => $task->category,
+                'category' => $task->category_id,
                 'created_at' => time_ago($task->created_at),
                 'term' => date_month_ru($task->term)
             ];

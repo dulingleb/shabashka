@@ -17,12 +17,13 @@ Route::middleware(['guest:api'])->prefix('oauth')->namespace('User')->group(func
     Route::post('register', 'UserController@register');
 });
 
-Route::middleware(['auth:api'])->prefix('user')->namespace('User')->name('user.')->group(function() {
-    Route::get('{user}', 'UserController@show');
-});
+Route::prefix('user')->namespace('User')->group(function() {
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::middleware(['auth:api'])->group(function (){
+        Route::get('me', 'UserController@me');
+    });
+
+    Route::get('{user}', 'UserController@show');
 });
 
 Route::get('tasks', 'TaskController@index');

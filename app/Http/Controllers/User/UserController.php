@@ -93,11 +93,36 @@ class UserController extends Controller
     public function show(User $user)
     {
 
-        $user->load('company')->load('reviews');
+        $user->load('company');
+
+        $company = null;
+        if($user->company && $user->company->is_active && $user->company->moderate_status=='active'){
+            $company = [
+                'id' => $user->company->id,
+                'title' => $user->company->title,
+                'address' => $user->company->address,
+                'description' => $user->company->description,
+            ];
+        }
 
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'logo' => $user->logo,
+                'phone' => $user->phone,
+                'company' => $company,
+            ]
+        ], 200);
+    }
+
+    public function me(){
+        $user = auth('api')->user();
+        return response()->json([
+            'success' => true,
+            'data' => $user->load('company')
         ], 200);
     }
 
