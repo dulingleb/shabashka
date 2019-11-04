@@ -1,13 +1,79 @@
  <template>
-  <div>
-      LOGIN
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">Авторизация</div>
+
+        <div class="card-body">
+          <b-form @submit.prevent="onSubmit" @reset.prevent="onReset">
+            <b-form-group  name="email" description="">
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="email">Email</label>
+                <div class="col-md-7">
+                  <b-form-input class="" id="email" v-model="form.email" :state="validateEmail" type="email" required placeholder="Введите email" autofocus></b-form-input>
+                  <b-form-invalid-feedback :state="validateEmail">Некорректный email</b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group name="password" description="">
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
+                <div class="col-md-7">
+                  <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" required placeholder="Введите пароль"></b-form-input>
+                  <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group>
+              <div class="row">
+                <div class="offset-md-3 col-md-7">
+                  <b-button type="submit" variant="info">Войти</b-button>
+                  <router-link class="btn btn-link text-info" :to="{ name: 'register' }">Регистрация</router-link>
+                  <a class="btn btn-link text-info" href="">Забыли пароль?</a>
+                </div>
+              </div>
+            </b-form-group>
+
+          </b-form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+import userService from "../common/user.service"
+
 export default {
   name: "app-login",
-  components: {}
+  data() {
+      return {
+        form: {
+          email: '',
+          password: ''
+        }
+      }
+    },
+    computed: {
+      validateEmail() {
+        return this.form.email.length > 4
+      },
+      validatePassword() {
+        return this.form.password.length > 3
+      }
+    },
+    methods: {
+      async onSubmit(evt) {
+        const user = await userService.auth(this.form.email, this.form.password)
+        console.log(user)
+      },
+      onReset(evt) {
+        this.form.email = ''
+        this.form.password = ''
+      }
+    }
 };
 </script> 
 

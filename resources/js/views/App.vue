@@ -15,6 +15,7 @@ import Header from "../common/components/Header.vue";
 import Footer from "../common/components/Footer.vue";
 
 import apiService from '../common/api.service'
+import userService from '../common/user.service'
 
 export default {
   props: ['csrfToken'],
@@ -23,8 +24,8 @@ export default {
     "app-footer": Footer,
   },
   created() {
-    apiService.init(this.csrfToken);
-    apiService.get('test-err'); // TEST ERR
+    apiService.init(this.csrfToken)
+    userService.init()
   },
 };
 </script> 
@@ -37,7 +38,7 @@ export default {
     background: #fdfff6;
 
     > .container {
-      padding: 20px 0;
+      padding: 30px 0;
       flex-grow: 1;
     }
   }

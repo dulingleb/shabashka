@@ -2,12 +2,14 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import jwtService from './jwt.service'
 
 class ApiService {
   private _api = 'api'
 
   init(csrfToken = ''): void {
     Vue.use(VueAxios, axios)
+    jwtService.init()
 
     csrfToken
       ? Vue.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
@@ -36,7 +38,7 @@ class ApiService {
 
   async get(resource: string, slug = '') {
     try {
-      const res = await Vue.axios.get(`${this.api}/${resource}/${slug}`)
+      const res = await Vue.axios.get(`${this.api}/${resource}/${slug}`, this.getConfig())
       return res.data
     } catch (error) {
       throw new Error(`[RWV] GET ApiService ${error}`)
@@ -45,7 +47,7 @@ class ApiService {
 
   async post(resource: string, params: any) {
     try {
-      const res = await Vue.axios.post(`${this.api}/${resource}`, params)
+      const res = await Vue.axios.post(`${this.api}/${resource}`, params, this.getConfig())
       return res.data
     } catch (error) {
       throw new Error(`[RWV] POST ApiService ${error}`)
@@ -54,7 +56,7 @@ class ApiService {
 
   async update(resource: string, slug: string, params: any) {
     try {
-      const res = await Vue.axios.put(`${this.api}/${resource}/${slug}`, params)
+      const res = await Vue.axios.put(`${this.api}/${resource}/${slug}`, params, this.getConfig())
       return res.data
     } catch (error) {
       throw new Error(`[RWV] UPDATE ApiService ${error}`)
@@ -63,7 +65,7 @@ class ApiService {
 
   async put(resource: string, params: any) {
     try {
-      const res = await Vue.axios.put(`${this.api}/${resource}`, params)
+      const res = await Vue.axios.put(`${this.api}/${resource}`, params, this.getConfig())
       return res.data
     } catch (error) {
       throw new Error(`[RWV] PUT ApiService ${error}`)
@@ -72,11 +74,17 @@ class ApiService {
 
   async delete(resource: string) {
     try {
-      const res = await Vue.axios.delete(`${this.api}/${resource}`)
+      const res = await Vue.axios.delete(`${this.api}/${resource}`, this.getConfig())
       return res.data
     } catch (error) {
       throw new Error(`[RWV] DELETE ApiService ${error}`)
     }
+  }
+
+  private getConfig() {
+    return jwtService.token ? {
+      headers:  { Authorization: `Bearer ${jwtService.token}` }
+    } : {}
   }
 
 }
