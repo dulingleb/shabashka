@@ -13,7 +13,7 @@ const state = new UserState()
 const getters = {
   user: (state: UserState) => {
     return state.user.id !== undefined && state.user
-  }
+  },
 }
 
 const mutations = {

@@ -8,8 +8,9 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Reg.vue'
 import Profile from './views/Ptofile.vue'
+import { store } from './store'
 
-export default new VueRouter({
+const router = new VueRouter({
   mode: 'history',
   routes: [
     {
@@ -25,17 +26,40 @@ export default new VueRouter({
     {
       path: '/login',
       name: 'login',
+      meta: { guestOnly: true },
       component: Login
     },
     {
       path: '/register',
       name: 'register',
+      meta: { guestOnly: true },
       component: Register
     },
     {
       path: '/profile',
       name: 'profile',
+      meta: { requiresAuth: true },
       component: Profile
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters.user) {
+      next({ name: 'home' })
+    }
+  } else {
+    next()
+  }
+  if (to.matched.some(record => record.meta.guestOnly)) {
+    if (store.getters.user) {
+      next({ name: 'home' })
+    }
+  } else {
+    next()
+  }
+  to.matched.some(record => record.meta.isAuth)
+})
+
+export default router

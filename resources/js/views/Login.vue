@@ -44,43 +44,43 @@
 </template>
 
 <script lang="ts">
-import userService from "../common/user.service"
+import userService from '../common/user.service'
 import appRouter from '../app.router'
 
 export default {
-  name: "app-login",
+  name: 'app-login',
   data() {
-      return {
-        loading: false,
-        form: {
-          email: '',
-          password: ''
-        }
-      }
-    },
-    computed: {
-      validateEmail() {
-        return this.form.email.length > 4
-      },
-      validatePassword() {
-        return this.form.password.length > 3
-      }
-    },
-    methods: {
-      async onSubmit(evt) {
-        this.loading = true
-        const result = await userService.auth(this.form.email, this.form.password)
-        if (result) {
-          await this.$store.dispatch('GET_USER')
-          appRouter.push({ name: 'home' })
-        }
-        this.loading = false
-      },
-      onReset(evt) {
-        this.form.email = ''
-        this.form.password = ''
+    return {
+      loading: false,
+      form: {
+        email: '',
+        password: ''
       }
     }
+  },
+  computed: {
+    validateEmail() {
+      return this.form.email.length > 4
+    },
+    validatePassword() {
+      return this.form.password.length > 3
+    }
+  },
+  methods: {
+    async onSubmit(evt) {
+      this.loading = true
+      const result = await userService.auth(this.form.email, this.form.password)
+      if (result) {
+        await this.$store.dispatch('GET_USER')
+        appRouter.push({ name: 'home' })
+      }
+      this.loading = false
+    },
+    onReset(evt) {
+      this.form.email = ''
+      this.form.password = ''
+    }
+  }
 };
 </script> 
 

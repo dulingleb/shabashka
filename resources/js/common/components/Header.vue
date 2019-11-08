@@ -39,30 +39,30 @@
 
 <script lang="ts">
 
-  import appRouter from '../../app.router'
-  
-  export default {
-    name: "app-header",
-    data() {
-      return {
-      }
-    },
-    created() {
-      
-    },
-    computed: {
-      user() {
-        return this.$store.getters.user
-      }
-    },
-    methods: {
-      logout() {
-        this.$store.dispatch('LOGOUT')
-        appRouter.push({ name: 'home' })
-      }
-    },
-    components: {}
-  };
+import appRouter from '../../app.router'
+
+export default {
+  name: 'app-header',
+  data() {
+    return {
+    }
+  },
+  created() {
+    
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('LOGOUT')
+      appRouter.push({ name: 'home' })
+    }
+  },
+  components: {}
+}
 </script> 
 
 <style lang="scss" scoped>
