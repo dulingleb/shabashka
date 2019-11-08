@@ -7,7 +7,8 @@ import Hello from './views/Hello.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Reg.vue'
-import Profile from './views/Ptofile.vue'
+import Profile from './views/Profile.vue'
+import Task from './views/Task.vue'
 import { store } from './store'
 
 const router = new VueRouter({
@@ -40,6 +41,11 @@ const router = new VueRouter({
       name: 'profile',
       meta: { requiresAuth: true },
       component: Profile
+    },
+    {
+      path: '/task/:id',
+      name: 'task',
+      component: Task
     }
   ]
 })

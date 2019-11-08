@@ -17,6 +17,10 @@ class TaskService {
     return this.tasks
   }
 
+  async getTask(id: number): Promise<Task> {
+    return { id, title: 'TEST. TODO: Get task by id' } as Task
+  }
+
   private convertResTask(resTask: TaskResponse): Task {
     return {
       id: resTask.id,

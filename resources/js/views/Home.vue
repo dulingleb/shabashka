@@ -1,7 +1,7 @@
 <template>
   <div class="row">
         <div class="col-md-4 col-lg-3">
-          <app-aside :categories="categories" ></app-aside>
+          <app-aside :categories="categories" @change-category="changeCategory"></app-aside>
         </div>
         <div class="col-md-8 col-lg-9">
            <div class="tasks">
@@ -9,27 +9,31 @@
               Loading...
             </div>
 
-            <div class="tasks" v-if="!loading">
-            {{ tasks }}
+            <div class="tasks container" v-if="!loading && tasks">
+              <section class="row task border-bottom" v-for="task in tasks" :key="task.id">
+                <div class="col-md-9">
+                  <h3 class="title"><router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
+                  <p class="description">{{ task.description }}</p>
+                  <footer class="info-footer">
+                    <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" /> <span>"Муж на час"</span>
+                  </footer>
+                </div>
+                <div class="col-md-3 text-center text-secondary">
+                  <p class="price">{{ task.price }} руб.</p><router-link :to="{ name: 'task', params: { id: task.id } }" class="btn btn-info text-light">Откликнуться</router-link>
+                </div>
+              </section>
             </div>
 
-
-            <ul v-if="users">
-              <li v-for="{ name, email } in users">
-                <strong>Name:</strong> {{ name }},
-                <strong>Email:</strong> {{ email }}
-              </li>
-            </ul>
           </div>
         </div>
       </div>
 </template>
 
 <script lang="ts">
-import Aside from "../common/components/Aside.vue"
-import userService from "../common/user.service"
-import categoryService from "../common/category.service"
-import taskService from "../common/task.service"
+import Aside from '../common/components/Aside.vue'
+import userService from '../common/user.service'
+import categoryService from '../common/category.service'
+import taskService from '../common/task.service'
 
 export default {
   data() {
@@ -50,16 +54,18 @@ export default {
       this.loading = true
       const categories = await categoryService.getCategories()
       this.categories = categories
-      console.log('categories', categories)
 
       const tasks = await taskService.getTaks()
       this.tasks = tasks
       // this.users = users
       this.loading = false
+    },
+    changeCategory(checkedCategory: string[]) {
+      console.log('checkedCategory', checkedCategory)
     }
   },
   components: {
-    "app-aside": Aside,
+    'app-aside': Aside,
   }
 }
 </script> 
@@ -68,6 +74,19 @@ export default {
   .tasks {
     background:#fff;
     box-shadow: 0px 0px 10px -3px rgba(0,0,0,0.25);
+    .task {
+      padding: 10px 0;
+      small {
+        font-size: 12px;
+      }
+      .info-footer {
+        font-size: 12px;
+      }
+      .price {
+        font-size: 20px;
+        font-weight: 600;
+      }
+    }
   }
 
 </style>
