@@ -3,19 +3,11 @@ import apiService from './api.service'
 import jwtService from './jwt.service'
 
 class UserService {
-  private _user: User // TODO: Current auth user
-
-  get user(): User {
-    return this._user
-  }
-
-  async init() {
-    await this.getTestUser()
-  }
-
   async getTestUser(): Promise<User> {
-    const response = await apiService.get('user')
-    console.log('getTestUser', response)
+    const response = await apiService.get('user/me')
+    if (response.success) {
+      return response.data
+    }
     return null
   }
 
@@ -24,9 +16,13 @@ class UserService {
     if (response.success) {
       jwtService.saveToken(response.token)
       const user = await this.getTestUser()
+      return !!user
     }
-    console.log('user', response)
     return false
+  }
+
+  logout(): void {
+    jwtService.clearToken()
   }
 
 }

@@ -25,7 +25,7 @@ export default {
   },
   created() {
     apiService.init(this.csrfToken)
-    userService.init()
+    this.$store.dispatch('GET_USER')
   },
 };
 </script> 

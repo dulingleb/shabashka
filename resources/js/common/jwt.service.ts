@@ -17,7 +17,7 @@ class JwtService {
     ls.set('token', token)
   }
 
-  resetToken() {
+  clearToken() {
     this._token = ''
     ls.remove('token')
   }

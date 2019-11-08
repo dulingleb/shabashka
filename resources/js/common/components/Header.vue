@@ -19,7 +19,6 @@
             </b-nav-form>
 
             <b-navbar-nav right>
-              <b-nav-item v-if="user" :to="{ name: 'login' }">{{ user }}</b-nav-item>
               <b-nav-item v-if="!user" :to="{ name: 'login' }">Вход</b-nav-item>
             </b-navbar-nav>
 
@@ -28,8 +27,8 @@
               <template v-slot:button-content>
                 <em>User</em>
               </template>
-              <b-dropdown-item :to="{ name: 'login' }">Профиль</b-dropdown-item>
-              <b-dropdown-item :to="{ name: 'register' }">Выход </b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'profile' }">Профиль</b-dropdown-item>
+              <b-dropdown-item @click="logout()">Выход </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -39,18 +38,28 @@
 </template>
 
 <script lang="ts">
-  import userService from "../user.service"
 
+  import appRouter from '../../app.router'
+  
   export default {
     name: "app-header",
     data() {
       return {
-        user: null
       }
     },
     created() {
-      this.user = userService.user
-      console.log('this.user', this.user)
+      
+    },
+    computed: {
+      user() {
+        return this.$store.getters.user
+      }
+    },
+    methods: {
+      logout() {
+        this.$store.dispatch('LOGOUT')
+        appRouter.push({ name: 'home' })
+      }
     },
     components: {}
   };

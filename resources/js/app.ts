@@ -6,6 +6,7 @@ import { NavbarPlugin, FormPlugin, FormInputPlugin, ButtonPlugin, FormGroupPlugi
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import { store } from './store'
 import router from './app.router'
 import App from './views/App.vue'
 
@@ -19,5 +20,6 @@ Vue.use(ButtonPlugin)
 const app = new Vue({
   el: '#app',
   components: { App },
+  store,
   router
 })

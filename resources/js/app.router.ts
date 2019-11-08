@@ -7,6 +7,7 @@ import Hello from './views/Hello.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Reg.vue'
+import Profile from './views/Ptofile.vue'
 
 export default new VueRouter({
   mode: 'history',
@@ -30,6 +31,11 @@ export default new VueRouter({
       path: '/register',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile
     }
   ]
 })
