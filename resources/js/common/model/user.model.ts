@@ -5,11 +5,11 @@ export default interface User {
   email: string
   avatar: string
   company: any
-  email_verified_at: string
+  emailvverifiedAt: string
   logo: string
   phone: string
   role_id: number
   settings: string
-  created_at: Date
-  updated_at: Date
+  createdAt: Date
+  updatedAt: Date
 }

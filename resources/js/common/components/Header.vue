@@ -47,9 +47,6 @@ export default {
     return {
     }
   },
-  created() {
-    
-  },
   computed: {
     user() {
       return this.$store.getters.user
