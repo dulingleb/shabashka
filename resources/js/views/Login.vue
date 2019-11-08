@@ -60,10 +60,10 @@ export default {
   },
   computed: {
     validateEmail() {
-      return this.form.email.length > 4
+      return !!this.form.email.match(/\S+@\S+\.\S+/)
     },
     validatePassword() {
-      return this.form.password.length > 3
+      return this.form.password.length > 5
     }
   },
   methods: {

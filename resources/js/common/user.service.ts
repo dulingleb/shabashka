@@ -21,6 +21,16 @@ class UserService {
     return false
   }
 
+  async register(name: string, email: string, password: string, Cpassword: string): Promise<boolean> {
+    const response = await apiService.post('oauth/register', { name, email, password, c_password: Cpassword })
+    if (response.success) {
+      jwtService.saveToken(response.token)
+      const user = await this.getTestUser()
+      return !!user
+    }
+    return false
+  }
+
   logout(): void {
     jwtService.clearToken()
   }
