@@ -42,6 +42,7 @@ export default {
     .sub-category {
       padding: 0 10px;
       label {
+        cursor: pointer;
         input {
           margin-right: 5px;
         }
