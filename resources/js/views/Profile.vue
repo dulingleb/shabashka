@@ -92,6 +92,7 @@
 <script lang="ts">
 import userService from '../common/user.service'
 import User from '../common/model/user.model'
+import { capitalizeFirst } from '../common/utils'
 
 export default {
   name: 'app-login',
@@ -128,7 +129,7 @@ export default {
       return this.$store.getters.user
     },
     userName() {
-      return this.capitalize(this.user.name) + ' ' + this.capitalize(this.user.surname)
+      return capitalizeFirst(this.user.name) + ' ' + capitalizeFirst(this.user.surname)
     }
   },
   created() {
@@ -151,10 +152,6 @@ export default {
       this.form.password = ''
       this.form.passwordConfirm = ''
       this.form.phone = ''
-    },
-    capitalize(s) {
-      if (typeof s !== 'string' && !s.length) return ''
-      return s.charAt(0).toUpperCase() + s.slice(1)
     }
   }
 }

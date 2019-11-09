@@ -81,7 +81,7 @@ export default {
       this.form.password = ''
     }
   }
-};
+}
 </script> 
 
 <style lang="scss" scoped>

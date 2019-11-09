@@ -5,7 +5,7 @@ import VueAxios from 'vue-axios'
 import jwtService from './jwt.service'
 
 class ApiService {
-  private _api = 'api'
+  private _api = '/api'
 
   init(csrfToken = ''): void {
     Vue.use(VueAxios, axios)

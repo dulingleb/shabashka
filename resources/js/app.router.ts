@@ -10,6 +10,8 @@ import Register from './views/Reg.vue'
 import Profile from './views/Profile.vue'
 import Task from './views/Task.vue'
 import NewTask from './views/NewTask.vue'
+import MyTasks from './views/MyTasks.vue'
+import MyTaskEdit from './views/MyTaskEdit.vue'
 import { store } from './store'
 
 const router = new VueRouter({
@@ -52,6 +54,16 @@ const router = new VueRouter({
       path: '/task/:id',
       name: 'task',
       component: Task
+    },
+    {
+      path: '/my-task/:id',
+      name: 'myTaskEdit',
+      component: MyTaskEdit
+    },
+    {
+      path: '/my-tasks',
+      name: 'myTasks',
+      component: MyTasks
     }
   ]
 })

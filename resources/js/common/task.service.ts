@@ -18,6 +18,8 @@ class TaskService {
   }
 
   async getTask(id: number): Promise<Task> {
+    const response = await apiService.get(`task/${id}`)
+    console.log(response)
     return { id, title: 'TEST. TODO: Get task by id' } as Task
   }
 
