@@ -18,5 +18,5 @@ export interface TaskResponse {
   price: number
   created_at: string
   term: string
-  category: CategoryResponse
+  category: number
 }

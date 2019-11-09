@@ -18,16 +18,17 @@
             </b-nav-form>
 
             <b-navbar-nav right>
-              <router-link :to="{ name: 'newTask' }" size="sm" class="my-2 my-sm-0 btn btn-warning" type="submit">Создать задание</router-link>
+              <router-link :to="{ name: 'newTask' }" size="sm" class="btn btn-warning add-task" type="submit">Создать задание</router-link>
 
               <b-nav-item v-if="!user" :to="{ name: 'login' }">Вход</b-nav-item>
             </b-navbar-nav>
 
             <b-nav-item-dropdown right v-if="user">
               <template v-slot:button-content>
-                <em>User</em>
+              <span class="text-white">{{ userName }}</span>
               </template>
               <b-dropdown-item :to="{ name: 'profile' }">Профиль</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'myTasks' }">Мои задания</b-dropdown-item>
               <b-dropdown-item @click="logout()">Выход </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
@@ -40,6 +41,7 @@
 <script lang="ts">
 
 import appRouter from '../../app.router'
+import { capitalizeFirst } from '../utils'
 
 export default {
   name: 'app-header',
@@ -50,6 +52,9 @@ export default {
   computed: {
     user() {
       return this.$store.getters.user
+    },
+    userName() {
+      return capitalizeFirst(this.user.name)
     }
   },
   methods: {
@@ -65,5 +70,10 @@ export default {
 <style lang="scss" scoped>
   header {
     box-shadow: 0px 0px 12px -5px black;
+    .add-task {
+      height: 32px;
+      line-height: 1;
+      margin-top: 5px;
+    }
   }
 </style>

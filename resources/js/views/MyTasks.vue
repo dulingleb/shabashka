@@ -12,14 +12,16 @@
             <div class="tasks container" v-if="!loading && tasks">
               <section class="row task border-bottom" v-for="(task, index) in tasks" :key="index">
                 <div class="col-md-9">
-                  <h3 class="title"><router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
+                  <h3 class="title"><router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
                   <p class="description">{{ task.description }}</p>
                   <footer class="info-footer">
                     <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" /> <span>{{ getCategoryName(task.categoryId) }}</span>
                   </footer>
                 </div>
                 <div class="col-md-3 text-center text-secondary">
-                  <p class="price">{{ task.price }} руб.</p><router-link :to="{ name: 'task', params: { id: task.id } }" class="btn btn-info text-light task-btn">Откликнуться</router-link>
+                  <p class="price">{{ task.price }} руб.</p>
+                  <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-info text-light task-btn">Редактировать</router-link>
+                  <button class="btn btn-danger text-light mt-1 task-btn">Удалить</button>
                 </div>
               </section>
             </div>
