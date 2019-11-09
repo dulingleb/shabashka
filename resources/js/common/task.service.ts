@@ -9,7 +9,7 @@ class TaskService {
   }
 
   async getTaks(start = 0, limit = 10, sort = 'DESC', categories = []): Promise<Task[]> {
-    const response = await apiService.get('tasks')
+    const response = await apiService.get('tasks', `?start=${start}&limit=${limit}&categories=[${categories}]`)
     if (response.success) {
       const resCategories: TaskResponse[] = response.data
       this._tasks = resCategories.map(dataTask => this.convertResTask(dataTask))
@@ -29,7 +29,7 @@ class TaskService {
       price: resTask.price,
       createdAt: resTask.created_at,
       created: resTask.term,
-      categoryId: resTask.category ? resTask.category.id : null
+      categoryId: resTask.category
     } as Task
   }
 

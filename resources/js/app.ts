@@ -11,6 +11,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faClock, faFolder } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import PrettyCheckbox from 'pretty-checkbox-vue'
+import 'pretty-checkbox/src/pretty-checkbox.scss'
+
 import { store } from './store'
 import router from './app.router'
 import App from './views/App.vue'
@@ -28,6 +31,8 @@ Vue.use(VueTheMask)
 library.add(faClock, faFolder)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
+
+Vue.use(PrettyCheckbox)
 
 const app = new Vue({
   el: '#app',

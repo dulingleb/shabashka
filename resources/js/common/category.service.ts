@@ -29,6 +29,23 @@ class CategoryService {
     return this.categories
   }
 
+  getCategoryName(categories: Category[], id: number): string {
+    for (const categoryParent of categories) {
+      const category = categoryParent.children.find(category => category.id === id)
+      if (category) {
+        return category.title
+      }
+    }
+  }
+
+  getIds(categories: Category[]): string[] {
+    const ids = []
+    for (const categoryParent of categories) {
+      ids.push(...categoryParent.children.map(category => category.id))
+    }
+    return ids
+  }
+
   private convertResCategory(resCategory: CategoryResponse): Category {
     return {
       id: resCategory.id,

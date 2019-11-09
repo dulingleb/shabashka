@@ -15,7 +15,7 @@
                   <h3 class="title"><router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
                   <p class="description">{{ task.description }}</p>
                   <footer class="info-footer">
-                    <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" /> <span>"Муж на час"</span>
+                    <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" /> <span>{{ getCategoryName(task.categoryId) }}</span>
                   </footer>
                 </div>
                 <div class="col-md-3 text-center text-secondary">
@@ -43,6 +43,11 @@ export default {
       tasks: [],
       users: null,
       error: null,
+      taskOptions: {
+        start: 0,
+        limit: 10,
+        sort: 'DESC'
+      }
     }
   },
   created() {
@@ -60,8 +65,12 @@ export default {
       // this.users = users
       this.loading = false
     },
-    changeCategory(checkedCategory: string[]) {
-      console.log('checkedCategory', checkedCategory)
+    async changeCategory(checkedCategory: string[]) {
+      this.tasks = await taskService.getTaks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, checkedCategory)
+      console.log(this.tasks)
+    },
+    getCategoryName(id: number) {
+      return categoryService.getCategoryName(this.categories, id)
     }
   },
   components: {
