@@ -21,10 +21,21 @@ Route::prefix('user')->namespace('User')->group(function() {
 
     Route::middleware(['auth:api'])->group(function (){
         Route::get('me', 'UserController@me');
+
+
+
     });
 
     Route::get('{user}', 'UserController@show');
 });
 
+
 Route::get('tasks', 'TaskController@index');
+Route::get('task/{task}', 'TaskController@show');
+Route::post('task/store', 'TaskController@store');
+Route::delete('task/{task}', 'TaskController@destroy');
+
+
+
 Route::get('categories', 'TaskController@categories');
+
