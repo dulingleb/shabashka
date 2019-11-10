@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import taskService from '../common/task.service'
+import taskService from '../../common/task.service'
 
 export default {
   name: 'app-register',
@@ -23,8 +23,6 @@ export default {
       loading: true,
       task: {}
     }
-  },
-  async mounted() {
   },
   methods: {
   }

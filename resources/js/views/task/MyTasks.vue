@@ -32,10 +32,10 @@
 </template>
 
 <script lang="ts">
-import Aside from '../common/components/Aside.vue'
-import userService from '../common/user.service'
-import categoryService from '../common/category.service'
-import taskService from '../common/task.service'
+import Aside from '../../common/components/Aside.vue'
+import userService from '../../common/user.service'
+import categoryService from '../../common/category.service'
+import taskService from '../../common/task.service'
 
 export default {
   data() {

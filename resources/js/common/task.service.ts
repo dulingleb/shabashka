@@ -3,9 +3,14 @@ import apiService from './api.service'
 
 class TaskService {
   private _tasks: Task[]
+  private _task: Task
 
   get tasks(): Task[] {
     return this._tasks
+  }
+
+  get task(): Task {
+    return this._task
   }
 
   async getTasks(start = 0, limit = 10, sort = 'DESC', categories = [], search = ''): Promise<Task[]> {
@@ -16,16 +21,19 @@ class TaskService {
       `&search=${search.length > 2 ? search : ''}`
     )
     if (response.success) {
-      const resCategories: TaskResponse[] = response.data
-      this._tasks = resCategories.map(dataTask => this.convertResTask(dataTask))
+      const resTasks: TaskResponse[] = response.data
+      this._tasks = resTasks.map(dataTask => this.convertResTask(dataTask))
     }
     return this.tasks
   }
 
   async getTask(id: number): Promise<Task> {
     const response = await apiService.get(`task/${id}`)
-    console.log(response)
-    return { id, title: 'TEST. TODO: Get task by id' } as Task
+    if (response.success) {
+      const resTask: TaskResponse = response.data
+      this._task = this.convertResTask(resTask)
+    }
+    return this.task
   }
 
   private convertResTask(resTask: TaskResponse): Task {
@@ -36,7 +44,12 @@ class TaskService {
       price: resTask.price,
       createdAt: resTask.created_at,
       created: resTask.term,
-      categoryId: resTask.category
+      categoryId: resTask.category,
+      address: resTask.address,
+      executor: resTask.executor,
+      files: resTask.files,
+      status: resTask.status,
+      userId: resTask.user_id,
     } as Task
   }
 
