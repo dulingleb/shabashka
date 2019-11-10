@@ -14,7 +14,7 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-form>
-              <b-form-input size="sm" class="mr-sm-2" placeholder="Поиск"></b-form-input>
+              <b-form-input size="sm" class="mr-sm-2" placeholder="Поиск" v-model="searchValue" @input="search()"></b-form-input>
             </b-nav-form>
 
             <b-navbar-nav right>
@@ -40,6 +40,8 @@
 
 <script lang="ts">
 
+import _ from 'lodash'
+
 import appRouter from '../../app.router'
 import { capitalizeFirst } from '../utils'
 
@@ -47,7 +49,12 @@ export default {
   name: 'app-header',
   data() {
     return {
+      searchValue: ''
     }
+  },
+  created() {
+    this.searchValue = this.$router.currentRoute.query.search
+    this.search = _.debounce(this.search, 1000)
   },
   computed: {
     user() {
@@ -61,6 +68,9 @@ export default {
     logout() {
       this.$store.dispatch('LOGOUT')
       appRouter.push({ name: 'home' })
+    },
+    search() {
+      this.$router.push({ query: { search: this.searchValue.trim() } })
     }
   },
   components: {}

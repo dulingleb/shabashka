@@ -46,12 +46,21 @@ export default {
       taskOptions: {
         start: 0,
         limit: 10,
-        sort: 'DESC'
+        sort: 'DESC',
+        checkedCategory: [],
+        search: ''
       }
     }
   },
   created() {
+    this.taskOptions.search = this.$router.currentRoute.query.search
     this.fetchData()
+  },
+  watch: {
+    '$route.query.search'(prevVal: string, newVal: string) {
+      this.taskOptions.search = this.$router.currentRoute.query.search
+      this.getTasks()
+    }
   },
   methods: {
     async fetchData() {
@@ -60,19 +69,22 @@ export default {
       const categories = await categoryService.getCategories()
       this.categories = categories
 
-      const tasks = await taskService.getTaks()
-      this.tasks = tasks
-      // this.users = users
-      this.loading = false
+      this.getTasks()
     },
+
     async changeCategory(checkedCategory: string[]) {
+      this.taskOptions.checkedCategory = checkedCategory
+      this.getTasks()
+    },
+
+    async getTasks() {
       this.loading = true
-      this.tasks = await taskService.getTaks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, checkedCategory)
+      this.tasks = await taskService.getTasks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, this.taskOptions.checkedCategory, this.taskOptions.search)
       this.$forceUpdate()
       await this.$nextTick()
       this.loading = false
-      console.log(this.tasks)
     },
+
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
     }

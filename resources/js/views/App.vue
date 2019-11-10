@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import Header from "../common/components/Header.vue";
-import Footer from "../common/components/Footer.vue";
+import Header from '../common/components/Header.vue';
+import Footer from '../common/components/Footer.vue';
 
 import apiService from '../common/api.service'
 import userService from '../common/user.service'
@@ -20,8 +20,8 @@ import userService from '../common/user.service'
 export default {
   props: ['csrfToken'],
   components: {
-    "app-header": Header,
-    "app-footer": Footer,
+    'app-header': Header,
+    'app-footer': Footer,
   },
   created() {
     apiService.init(this.csrfToken)
