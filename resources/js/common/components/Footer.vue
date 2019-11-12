@@ -8,9 +8,9 @@
 
 <script lang="ts">
 export default {
-  name: "app-footer",
+  name: 'app-footer',
   components: {}
-};
+}
 </script> 
 
 <style lang="scss" scoped>

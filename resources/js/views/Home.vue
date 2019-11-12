@@ -15,7 +15,8 @@
                   <h3 class="title"><router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
                   <p class="description">{{ task.description }}</p>
                   <footer class="info-footer">
-                    <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" /> <span>{{ getCategoryName(task.categoryId) }}</span>
+                    <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
+                    <span class="btn btn-link text-info category-link" @click="changeCategory([task.categoryId])">{{ getCategoryName(task.categoryId) }}</span>
                   </footer>
                 </div>
                 <div class="col-md-3 text-center text-secondary">
@@ -46,12 +47,21 @@ export default {
       taskOptions: {
         start: 0,
         limit: 10,
-        sort: 'DESC'
+        sort: 'DESC',
+        checkedCategory: [],
+        search: ''
       }
     }
   },
   created() {
+    this.taskOptions.search = this.$router.currentRoute.query.search
     this.fetchData()
+  },
+  watch: {
+    '$route.query.search'(prevVal: string, newVal: string) {
+      this.taskOptions.search = this.$router.currentRoute.query.search
+      this.getTasks()
+    }
   },
   methods: {
     async fetchData() {
@@ -60,19 +70,22 @@ export default {
       const categories = await categoryService.getCategories()
       this.categories = categories
 
-      const tasks = await taskService.getTaks()
-      this.tasks = tasks
-      // this.users = users
-      this.loading = false
+      this.getTasks()
     },
+
     async changeCategory(checkedCategory: string[]) {
+      this.taskOptions.checkedCategory = checkedCategory
+      this.getTasks()
+    },
+
+    async getTasks() {
       this.loading = true
-      this.tasks = await taskService.getTaks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, checkedCategory)
+      this.tasks = await taskService.getTasks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, this.taskOptions.checkedCategory, this.taskOptions.search)
       this.$forceUpdate()
       await this.$nextTick()
       this.loading = false
-      console.log(this.tasks)
     },
+
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
     }
@@ -93,7 +106,15 @@ export default {
         font-size: 12px;
       }
       .info-footer {
+        display: flex;
+        align-items: center;
         font-size: 12px;
+        .category-link {
+          padding: 0 0 0 5px;
+          font-size: 12px;
+          line-height: 1;
+          cursor: pointer;
+        }
       }
       .price {
         font-size: 20px;
