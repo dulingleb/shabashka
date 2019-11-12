@@ -8,8 +8,10 @@ use App\Response;
 use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -36,6 +38,7 @@ class TaskController extends Controller
         foreach ($tasks->get() as $task){
             $data[] = [
                 'id' => $task->id,
+                'user_id' => $task->user_id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'price' => $task->price,
@@ -49,15 +52,12 @@ class TaskController extends Controller
             "success" => true,
             "data" => $data,
             "total" => $total
-        ]);
+        ], 200);
     }
 
     public function store(Request $request)
     {
-        if(!auth('api')->check())
-            return \response()->json(['success'=> false, 'error' => 'Необходимо авторзиоваться'], 419);
-
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'category_id' => [
                 'required',
                 function($attribute, $value, $fail) {
@@ -73,60 +73,54 @@ class TaskController extends Controller
             'term' => 'required|date|date-format:Y-m-d|after:yesterday',
             'price' => 'required|numeric|min:0|max:999999999',
             'phone' => 'required|string|size:18',
-            'files' => [function($attribute, $value, $fail){
-                if(count(json_decode($value, true)) > 8)
-                    $fail('Максимальное кол-во файлов - 8');
-            }]
+            'files' => 'required',
+            'files.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096'
         ]);
 
-        $files = json_decode($request->get('files'), true);
+        if($validator->fails())
+            return \response()->json([
+                'success' => false,
+                'errors' => $validator->messages()
+            ], 401);
+
+        $task = Task::create([
+            'category_id' => $request->category_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'address' => $request->address,
+            'term' => $request->term,
+            'price' => $request->price,
+            'phone' => $request->phone,
+            'user_id' => auth('api')->id(),
+        ]);
+
         $filesName = [];
-        foreach($files as $file){
-            $filesName[] = basename($file);
+
+        if ($request->hasFile('files')) {
+            File::makeDirectory(storage_path('app\public\tasks\\' . $task->id));
+
+            foreach ($request->file('files') as $file){
+                $name = $file->getClientOriginalName();
+                if(Storage::exists('public\tasks\\' . $task->id . '\\' . $name)){
+                    $item = 1;
+                    do {
+                        $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
+                        $item++;
+                    } while(Storage::exists('public\tasks\\' . $task->id . '\\' . $name));
+                }
+
+                $path = $file->move(storage_path('app\public\tasks\\' . $task->id . '\\'), $name );
+                $filesName[] = basename($name);
+            }
         }
 
-        if(isset($request->id) && $request->id!='') {
-            $task = Task::find($request->id);
-            if($task->user_id !== Auth::id()) return \response('Что-то пошло не так', 419);
-            $task->update([
-                'category_id' => $request->category_id,
-                'title' => $request->title,
-                'description' => $request->description,
-                'address' => $request->address,
-                'term' => $request->term,
-                'price' => $request->price,
-                'phone' => $request->phone,
-                'files' => json_encode($filesName),
-            ]);
+        $task->files = json_encode($filesName);
+        $task->save();
 
-            Session::flash('message', 'Задание успешно отредактировано!');
-        }
-        else {
-            $task = Task::create([
-                'category_id' => $request->category_id,
-                'title' => $request->title,
-                'description' => $request->description,
-                'address' => $request->address,
-                'term' => $request->term,
-                'price' => $request->price,
-                'phone' => $request->phone,
-                'user_id' => Auth::id(),
-                'files' => json_encode($filesName),
-            ]);
-
-            Session::flash('message', 'Задание успешно добавлено!');
-        }
-
-
-        Storage::deleteDirectory('public\tasks\\' . $task->id);
-        foreach ($filesName as $file){
-            if(Storage::exists('public\tasks\temp\\' . Auth::id() . '\\' . $file))
-                Storage::move('public\tasks\temp\\' . Auth::id() . '\\' . $file, 'public\tasks\\' . $task->id . '\\' . $file);
-        }
-
-
-
-        return route('tasks.show', ['id' => $task->id]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Задание успешно доавлено!'
+        ]);
     }
 
     public function show(Task $task){

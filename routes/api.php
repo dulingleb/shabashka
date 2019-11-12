@@ -32,7 +32,7 @@ Route::prefix('user')->namespace('User')->group(function() {
 
 Route::get('tasks', 'TaskController@index');
 Route::get('task/{task}', 'TaskController@show');
-Route::post('task/store', 'TaskController@store');
+Route::post('task/store', 'TaskController@store')->middleware(['auth:api']);
 Route::delete('task/{task}', 'TaskController@destroy');
 
 
