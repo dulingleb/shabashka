@@ -8,13 +8,13 @@
         <input ref="fileinput" type="file" @change="previewFiles" multiple>
 
         <div class="preview-wrapp">
-          <div v-for="(file, key) in files" class="file-listing">
+          <div v-for="(file, key) in files" :key="key" class="file-listing">
             <div class="img-wrapp">
               <img class="img" :ref="'preview' + key"/>
             </div>
             <p class="image-name">{{ file.name }}</p>
             <div class="remove-container">
-              <button class="btn btn-danger btn-remove" type="button" @click="removeFile( key )">Удалить</button>
+              <button class="btn btn-danger btn-remove" type="button" @click="removeFile(key)">Удалить</button>
             </div>
           </div>
         </div>
@@ -46,10 +46,10 @@ export default {
     previewFiles() {
       const filesInput = this.$refs.fileinput.files
       for (let i = 0; i < filesInput.length; i++) {
-        console.log(filesInput[i])
         this.files.push(filesInput[i])
         this.getImagePreviews()
       }
+      this.$emit('change-files', this.files)
     },
     getImagePreviews() {
       for (let i = 0; i < this.files.length; i++) {
@@ -67,6 +67,7 @@ export default {
 
     removeFile(key) {
       this.files.splice(key, 1)
+      this.$emit('change-files', this.files)
     }
   }
 }

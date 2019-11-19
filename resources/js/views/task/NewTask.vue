@@ -49,7 +49,7 @@
             <div class="row">
                 <label class="col-md-2 col-form-label text-md-right" for="title">Файлы</label>
                 <div class="col-md-10">
-                  <drag-drop-images></drag-drop-images>
+                  <drag-drop-images @change-files="changeFiles"></drag-drop-images>
                 </div>
               </div>
 
@@ -103,6 +103,10 @@
               </div>
             </div>
 
+            <div class="btn-container mt-3 text-right">
+              <button class="btn btn-info">Создать задание</button>
+            </div>
+
           </b-form>
         </div>
       </div>
@@ -129,6 +133,7 @@ export default {
         date: (new Date()).toString(),
         cost: 0,
         phone: '',
+        files: []
       },
       formDirty: false
     }
@@ -161,6 +166,14 @@ export default {
     this.loading = false
   },
   methods: {
+    changeFiles(files) {
+      this.form.files = files
+      console.log(this.form)
+    },
+    onSubmit() {
+      console.log(this.form)
+      taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, this.form.date, this.form.cost, this.form.phone, this.form.files)
+    }
   }
 }
 </script> 

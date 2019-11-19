@@ -27,6 +27,22 @@ class TaskService {
     return this.tasks
   }
 
+  async addTask(categoryId: string, title: string, description: string, address: string, date: any, cost: string, phone: string, files: any[]): Promise<void> {
+    const bodyFormData = new FormData()
+    bodyFormData.set('category', categoryId)
+    bodyFormData.set('title', title)
+    bodyFormData.set('description', description)
+    bodyFormData.set('address', address)
+    bodyFormData.set('date', date)
+    bodyFormData.set('cost', cost)
+    bodyFormData.set('phone', phone)
+    for (const file of files) {
+      bodyFormData.set('files[]', file)
+    }
+    const response = await apiService.postFormData('task/store', bodyFormData)
+    console.log('res', response)
+  }
+
   async getTask(id: number): Promise<Task> {
     const response = await apiService.get(`task/${id}`)
     if (response.success) {
