@@ -46,7 +46,13 @@
               </div>
             </b-form-group>
 
-            <p>Файлы</p>
+            <div class="row">
+                <label class="col-md-2 col-form-label text-md-right" for="title">Файлы</label>
+                <div class="col-md-10">
+                  <drag-drop-images></drag-drop-images>
+                </div>
+              </div>
+
 
             <div class="row">
               <div class="col-md-6">
@@ -120,7 +126,7 @@ export default {
         title: '',
         description: '',
         address: '',
-        date: new Date(),
+        date: (new Date()).toString(),
         cost: 0,
         phone: '',
       },

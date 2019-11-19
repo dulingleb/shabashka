@@ -21,6 +21,10 @@ import { store } from './store'
 import router from './app.router'
 import App from './views/App.vue'
 
+import DragDropImages from './shared/DragDropImages.vue'
+
+Vue.component('drag-drop-images', DragDropImages)
+
 Vue.use(storageInstall)
 
 Vue.use(NavbarPlugin)
