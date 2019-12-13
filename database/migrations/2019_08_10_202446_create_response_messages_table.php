@@ -19,6 +19,9 @@ class CreateResponseMessagesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->text('text');
             $table->timestamps();
+
+            $table->foreign('response_id')->references('id')->on('responses')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -29,6 +32,8 @@ class CreateResponseMessagesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('response_messages');
+        Schema::enableForeignKeyConstraints();
     }
 }

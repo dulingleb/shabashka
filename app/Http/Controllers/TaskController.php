@@ -57,7 +57,7 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'category_id' => [
                 'required',
                 function($attribute, $value, $fail) {
@@ -77,11 +77,6 @@ class TaskController extends Controller
             'files.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096'
         ]);
 
-        if($validator->fails())
-            return \response()->json([
-                'success' => false,
-                'errors' => $validator->messages()
-            ], 401);
 
         $task = Task::create([
             'category_id' => $request->category_id,

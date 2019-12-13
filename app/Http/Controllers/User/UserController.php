@@ -37,8 +37,8 @@ class UserController extends Controller
     }
 
     public function login(Request $request){
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = Auth::user();
+        if(auth('api')->attempt(['email' => $request->email, 'password' => $request->password])){
+            $user = auth('api')->user();
             return response()->json([
                 'success' => true,
                 'token' => $user->createToken(config('app.name'))->accessToken
@@ -134,7 +134,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $company = Company::with('categories')->where('user_id', Auth::id())->first();
+        $company = Company::with('categories')->where('user_id', auth('api')->id())->first();
         return view('user.setting.index', compact('company'));
     }
 
@@ -147,49 +147,45 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        $user = User::find(Auth::id());
+
+        $user = User::find(auth('api')->user()->id);
 
         $request->validate([
-            'name' => 'required|string|alpha|min:2|max:16',
-            'surname' => 'required|string|alpha|min:2|max:16',
-            'phone' => 'required|string|size:18|unique:users,id,' . Auth::id(),
-            'logo' => 'image|mimes:jpeg,png,jpg|max:1024'
+            'name' => 'string|alpha|min:2|max:16',
+            'surname' => 'string|alpha|min:2|max:16',
+            'phone' => 'string|size:18|unique:users,id,' . auth('api')->id(),
+            'logo' => 'image|mimes:jpeg,png,jpg|max:1024',
+            'password' => 'string|min:6|max:64',
+            'c_password' => 'same:password',
+            'company' => 'array'
         ]);
 
-        if($request->is_active == 1){
+        if($request->has('company')){
+
             $request->validate([
-                'title' => 'required|string|min:5|max:56',
-                'inn' => 'required|numeric|digits_between:9,12',
-                'description' => 'required|string',
-                'address' => 'required|string|min:5|max:255'
+                'company.title' => 'required|string|min:5|max:56',
+                'company.inn' => 'numeric|digits_between:9,12',
+                'company.description' => 'string',
+                'company.address' => 'string|min:5|max:255',
+                'company.categories' => 'array',
+                'company.categories.*' => 'numeric|min:1|exists:categories,id'
             ]);
 
-            $company = Company::updateOrCreate(
-                ['user_id' => Auth::id()],
-                [
-                    'is_active' => 1,
-                    'title' => $request->input('title'),
-                    'description' => $request->input('description'),
-                    'address' => $request->input('address'),
-                    'inn' => $request->input('inn')
-                ]
-            );
-
-            $categories = json_decode($request->categories, true);
-
-            DB::table('categoriables')->where('categoriable_id', $company->id)->where('categoriable_type', Company::class)->delete();
-            foreach ($categories as $category) {
-                if(Category::where('id', $category['id'])->exists()) {
-                    DB::table('categoriables')->insert([
-                        'category_id' => $category['id'],
-                        'categoriable_id' => $company->id,
-                        'categoriable_type' => Company::class
-                    ]);
-                }
+            if($request->has('company.categories')){
+                $categories = $request->input('company.categories');
+                $request->offsetUnset('company.categories');
             }
 
-        } else {
-            $company = Company::where('user_id', Auth::id())->first();
+            $company = Company::updateOrCreate(
+                ['user_id' => auth('api')->id()],
+                array_merge($request->get('company'), ['is_active' => 1])
+            );
+
+            if(isset($categories))
+                $company->categories()->sync($categories);
+
+        } elseif ($request->company_hide) {
+            $company = Company::where('user_id', auth('api')->id())->first();
             if($company) {
                 $company->is_active = 0;
                 $company->save();
@@ -206,17 +202,22 @@ class UserController extends Controller
 
         if ($request->hasFile('logo')) {
             $image = $request->file('logo');
-            $name = md5(Auth::id() . Auth::user()->email).'.'.$image->getClientOriginalExtension();
+            $name = md5(auth('api')->id() . auth('api')->user()->email).'.'.$image->getClientOriginalExtension();
             $image->move(public_path('img/logo'), $name);
 
             $user->logo = '/img/logo/' . $name;
             $user->save();
         }
 
-        $user->update($request->except(['_token', '_method', 'logo', 'email']));
 
 
-        return response('Настройки успешно сохранены');
+        $user->update($request->except(['_token', '_method', 'logo', 'email', 'c_password']));
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $user->load('company')
+        ], 200);
     }
 
     /**

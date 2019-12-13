@@ -20,6 +20,9 @@ class CreateReviewsTable extends Migration
             $table->text('text')->nullable();
             $table->boolean('assessment');
             $table->timestamps();
+
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -30,6 +33,8 @@ class CreateReviewsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('reviews');
+        Schema::enableForeignKeyConstraints();
     }
 }

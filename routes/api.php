@@ -21,9 +21,7 @@ Route::prefix('user')->namespace('User')->group(function() {
 
     Route::middleware(['auth:api'])->group(function (){
         Route::get('me', 'UserController@me');
-
-
-
+        Route::put('me', 'UserController@update');
     });
 
     Route::get('{user}', 'UserController@show');

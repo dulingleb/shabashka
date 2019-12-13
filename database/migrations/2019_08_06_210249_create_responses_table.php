@@ -20,6 +20,9 @@ class CreateResponsesTable extends Migration
             $table->decimal('price', 10,2)->unsigned();
             $table->text('text');
             $table->timestamps();
+
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -30,6 +33,8 @@ class CreateResponsesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('responses');
+        Schema::enableForeignKeyConstraints();
     }
 }

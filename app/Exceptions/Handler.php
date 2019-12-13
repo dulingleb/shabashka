@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -49,8 +50,24 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof ModelNotFoundException) {
             return response()->json(['status' => false, 'error' => 'Not Found!'], 404);
+        } elseif ($exception instanceof ValidationException){
+            return $this->convertValidationExceptionToResponse($exception, $request);
         }
 
         return parent::render($request, $exception);
+    }
+
+    /**
+     * Create a response object from the given validation exception.
+     *
+     * @param  \Illuminate\Validation\ValidationException  $e
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function convertValidationExceptionToResponse(\Illuminate\Validation\ValidationException $e, $request)
+    {
+        $error = $e->validator->errors()->getMessages();
+
+        return response()->json(['success' => false, 'error' => $error], 422);
     }
 }
