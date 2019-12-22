@@ -65,7 +65,7 @@ class TaskService {
       price: resTask.price,
       createdAt: resTask.created_at,
       created: resTask.term,
-      categoryId: resTask.category,
+      categoryId: resTask.category_id,
       address: resTask.address,
       executor: resTask.executor,
       files: resTask.files,

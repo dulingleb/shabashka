@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faClock, faFolder, faChevronUp, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import PrettyCheckbox from 'pretty-checkbox-vue'
@@ -36,7 +36,7 @@ Vue.use(ButtonPlugin)
 
 Vue.use(VueTheMask)
 
-library.add(faClock, faFolder, faChevronUp, faChevronLeft)
+library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
 
