@@ -13,13 +13,18 @@ class TaskService {
     return this._task
   }
 
-  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = [], search = ''): Promise<Task[]> {
-    const response = await apiService.get('tasks',
-      `?start=${start}` +
-      `&limit=${limit}` +
-      `&categories=[${categories}]` +
-      `&search=${search.length > 2 ? search : ''}`
-    )
+  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = ''): Promise<Task[]> {
+    let query = `?start=${start}`
+    if (limit) {
+      query += `&limit=${limit}`
+    }
+    if (categories && categories.length) {
+      query += `&categories=[${categories}]`
+    }
+    if (search && search.length > 2) {
+      query += `&search=${search}`
+    }
+    const response = await apiService.get('tasks', query)
     if (response.success) {
       const resTasks: TaskResponse[] = response.data
       this._tasks = resTasks.map(dataTask => this.convertResTask(dataTask))
