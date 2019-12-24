@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
 
-
     public static function getAllCategories(){
         $categories = [];
         foreach(Category::where('parent', 0)->get() as $category){

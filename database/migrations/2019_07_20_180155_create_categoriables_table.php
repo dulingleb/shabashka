@@ -14,9 +14,11 @@ class CreateCategoriablesTable extends Migration
     public function up()
     {
         Schema::create('categoriables', function (Blueprint $table) {
-            $table->integer('category_id');
-            $table->integer('categoriable_id');
+            $table->bigInteger('category_id');
+            $table->bigInteger('categoriable_id');
             $table->string('categoriable_type');
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 
@@ -27,6 +29,8 @@ class CreateCategoriablesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('categoriables');
+        Schema::enableForeignKeyConstraints();
     }
 }

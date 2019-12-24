@@ -7,7 +7,6 @@ export interface Task {
   price: number
   createdAt: string
   created: string
-  term: string
   categoryId: number
   address: string
   executor: number
@@ -23,7 +22,7 @@ export interface TaskResponse {
   price: number
   created_at: string
   term: string
-  category: number
+  category_id: number
   address: string
   executor: number
   files: string[]

@@ -13,18 +13,39 @@ class TaskService {
     return this._task
   }
 
-  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = [], search = ''): Promise<Task[]> {
-    const response = await apiService.get('tasks',
-      `?start=${start}` +
-      `&limit=${limit}` +
-      `&categories=[${categories}]` +
-      `&search=${search.length > 2 ? search : ''}`
-    )
+  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = ''): Promise<Task[]> {
+    let query = `?start=${start}`
+    if (limit) {
+      query += `&limit=${limit}`
+    }
+    if (categories && categories.length) {
+      query += `&categories=[${categories}]`
+    }
+    if (search && search.length > 2) {
+      query += `&search=${search}`
+    }
+    const response = await apiService.get('tasks', query)
     if (response.success) {
       const resTasks: TaskResponse[] = response.data
       this._tasks = resTasks.map(dataTask => this.convertResTask(dataTask))
     }
     return this.tasks
+  }
+
+  async addTask(categoryId: string, title: string, description: string, address: string, date: any, cost: string, phone: string, files: any[]): Promise<void> {
+    const bodyFormData = new FormData()
+    bodyFormData.set('category', categoryId)
+    bodyFormData.set('title', title)
+    bodyFormData.set('description', description)
+    bodyFormData.set('address', address)
+    bodyFormData.set('date', date)
+    bodyFormData.set('cost', cost)
+    bodyFormData.set('phone', phone)
+    for (const file of files) {
+      bodyFormData.set('files[]', file)
+    }
+    const response = await apiService.postFormData('task/store', bodyFormData)
+    console.log('res', response)
   }
 
   async getTask(id: number): Promise<Task> {
@@ -44,7 +65,7 @@ class TaskService {
       price: resTask.price,
       createdAt: resTask.created_at,
       created: resTask.term,
-      categoryId: resTask.category,
+      categoryId: resTask.category_id,
       address: resTask.address,
       executor: resTask.executor,
       files: resTask.files,

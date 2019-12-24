@@ -21,9 +21,7 @@ Route::prefix('user')->namespace('User')->group(function() {
 
     Route::middleware(['auth:api'])->group(function (){
         Route::get('me', 'UserController@me');
-
-
-
+        Route::post('me', 'UserController@update');
     });
 
     Route::get('{user}', 'UserController@show');
@@ -38,4 +36,5 @@ Route::delete('task/{task}', 'TaskController@destroy');
 
 
 Route::get('categories', 'TaskController@categories');
+
 

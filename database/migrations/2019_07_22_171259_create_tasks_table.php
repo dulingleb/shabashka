@@ -22,11 +22,15 @@ class CreateTasksTable extends Migration
             $table->timestamp('term');
             $table->float('price', 10, 0)->default(0);
             $table->string('phone');
-            $table->integer('category_id')->unsigned()->index();
-            $table->integer('user_id')->unsigned();
-            $table->integer('executor')->unsigned()->nullable();
+            $table->bigInteger('category_id')->unsigned()->index();
+            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('executor')->unsigned()->nullable();
             $table->string('status', 255)->default('wait');
             $table->timestamps();
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('executor')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -37,6 +41,8 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tasks');
+        Schema::enableForeignKeyConstraints();
     }
 }

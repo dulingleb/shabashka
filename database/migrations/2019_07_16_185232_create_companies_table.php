@@ -24,6 +24,8 @@ class CreateCompaniesTable extends Migration
             $table->text('description')->nullable();
             $table->text('documents')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -34,6 +36,8 @@ class CreateCompaniesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('companies');
+        Schema::enableForeignKeyConstraints();
     }
 }

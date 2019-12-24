@@ -21,11 +21,11 @@ class ApiService {
   }
 
   // TODO: Add token in headers
-  setHeader() {
-    // Vue.axios.defaults.headers.common[
-    //   "Authorization"
-    // ] = `Token ${JwtService.getToken()}`;
-  }
+  // setHeader() {
+  //   Vue.axios.defaults.headers.common[
+  //     "Authorization"
+  //   ] = `Token ${JwtService.getToken()}`;
+  // }
 
   async query(resource: string, params: any) {
     try {
@@ -78,6 +78,22 @@ class ApiService {
       return res.data
     } catch (error) {
       throw new Error(`[RWV] DELETE ApiService ${error}`)
+    }
+  }
+
+  async postFormData(resource: string, bodyFormData: FormData) {
+    const config = this.getConfig()
+    config.headers['Content-Type'] = 'multipart/form-data'
+    try {
+      const res = await Vue.axios({
+        method: 'post',
+        url: `${this.api}/${resource}`,
+        data: bodyFormData,
+        headers: config.headers
+      })
+      return res.data
+    } catch (error) {
+      throw new Error(`[RWV] POST ApiService ${error}`)
     }
   }
 

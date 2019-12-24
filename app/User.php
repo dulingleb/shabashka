@@ -39,7 +39,7 @@ class User extends Authenticatable
     ];
 
     public function company(){
-        return $this->hasOne(Company::class);
+        return $this->hasOne(Company::class)->with('categories');
     }
 
     public function reviews(){
