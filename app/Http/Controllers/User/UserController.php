@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -37,8 +39,8 @@ class UserController extends Controller
     }
 
     public function login(Request $request){
-        if(auth('api')->attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = auth('api')->user();
+        if(\Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])){
+            $user = auth('web')->user();
             return response()->json([
                 'success' => true,
                 'token' => $user->createToken(config('app.name'))->accessToken
@@ -127,18 +129,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        $company = Company::with('categories')->where('user_id', auth('api')->id())->first();
-        return view('user.setting.index', compact('company'));
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -147,7 +137,6 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-
         $user = User::find(auth('api')->user()->id);
 
         $request->validate([
@@ -163,41 +152,63 @@ class UserController extends Controller
         if($request->has('company')){
 
             $request->validate([
-                'company.title' => 'required|string|min:5|max:56',
+                'company.title' => 'string|min:5|max:56',
                 'company.inn' => 'numeric|digits_between:9,12',
                 'company.description' => 'string',
                 'company.address' => 'string|min:5|max:255',
                 'company.categories' => 'array',
-                'company.categories.*' => 'numeric|min:1|exists:categories,id'
+                'company.categories.*' => 'numeric|min:1|exists:categories,id',
+                //'company.documents' => 'array',
+                'company.documents.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096',
             ]);
+
+            $company = $request->company;
 
             if($request->has('company.categories')){
                 $categories = $request->input('company.categories');
-                $request->offsetUnset('company.categories');
+                unset($company['categories']);
             }
+
+            if($request->has('company.is_active')){
+                $company['is_active'] = $company['is_active'] ? 1 : 0;
+
+            }
+
+            if($request->has('company.documents')){
+                if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
+                    File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
+
+
+                $filesName = [];
+
+                foreach ($request->file('company.documents') as $file){
+                    $name = $file->getClientOriginalName();
+                    if(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name)){
+                        $item = 1;
+                        do {
+                            $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
+                            $item++;
+                        } while(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name));
+                    }
+
+                    $path = $file->move(storage_path('app\public\users\\' . \auth('api')->id() . '\\'), $name );
+                    $filesName[] = basename($name);
+                }
+
+                $company['documents'] = serialize($filesName);
+
+                //$request->offsetUnset('company.documents');
+            }
+
 
             $company = Company::updateOrCreate(
                 ['user_id' => auth('api')->id()],
-                array_merge($request->get('company'), ['is_active' => 1])
+                $company
             );
 
             if(isset($categories))
                 $company->categories()->sync($categories);
 
-        } elseif ($request->company_hide) {
-            $company = Company::where('user_id', auth('api')->id())->first();
-            if($company) {
-                $company->is_active = 0;
-                $company->save();
-            }
-        }
-
-        if($request->remove_logo){
-            if(\File::exists(public_path($user->logo))){
-                \File::delete(public_path($user->logo));
-            }
-            $user->logo = NULL;
-            $user->save();
         }
 
         if ($request->hasFile('logo')) {
@@ -207,16 +218,41 @@ class UserController extends Controller
 
             $user->logo = '/img/logo/' . $name;
             $user->save();
+        } elseif ($request->get('logo') === null){
+            if(\File::exists(public_path($user->logo))){
+                \File::delete(public_path($user->logo));
+            }
+            $user->logo = NULL;
+            $user->save();
         }
 
 
+        if($request->has('password'))
+            $request->replace(['password' => bcrypt($request->password)]);
 
-        $user->update($request->except(['_token', '_method', 'logo', 'email', 'c_password']));
+        $user->update($request->except(['logo', 'email', 'c_password']));
+
 
 
         return response()->json([
             'success' => true,
-            'data' => $user->load('company')
+            'data' => [
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'logo' => $user->logo,
+                'phone' => $user->phone,
+                'email' => $user->email,
+                'company' => [
+                    'id' => $user->company->id,
+                    'title' => $user->company->title,
+                    'address' => $user->company->address,
+                    'description' => $user->company->description,
+                    'moderate_status' => $user->company->moderate_status,
+                    'is_active' => $user->company->is_active,
+                    'documents' => $user->company->documents,
+                    'categories' => $user->company->categories->pluck('id')
+                ]
+            ]
         ], 200);
     }
 
