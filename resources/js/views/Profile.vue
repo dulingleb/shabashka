@@ -1,98 +1,163 @@
- <template>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">Профиль</div>
+<template>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">Профиль</div>
 
-        <div class="card-body">
+      <div class="card-body">
+
+        <b-form @submit="onSubmit" @reset="onReset">
           <div class="row" v-if="user">
             <div class="col-md-4">
               <p><b>{{ userName }}</b></p>
               <div class="img">
                 <img src="https://via.placeholder.com/300x350" alt />
               </div>
+              <label class="btn btn-link text-info change-avatar">Сменить аватар
+                <input type="file" accept="image/*">
+              </label>
             </div>
             <div class="col-md-8">
-              <b-form @submit="onSubmit" @reset="onReset">
-                <b-form-group name="name" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="name">Имя</label>
-                    <div class="col-md-9">
-                      <b-form-input id="name" v-model="form.name" :state="validateName" type="text" required placeholder="Введите имя" autofocus :disabled="loading"></b-form-input>
-                      <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 3-х символов</b-form-invalid-feedback>
-                    </div>
+              <b-form-group name="name" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="name">Имя</label>
+                  <div class="col-md-9">
+                    <b-form-input id="name" v-model="form.name" :state="validateName" type="text" required placeholder="Введите имя" autofocus :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 3-х символов</b-form-invalid-feedback>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group name="surname" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="surname">Фамилия</label>
-                    <div class="col-md-9">
-                      <b-form-input id="surname" v-model="form.surname" :state="validateSurname" type="text" placeholder="Введите фамилию" :disabled="loading"
-                      ></b-form-input>
-                      <b-form-invalid-feedback :state="true"></b-form-invalid-feedback>
-                    </div>
+              <b-form-group name="surname" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="surname">Фамилия</label>
+                  <div class="col-md-9">
+                    <b-form-input id="surname" v-model="form.surname" :state="validateSurname" type="text" placeholder="Введите фамилию" :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validateSurname"></b-form-invalid-feedback>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group name="email" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="email">Email</label>
-                    <div class="col-md-9"><b-form-input id="email" v-model="form.email" type="email" disabled></b-form-input>
-                    </div>
+              <b-form-group name="email" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="email">Email</label>
+                  <div class="col-md-9">
+                    <b-form-input id="email" v-model="form.email" type="email" disabled></b-form-input>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group name="password" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
-                    <div class="col-md-9">
-                      <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" placeholder="Введите пароль" :disabled="loading"></b-form-input>
-                      <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
-                    </div>
+              <b-form-group name="password" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
+                  <div class="col-md-9">
+                    <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" placeholder="Введите пароль" :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group name="passwordConfirm" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль:</label>
-                    <div class="col-md-9">
-                      <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
-                      <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
-                    </div>
+              <b-form-group name="passwordConfirm" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль:</label>
+                  <div class="col-md-9">
+                    <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group name="phone" description>
-                  <div class="row">
-                    <label class="col-md-3 col-form-label text-md-right" for="phone">Телефон:</label>
-                    <div class="col-md-9">
-                      <b-form-input v-mask="'+7 (###) ###-##-##'" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="+7 (___) ___-__-__" :disabled="loading"></b-form-input>
-                      <b-form-invalid-feedback :state="validatePhone">Некорректный телефон</b-form-invalid-feedback>
-                    </div>
+              <b-form-group name="phone" description>
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="phone">Телефон:</label>
+                  <div class="col-md-9">
+                    <b-form-input v-mask="'+7 (###) ###-##-##'" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="+7 (___) ___-__-__" :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validatePhone">Некорректный телефон</b-form-invalid-feedback>
                   </div>
-                </b-form-group>
+                </div>
+              </b-form-group>
 
-                <b-form-group>
-                  <div class="row">
-                    <div class="offset-md-3 col-md-7">
-                      <b-button type="submit" variant="info" :disabled="loading">Сохранить</b-button>
-                    </div>
-                  </div>
-                </b-form-group>
-              </b-form>
             </div>
+
           </div>
-        </div>
+
+          <b-form-group>
+              <div class="row">
+                <div class="offset-md-3 col-md-7">
+                  <p-check name="category" color="info" v-model="form.company.isActive">Юридическое лицо</p-check>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group name="companyTitle" description>
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="companyTitle">Наименование:</label>
+                <div class="col-md-9">
+                  <b-form-input id="companyTitle" v-model="form.company.title" :state="validateСompanyTitle" type="text" placeholder="ИП Иванов И.И." :disabled="loading"></b-form-input>
+                  <b-form-invalid-feedback :state="validateСompanyTitle"></b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group name="companyInn" description>
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="companyInn">ИНН:</label>
+                <div class="col-md-9">
+                  <b-form-input id="companyInn" v-model="form.company.inn" :state="validateСompanyInn" type="text" placeholder="0123456789" :disabled="loading"></b-form-input>
+                  <b-form-invalid-feedback :validateСompanyInn="true"></b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group name="companyDescription" description>
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="companyDescription">Описание:</label>
+                <div class="col-md-9">
+                  <b-form-textarea id="companyDescription" v-model="form.company.description" :state="validateCompanyDescription" type="text" placeholder="Пару слов, чем вы занимаетесь" :disabled="loading"></b-form-textarea>
+                  <b-form-invalid-feedback :state="validateCompanyDescription"></b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <b-form-group name="companyAddress" description>
+              <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="companyAddress">Адрес:</label>
+                <div class="col-md-9">
+                  <b-form-input id="companyAddress" v-model="form.company.address" :state="validateCompanyAddress" type="text" placeholder="ул. Центральная 1" :disabled="loading"></b-form-input>
+                  <b-form-invalid-feedback :state="validateCompanyAddress"></b-form-invalid-feedback>
+                </div>
+              </div>
+            </b-form-group>
+
+            <div class="row">
+                <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
+                <div class="col-md-9">
+                  <drag-drop-images @change-files="changeFiles"></drag-drop-images>
+                </div>
+              </div>
+
+            <b-form-group>
+              <div class="row">
+                <div class="offset-md-3 col-md-7">
+                  <b-button type="submit" variant="info" :disabled="loading">Сохранить</b-button>
+                </div>
+              </div>
+            </b-form-group>
+
+        </b-form>
+
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
 import userService from '../common/user.service'
 import User from '../common/model/user.model'
-import { capitalizeFirst } from '../common/utils'
+import {
+  capitalizeFirst
+} from '../common/utils'
 
 export default {
   name: 'app-login',
@@ -105,7 +170,14 @@ export default {
         email: '',
         password: '',
         passwordConfirm: '',
-        phone: ''
+        phone: '',
+        company: {
+          isActive: true,
+          title: '',
+          address: '',
+          inn: '',
+          description: ''
+        }
       },
     }
   },
@@ -124,6 +196,18 @@ export default {
     },
     validateSurname() {
       return this.form.name.length > 3 || !this.form.name.length
+    },
+    validateСompanyTitle() {
+      return !this.form.company.isActive || this.form.company.title.length > 3
+    },
+    validateСompanyInn() {
+      return !this.form.company.isActive || this.form.company.inn.length > 3
+    },
+    validateCompanyDescription() {
+      return !this.form.company.isActive || this.form.company.description.length > 3
+    },
+    validateCompanyAddress() {
+      return !this.form.company.isActive || this.form.company.address.length > 3
     },
     user(): User {
       return this.$store.getters.user
@@ -161,8 +245,17 @@ export default {
 .img {
   border-radius: 4px;
   overflow: hidden;
+
   img {
     width: 100%;
+  }
+}
+
+.change-avatar {
+  cursor: pointer;
+
+  input[type=file] {
+    display: none;
   }
 }
 </style>
