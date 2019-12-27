@@ -9,13 +9,7 @@
         <b-form @submit="onSubmit" @reset="onReset">
           <div class="row" v-if="user">
             <div class="col-md-4">
-              <p><b>{{ userName }}</b></p>
-              <div class="img">
-                <img src="https://via.placeholder.com/300x350" alt />
-              </div>
-              <label class="btn btn-link text-info change-avatar">Сменить аватар
-                <input type="file" accept="image/*">
-              </label>
+              <avatar :user-name="userName"></avatar>
             </div>
             <div class="col-md-8">
               <b-form-group name="name" description>
@@ -236,26 +230,14 @@ export default {
       this.form.password = ''
       this.form.passwordConfirm = ''
       this.form.phone = ''
+    },
+    changeFiles(files) {
+      console.log(files)
     }
   }
 }
 </script> 
 
 <style lang="scss" scoped>
-.img {
-  border-radius: 4px;
-  overflow: hidden;
 
-  img {
-    width: 100%;
-  }
-}
-
-.change-avatar {
-  cursor: pointer;
-
-  input[type=file] {
-    display: none;
-  }
-}
 </style>

@@ -22,8 +22,10 @@ import router from './app.router'
 import App from './views/App.vue'
 
 import DragDropImages from './shared/DragDropImages.vue'
+import Avatar from './shared/avatar.vue'
 
 Vue.component('drag-drop-images', DragDropImages)
+Vue.component('avatar', Avatar)
 
 Vue.use(storageInstall)
 
