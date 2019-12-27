@@ -56,37 +56,6 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\User  $user
@@ -107,25 +76,12 @@ class UserController extends Controller
             ];
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'surname' => $user->surname,
-                'logo' => $user->logo,
-                'phone' => $user->phone,
-                'company' => $company,
-            ]
-        ], 200);
+        return $this->_me_data($user);
     }
 
     public function me(){
         $user = auth('api')->user();
-        return response()->json([
-            'success' => true,
-            'data' => $user->load('company')
-        ], 200);
+        return $this->_me_data($user);
     }
 
     /**
@@ -234,6 +190,10 @@ class UserController extends Controller
 
 
 
+        return $this->_me_data($user);
+    }
+
+    public function _me_data($user){
         return response()->json([
             'success' => true,
             'data' => [
@@ -249,21 +209,10 @@ class UserController extends Controller
                     'description' => $user->company->description,
                     'moderate_status' => $user->company->moderate_status,
                     'is_active' => $user->company->is_active,
-                    'documents' => $user->company->documents,
+                    'documents' => $user->company->documents ?? null,
                     'categories' => $user->company->categories->pluck('id')
                 ]
             ]
         ], 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
     }
 }

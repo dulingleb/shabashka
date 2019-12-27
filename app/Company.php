@@ -9,6 +9,7 @@ class Company extends Model
     protected $fillable = ['user_id', 'is_active', 'is_moderate', 'inn', 'description', 'title', 'address', 'documents'];
 
     public function getDocumentsAttribute($value){
+        if(!$value) return null;
         $_v = unserialize($value);
         $files = [];
         foreach ($_v as $file){
