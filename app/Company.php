@@ -19,6 +19,18 @@ class Company extends Model
         return json_encode($files);
     }
 
+    public function setDocumentsAttribute($value){
+
+        if(is_array($value)){
+            $_value = [];
+            foreach ($value as $item)
+                $_value[] = basename($item);
+            $this->attributes['documents'] = serialize($_value);
+        } else
+            $this->attributes['documents'] = $value;
+
+    }
+
     public function categories(){
         return $this->morphToMany('App\Category', 'categoriable');
     }

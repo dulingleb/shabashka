@@ -107,8 +107,7 @@ class UserController extends Controller
         ]);
 
         if($request->has('company')){
-
-
+            if(!$user->company()->exists() && $request->input('company.is_active')==='false') return;
 
             $request->validate([
                 'company.title' => 'string|min:5|max:56',
@@ -121,6 +120,7 @@ class UserController extends Controller
             ]);
 
             $company = $request->company;
+            $documents = json_decode($user->company->documents, true);
 
             if($request->has('company.is_active')){
                 $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
@@ -131,10 +131,23 @@ class UserController extends Controller
                 unset($company['categories']);
             }
 
+            if($request->has('company.documents_remove')){
+                $documents_remove = $company['documents_remove'];
+                unset($company['documents_remove']);
+
+                foreach ($documents_remove as $item){
+                    $item = basename($item);
+                    if(File::exists(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item)))
+                        File::delete(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item));
+                }
+
+                $documents = array_diff($documents, $documents_remove);
+
+            }
+
             if($request->has('company.documents')){
                 if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
                     File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
-
 
                 $filesName = [];
 
@@ -152,12 +165,12 @@ class UserController extends Controller
                     $filesName[] = basename($name);
                 }
 
-                $company['documents'] = serialize($filesName);
+                $documents = array_merge($documents, $filesName);
 
                 //$request->offsetUnset('company.documents');
             }
 
-
+            $company['documents'] = $documents;
             $company = Company::updateOrCreate(
                 ['user_id' => auth('api')->id()],
                 $company
@@ -174,9 +187,9 @@ class UserController extends Controller
 
             $image = $request->file('logo');
             $name = md5(auth('api')->id() . auth('api')->user()->email).'.'.$image->getClientOriginalExtension();
-            $image->move(public_path('users/' . \auth('api')->id()), $name);
+            $image->move(storage_path('app/public/users/' . \auth('api')->id()), $name);
 
-            $user->logo = 'users/' . \auth('api')->id() . '/' . $name;
+            $user->logo = 'storage/users/' . \auth('api')->id() . '/' . $name;
             $user->save();
         } elseif ($request->get('logo') === null){
             if(\File::exists(public_path($user->logo))){
@@ -194,7 +207,7 @@ class UserController extends Controller
 
 
 
-        return $this->_me_data($user);
+        return $this->_me_data($user->load('company'));
     }
 
     public function _me_data($user, $except = []){
