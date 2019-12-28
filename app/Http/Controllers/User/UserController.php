@@ -169,11 +169,14 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('logo')) {
+            if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
+                File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
+
             $image = $request->file('logo');
             $name = md5(auth('api')->id() . auth('api')->user()->email).'.'.$image->getClientOriginalExtension();
-            $image->move(public_path('img/logo'), $name);
+            $image->move(public_path('users/' . \auth('api')->id()), $name);
 
-            $user->logo = '/img/logo/' . $name;
+            $user->logo = 'users/' . \auth('api')->id() . '/' . $name;
             $user->save();
         } elseif ($request->get('logo') === null){
             if(\File::exists(public_path($user->logo))){
