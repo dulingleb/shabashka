@@ -30,7 +30,7 @@ Route::prefix('user')->namespace('User')->group(function() {
 
 Route::get('tasks', 'TaskController@index');
 Route::get('task/{task}', 'TaskController@show');
-
+Route::get('task/{task}/responses', 'User\ResponseController@index');
 
 Route::middleware(['auth:api'])->prefix('task')->group(function() {
     Route::post('store', 'TaskController@store');
@@ -39,6 +39,8 @@ Route::middleware(['auth:api'])->prefix('task')->group(function() {
     
     Route::post('{task}/response', 'User\ResponseController@store');
 });
+
+
 
 
 Route::get('categories', 'TaskController@categories');

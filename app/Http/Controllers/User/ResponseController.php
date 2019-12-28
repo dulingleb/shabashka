@@ -4,12 +4,31 @@ namespace App\Http\Controllers\User;
 
 use App\Response;
 use App\Task;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ResponseController extends Controller
 {
+    public function index(Task $task){
+        $data = [];
+        foreach ($task->responses as $respons){
+            $data[] = [
+                'id' => $respons->id,
+                'user_id' => $respons->user_id,
+                'text' => $respons->text,
+                'price' => $respons->price,
+                'created_at' => Carbon::parse($respons->created_at)
+            ];
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'total' => $task->responses()->count()
+        ], 200);
+    }
+
     public function store(Task $task, Request $request){
         if($task->user_id === \auth('api')->id())
             return response()->json([
