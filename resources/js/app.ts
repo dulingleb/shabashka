@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import PrettyCheckbox from 'pretty-checkbox-vue'
@@ -22,8 +22,10 @@ import router from './app.router'
 import App from './views/App.vue'
 
 import DragDropImages from './shared/DragDropImages.vue'
+import Avatar from './shared/avatar.vue'
 
 Vue.component('drag-drop-images', DragDropImages)
+Vue.component('avatar', Avatar)
 
 Vue.use(storageInstall)
 
@@ -36,7 +38,7 @@ Vue.use(ButtonPlugin)
 
 Vue.use(VueTheMask)
 
-library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt)
+library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
 

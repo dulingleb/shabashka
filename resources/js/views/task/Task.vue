@@ -78,7 +78,7 @@ import {
 import {
   Category
 } from '../../common/model/category.model'
-import User from 'resources/js/common/model/user.model'
+import { User } from 'resources/js/common/model/user.model'
 
 import taskService from '../../common/task.service'
 import categoryService from '../../common/category.service'

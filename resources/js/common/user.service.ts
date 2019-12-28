@@ -1,6 +1,7 @@
-import User from './model/user.model'
+import { User, UserResponse } from './model/user.model'
 import apiService from './api.service'
 import jwtService from './jwt.service'
+import { CompanyResponse, Company } from './model/company.model'
 
 class UserService {
   async getTestUser(): Promise<User> {
@@ -32,27 +33,60 @@ class UserService {
     return false
   }
 
+  async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company): Promise<void> {
+    const bodyFormData = this.parseChangedFields(name, email, surname, phone, logo, password, cPassword, company)
+    const response = await apiService.postFormData('user/me', bodyFormData)
+    console.log('res', response)
+  }
+
   logout(): void {
     jwtService.clearToken()
   }
 
-  private parseUser(data: any): User {
+  private parseUser(data: UserResponse): User {
     if (!data) { return null }
     return {
       id: +data.id,
       name: data.name !== null ? data.name : '',
       surname: data.surname !== null ? data.surname : '',
       email: data.email !== null ? data.email : '',
-      avatar: data.avatar !== null ? data.avatar : '',
-      company: data.company !== null ? data.company : '',
-      emailvverifiedAt: data.email_verified_at,
+      company: this.parseCompany(data.company),
       logo: data.logo !== null ? data.logo : '',
       phone: data.phone !== null ? data.phone : '',
-      role_id: data.role_id !== null ? data.role_id : '',
-      settings: data.settings !== null ? data.settings : '',
-      createdAt: data.created_at,
-      updatedAt: data.updated_at
+      settings: data.settings !== null ? data.settings : ''
     }
+  }
+
+  private parseCompany(data: CompanyResponse): Company {
+    if (!data) { return {} as Company }
+    return {
+      id: +data.id,
+      isActive: !!data.is_active,
+      title: data.title !== null ? data.title : '',
+      inn: data.inn !== null ? data.inn : '',
+      address: data.address !== null ? data.address : '',
+      description: data.description !== null ? data.description : '',
+      moderateStatus: data.moderate_status,
+      documents: data.documents !== null ? data.documents : [],
+      categories: data.categories !== null ? data.categories : []
+    }
+  }
+
+  private parseChangedFields(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company): FormData {
+    const bodyFormData = new FormData()
+    if (name && name.length) bodyFormData.set('name', name)
+    if (email && email.length) bodyFormData.set('email', email)
+    if (surname && surname.length) bodyFormData.set('surname', surname)
+    if (phone && phone.length) bodyFormData.set('phone', phone)
+    if (logo) bodyFormData.set('logo', logo)
+    if (password && password.length && cPassword && cPassword.length && cPassword.length === password.length) {
+      bodyFormData.set('password', password)
+      bodyFormData.set('c_password', cPassword)
+    }
+    if (!company) return bodyFormData
+    const newCompany = {} as Company
+    // bodyFormData.set('company', company)
+    return bodyFormData
   }
 
 }
