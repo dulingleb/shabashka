@@ -41,26 +41,6 @@
                 </div>
               </b-form-group>
 
-              <b-form-group name="password" description>
-                <div class="row">
-                  <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
-                  <div class="col-md-9">
-                    <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" placeholder="Введите пароль" :disabled="loading"></b-form-input>
-                    <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
-                  </div>
-                </div>
-              </b-form-group>
-
-              <b-form-group name="passwordConfirm" description>
-                <div class="row">
-                  <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль:</label>
-                  <div class="col-md-9">
-                    <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
-                    <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
-                  </div>
-                </div>
-              </b-form-group>
-
               <b-form-group name="phone" description>
                 <div class="row">
                   <label class="col-md-3 col-form-label text-md-right" for="phone">Телефон:</label>
@@ -71,17 +51,42 @@
                 </div>
               </b-form-group>
 
+              <button type="button" v-b-toggle="'changePsw'" class="btn btn-link text-right">Сменить пароль</button>
+              <b-collapse id="changePsw">
+                <b-form-group name="password" description>
+                  <div class="row">
+                    <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
+                    <div class="col-md-9">
+                      <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" placeholder="Введите пароль" :disabled="loading"></b-form-input>
+                      <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
+                    </div>
+                  </div>
+                </b-form-group>
+
+                <b-form-group name="passwordConfirm" description>
+                  <div class="row">
+                    <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль 2:</label>
+                    <div class="col-md-9">
+                      <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
+                      <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
+                    </div>
+                  </div>
+                </b-form-group>
+              </b-collapse>
+
             </div>
 
           </div>
 
           <b-form-group>
-              <div class="row">
-                <div class="offset-md-3 col-md-7">
-                  <p-check name="category" color="info" v-model="form.company.isActive">Юридическое лицо</p-check>
-                </div>
+            <div class="row">
+              <div class="offset-md-3 col-md-7">
+                <p-check name="category" color="info" v-model="form.company.isActive">Юридическое лицо</p-check>
               </div>
-            </b-form-group>
+            </div>
+          </b-form-group>
+
+          <b-collapse id="companyForm" v-model="form.company.isActive">
 
             <b-form-group name="companyTitle" description>
               <div class="row">
@@ -124,19 +129,21 @@
             </b-form-group>
 
             <div class="row">
-                <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
-                <div class="col-md-9">
-                  <drag-drop-images @change-files="changeFiles"></drag-drop-images>
-                </div>
+              <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
+              <div class="col-md-9">
+                <drag-drop-images @change-files="changeFiles"></drag-drop-images>
               </div>
+            </div>
 
-            <b-form-group>
-              <div class="row">
-                <div class="offset-md-3 col-md-7">
-                  <b-button type="submit" variant="info" :disabled="loading">Сохранить</b-button>
-                </div>
+          </b-collapse>
+
+          <b-form-group>
+            <div class="row">
+              <div class="offset-md-3 col-md-7">
+                <b-button type="submit" variant="info" :disabled="loading">Сохранить</b-button>
               </div>
-            </b-form-group>
+            </div>
+          </b-form-group>
 
         </b-form>
 
@@ -148,7 +155,7 @@
 
 <script lang="ts">
 import userService from '../common/user.service'
-import User from '../common/model/user.model'
+import { User } from '../common/model/user.model'
 import {
   capitalizeFirst
 } from '../common/utils'
@@ -166,7 +173,7 @@ export default {
         passwordConfirm: '',
         phone: '',
         company: {
-          isActive: true,
+          isActive: false,
           title: '',
           address: '',
           inn: '',
@@ -193,16 +200,16 @@ export default {
       return this.form.surname.length > 4 || !this.form.surname.length
     },
     validateСompanyTitle() {
-      return !this.form.company.isActive || this.form.company.title.length > 4
+      return !this.form.company.isActive || (this.form.company.title && this.form.company.title.length > 4)
     },
     validateСompanyInn() {
-      return !this.form.company.isActive || this.form.company.inn.length > 4
+      return !this.form.company.isActive || (this.form.company.inn && this.form.company.inn.length > 9 && this.form.company.inn.length < 13)
     },
     validateCompanyDescription() {
-      return !this.form.company.isActive || this.form.company.description.length > 4
+      return !this.form.company.isActive || (this.form.company.description && this.form.company.description.length > 4)
     },
     validateCompanyAddress() {
-      return !this.form.company.isActive || this.form.company.address.length > 4
+      return !this.form.company.isActive || (this.form.company.address && this.form.company.address.length > 4)
     },
     user(): User {
       return this.$store.getters.user
@@ -216,13 +223,14 @@ export default {
     this.form.surname = this.user.surname
     this.form.email = this.user.email
     this.form.phone = this.user.phone
+    this.form.company = this.user.company
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault()
       this.loading = true
       console.log(this.form)
-      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, null)
+      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company)
       await this.$store.dispatch('GET_USER')
       this.loading = false
     },

@@ -1,15 +1,23 @@
-export default interface User {
+import { CompanyResponse, Company } from './company.model'
+
+export interface User {
   id: number
   name: string
   surname: string
   email: string
-  avatar: string
-  company: any
-  emailvverifiedAt: string
+  company: Company
   logo: string
   phone: string
-  role_id: number
   settings: string
-  createdAt: Date
-  updatedAt: Date
+}
+
+export interface UserResponse {
+  id: number
+  name: string
+  surname: string
+  email: string
+  company: CompanyResponse
+  logo: string
+  phone: string
+  settings: string
 }
