@@ -17,7 +17,7 @@
                   <label class="col-md-3 col-form-label text-md-right" for="name">Имя</label>
                   <div class="col-md-9">
                     <b-form-input id="name" v-model="form.name" :state="validateName" type="text" required placeholder="Введите имя" autofocus :disabled="loading"></b-form-input>
-                    <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 3-х символов</b-form-invalid-feedback>
+                    <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 2-х символов</b-form-invalid-feedback>
                   </div>
                 </div>
               </b-form-group>
@@ -180,12 +180,13 @@ export default {
           description: ''
         }
       },
-      avatarFile: undefined
+      avatarFile: undefined,
+      companyFiles: []
     }
   },
   computed: {
     validateName() {
-      return this.form.name.length > 4
+      return this.form.name.length > 1
     },
     validatePassword() {
       return this.form.password.length > 4 || !this.form.password.length
@@ -228,9 +229,9 @@ export default {
   methods: {
     async onSubmit(evt) {
       evt.preventDefault()
-      this.loading = true
+      // this.loading = true
       console.log(this.form)
-      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company)
+      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company, this.companyFiles)
       await this.$store.dispatch('GET_USER')
       this.loading = false
     },
@@ -248,6 +249,7 @@ export default {
       console.log(file)
     },
     changeFiles(files) {
+      this.companyFiles = files
       console.log(files)
     }
   }

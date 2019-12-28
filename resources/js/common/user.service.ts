@@ -33,8 +33,8 @@ class UserService {
     return false
   }
 
-  async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company): Promise<void> {
-    const bodyFormData = this.parseChangedFields(name, email, surname, phone, logo, password, cPassword, company)
+  async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company, companyFiles: File[]): Promise<void> {
+    const bodyFormData = this.parseChangedFields(name, email, surname, phone, logo, password, cPassword, company, companyFiles)
     const response = await apiService.postFormData('user/me', bodyFormData)
     console.log('res', response)
   }
@@ -72,7 +72,7 @@ class UserService {
     }
   }
 
-  private parseChangedFields(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company): FormData {
+  private parseChangedFields(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company, companyFiles: File[]): FormData {
     const bodyFormData = new FormData()
     if (name && name.length) bodyFormData.set('name', name)
     if (email && email.length) bodyFormData.set('email', email)
@@ -84,7 +84,21 @@ class UserService {
       bodyFormData.set('c_password', cPassword)
     }
     if (!company) return bodyFormData
-    const newCompany = {} as Company
+    const newCompany = []
+    try {
+      if (company.title && company.title.length) newCompany['title'] = company.title
+      if (company.inn && company.inn.length) newCompany['inn'] = company.inn
+      if (company.description && company.description.length) newCompany['description'] = company.description
+      if (company.address && company.address.length) newCompany['address'] = company.address
+      console.log('newCompany', newCompany)
+      Object.keys(newCompany).forEach((key) => {
+        bodyFormData.set(`company[${key}]`, newCompany[key])
+      })
+      for (let file of companyFiles) {
+        bodyFormData.append('company[documents][]', file)
+      }
+    // tslint:disable-next-line: no-empty
+    } catch (e) { }
     // bodyFormData.set('company', company)
     return bodyFormData
   }
