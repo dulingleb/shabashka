@@ -6,6 +6,7 @@ use App\Category;
 use App\Func\Filter;
 use App\Response;
 use App\Task;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -55,8 +56,7 @@ class TaskController extends Controller
         ], 200);
     }
 
-    public function store(Request $request)
-    {
+    private function _validate($request){
         $request->validate([
             'category_id' => [
                 'required',
@@ -70,51 +70,85 @@ class TaskController extends Controller
             'title' => 'required|string|min:5|max:100',
             'description' => 'required|string|min:20|max:1000',
             'address' => 'nullable|string|min:5|max:255',
-            'term' => 'required|date|date-format:Y-m-d|after:yesterday',
+            'term' => 'required|date|date-format:Y-m-d\TH:i:s.u\Z|after:yesterday',
             'price' => 'required|numeric|min:0|max:999999999',
             'phone' => 'required|string|size:18',
-            'files' => 'required',
+            'files' => 'array',
             'files.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096'
         ]);
+    }
 
+    public function store(Request $request)
+    {
+        $this->_validate($request);
 
         $task = Task::create([
             'category_id' => $request->category_id,
             'title' => $request->title,
             'description' => $request->description,
             'address' => $request->address,
-            'term' => $request->term,
+            'term' => Carbon::parse($request->term),
             'price' => $request->price,
             'phone' => $request->phone,
             'user_id' => auth('api')->id(),
         ]);
 
-        $filesName = [];
-
-        if ($request->hasFile('files')) {
-            File::makeDirectory(storage_path('app\public\tasks\\' . $task->id));
-
-            foreach ($request->file('files') as $file){
-                $name = $file->getClientOriginalName();
-                if(Storage::exists('public\tasks\\' . $task->id . '\\' . $name)){
-                    $item = 1;
-                    do {
-                        $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
-                        $item++;
-                    } while(Storage::exists('public\tasks\\' . $task->id . '\\' . $name));
-                }
-
-                $path = $file->move(storage_path('app\public\tasks\\' . $task->id . '\\'), $name );
-                $filesName[] = basename($name);
-            }
+        if($request->has('files')){
+            $filesName = Task::uploadFiles($request->file('files'), $task->id);
+            $task->files = $filesName;
+            $task->save();
         }
-
-        $task->files = json_encode($filesName);
-        $task->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Задание успешно доавлено!'
+        ]);
+    }
+
+    public function update(Task $task, Request $request){
+        if($task->user_id !== \auth('api')->id())
+            return response()->json([
+                'success' => false,
+                'message' => 'Не ваше задание'
+            ], 419);
+
+        if($task->status !== 'search_executor')
+            return response()->json([
+                'success' => false,
+                'message' => 'Задание в работе или завершенное редактировать нельзя'
+            ], 401);
+
+        $this->_validate($request);
+
+
+        $task->category_id = $request->category_id;
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->address = $request->address;
+        $task->term = Carbon::parse($request->term);
+        $task->price = $request->price;
+        $task->phone = $request->phone;
+
+        if($request->has('files')){
+            $filesName = Task::uploadFiles($request->file('files'), $task->id);
+            $task->files = $filesName;
+            $task->save();
+        }
+
+        if($request->has('files_remove')){
+            foreach ($request->input('files_remove') as $item){
+                $item = basename($item);
+                if(File::exists(storage_path('app\public\tasks\\' . $task->id . '\\' . $item)))
+                    File::delete(storage_path('app\public\tasks\\' .$task->id . '\\' . $item));
+            }
+
+            $task->files = array_diff($task->files, $request->input('files_remove'));
+            $task->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Задание успешно обновлено!'
         ]);
     }
 
@@ -126,16 +160,12 @@ class TaskController extends Controller
         if ($task->executor == null || $task->executor === Auth::id())
             $myResponse = Response::with('user')->with('messages')->where('user_id', Auth::id())->where('task_id', $task->id)->first();
 
-        $files = json_decode($task->files);
-        for($i=0;$i<count($files);$i++)
-            $files[$i] = '/storage/tasks/' . $task->id . '/' . $files[$i];
-
         $data = [
             'id' => $task->id,
             'title' => $task->title,
             'description' => $task->description,
             'address' => $task->address,
-            'files' => $files,
+            'files' => $task->files,
             'price' => $task->price,
             'category_id' => $task->category_id,
             'user_id' => $task->user_id,
@@ -153,7 +183,8 @@ class TaskController extends Controller
 
     public function destroy(Task $task){
         if($task->user_id === auth('api')->id() && $task->executor === null){
-            Storage::deleteDirectory('public\tasks\\' . $task->id);
+            if(Storage::exists('public\tasks\\' . $task->id))
+                Storage::deleteDirectory('public\tasks\\' . $task->id);
             $task->delete();
 
             return response()->json([

@@ -13,10 +13,10 @@ class Company extends Model
         $_v = unserialize($value);
         $files = [];
         foreach ($_v as $file){
-            $files[] = 'storage/users/' . $this->user_id . '/' . $file;
+            $files[] = '/storage/users/' . $this->user_id . '/' . $file;
         }
 
-        return json_encode($files);
+        return $files;
     }
 
     public function setDocumentsAttribute($value){

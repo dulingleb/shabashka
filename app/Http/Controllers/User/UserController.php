@@ -120,7 +120,7 @@ class UserController extends Controller
             ]);
 
             $company = $request->company;
-            $documents = json_decode($user->company->documents, true);
+            $documents = $user->company->documents;
 
             if($request->has('company.is_active')){
                 $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
