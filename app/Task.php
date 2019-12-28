@@ -10,6 +10,8 @@ class Task extends Model
         'title', 'description', 'files', 'address', 'date', 'term', 'price', 'phone', 'category_id', 'user_id'
     ];
 
+    protected $dates = ['term', 'created_at', 'updated_at', 'deleted_at'];
+
     public function category(){
         return $this->belongsTo(Category::class);
     }

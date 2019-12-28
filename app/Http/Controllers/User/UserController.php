@@ -93,6 +93,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+
         $user = User::find(auth('api')->user()->id);
 
         $request->validate([
@@ -107,6 +108,8 @@ class UserController extends Controller
 
         if($request->has('company')){
 
+
+
             $request->validate([
                 'company.title' => 'string|min:5|max:56',
                 'company.inn' => 'numeric|digits_between:9,12',
@@ -114,20 +117,18 @@ class UserController extends Controller
                 'company.address' => 'string|min:5|max:255',
                 'company.categories' => 'array',
                 'company.categories.*' => 'numeric|min:1|exists:categories,id',
-                //'company.documents' => 'array',
                 'company.documents.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096',
             ]);
 
             $company = $request->company;
 
+            if($request->has('company.is_active')){
+                $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
+            }
+
             if($request->has('company.categories')){
                 $categories = $request->input('company.categories');
                 unset($company['categories']);
-            }
-
-            if($request->has('company.is_active')){
-                $company['is_active'] = $company['is_active'] ? 1 : 0;
-
             }
 
             if($request->has('company.documents')){
@@ -193,26 +194,31 @@ class UserController extends Controller
         return $this->_me_data($user);
     }
 
-    public function _me_data($user){
+    public function _me_data($user, $except = []){
+        $data = [
+            'name' => $user->name,
+            'surname' => $user->surname,
+            'logo' => $user->logo,
+            'phone' => $user->phone,
+            'email' => $user->email,
+        ];
+
+        if($user->company()->exists())
+            $data['company'] = [
+                'id' => $user->company->id,
+                'title' => $user->company->title,
+                'inn' => $user->company->inn,
+                'address' => $user->company->address,
+                'description' => $user->company->description,
+                'moderate_status' => $user->company->moderate_status,
+                'is_active' => $user->company->is_active,
+                'documents' => $user->company->documents ?? null,
+                'categories' => $user->company->categories->pluck('id')
+            ];
+
         return response()->json([
             'success' => true,
-            'data' => [
-                'name' => $user->name,
-                'surname' => $user->surname,
-                'logo' => $user->logo,
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'company' => [
-                    'id' => $user->company->id,
-                    'title' => $user->company->title,
-                    'address' => $user->company->address,
-                    'description' => $user->company->description,
-                    'moderate_status' => $user->company->moderate_status,
-                    'is_active' => $user->company->is_active,
-                    'documents' => $user->company->documents ?? null,
-                    'categories' => $user->company->categories->pluck('id')
-                ]
-            ]
+            'data' => $data
         ], 200);
     }
 }

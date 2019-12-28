@@ -43,8 +43,8 @@ class TaskController extends Controller
                 'description' => $task->description,
                 'price' => $task->price,
                 'category_id' => $task->category_id,
-                'created_at' => time_ago($task->created_at),
-                'term' => date_month_ru($task->term)
+                'created_at' => $task->created_at,
+                'term' => $task->term
             ];
         }
 
@@ -141,7 +141,8 @@ class TaskController extends Controller
             'user_id' => $task->user_id,
             'executor' => $task->executor,
             'status' => $task->status,
-            'term' => date_month_ru($task->term)
+            'term' => $task->term,
+            'created_at' => $task->created_at,
         ];
 
         return response()->json([

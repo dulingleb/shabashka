@@ -25,7 +25,7 @@ class CreateTasksTable extends Migration
             $table->bigInteger('category_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('executor')->unsigned()->nullable();
-            $table->string('status', 255)->default('wait');
+            $table->enum('status', ['search_executor', 'doing', 'done'])->default('search_executor');
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

@@ -15,8 +15,8 @@ class CreateResponseMessagesTable extends Migration
     {
         Schema::create('response_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('response_id')->unsigned()->index();
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('response_id')->unsigned()->index();
+            $table->bigInteger('user_id')->unsigned();
             $table->text('text');
             $table->timestamps();
 

@@ -14,8 +14,8 @@ class CreateCategoriablesTable extends Migration
     public function up()
     {
         Schema::create('categoriables', function (Blueprint $table) {
-            $table->bigInteger('category_id');
-            $table->bigInteger('categoriable_id');
+            $table->bigInteger('category_id')->unsigned();
+            $table->bigInteger('categoriable_id')->unsigned();
             $table->string('categoriable_type');
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
