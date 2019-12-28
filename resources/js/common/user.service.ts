@@ -32,6 +32,12 @@ class UserService {
     return false
   }
 
+  async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company): Promise<void> {
+    const bodyFormData = this.parseChangedFields(name, email, surname, phone, logo, password, cPassword, company)
+    const response = await apiService.postFormData('user/me', bodyFormData)
+    console.log('res', response)
+  }
+
   logout(): void {
     jwtService.clearToken()
   }
@@ -53,6 +59,20 @@ class UserService {
       createdAt: data.created_at,
       updatedAt: data.updated_at
     }
+  }
+
+  private parseChangedFields(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company): FormData {
+    const bodyFormData = new FormData()
+    if (name && name.length) bodyFormData.set('name', name)
+    if (email && email.length) bodyFormData.set('email', email)
+    if (surname && surname.length) bodyFormData.set('surname', surname)
+    if (phone && phone.length) bodyFormData.set('phone', phone)
+    if (!logo) bodyFormData.set('logo', logo)
+    if (password && password.length && cPassword && cPassword.length && cPassword.length === password.length) {
+      bodyFormData.set('password', password)
+      bodyFormData.set('c_password', cPassword)
+    }
+    return bodyFormData
   }
 
 }

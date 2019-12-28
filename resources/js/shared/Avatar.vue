@@ -4,7 +4,7 @@
     <span class="user-title">{{ userTitle  }}</span>
 
     <div v-if="image && !filePreview" class="img">
-      <img src="https://via.placeholder.com/300x350" alt />
+      <img :src="image" alt />
     </div>
 
     <template v-if="isEdit">

@@ -9,7 +9,7 @@
         <b-form @submit="onSubmit" @reset="onReset">
           <div class="row" v-if="user">
             <div class="col-md-4">
-              <avatar :user-name="userName" :is-edit="true"></avatar>
+              <avatar :user-name="userName" :is-edit="true" :image="user.logo" @change-file="changeAvatar"></avatar>
             </div>
             <div class="col-md-8">
               <b-form-group name="name" description>
@@ -173,14 +173,15 @@ export default {
           description: ''
         }
       },
+      avatarFile: undefined
     }
   },
   computed: {
     validateName() {
-      return this.form.name.length > 3
+      return this.form.name.length > 4
     },
     validatePassword() {
-      return this.form.password.length > 5 || !this.form.password.length
+      return this.form.password.length > 4 || !this.form.password.length
     },
     validatePasswordConfirm() {
       return this.form.passwordConfirm === this.form.password
@@ -189,19 +190,19 @@ export default {
       return !!this.form.phone.match(/^\+7\s[(][0-9]{3}[)]\s[0-9]{3}([-][0-9]{2}){2}$/) || !this.form.phone.length
     },
     validateSurname() {
-      return this.form.name.length > 3 || !this.form.name.length
+      return this.form.surname.length > 4 || !this.form.surname.length
     },
     validateСompanyTitle() {
-      return !this.form.company.isActive || this.form.company.title.length > 3
+      return !this.form.company.isActive || this.form.company.title.length > 4
     },
     validateСompanyInn() {
-      return !this.form.company.isActive || this.form.company.inn.length > 3
+      return !this.form.company.isActive || this.form.company.inn.length > 4
     },
     validateCompanyDescription() {
-      return !this.form.company.isActive || this.form.company.description.length > 3
+      return !this.form.company.isActive || this.form.company.description.length > 4
     },
     validateCompanyAddress() {
-      return !this.form.company.isActive || this.form.company.address.length > 3
+      return !this.form.company.isActive || this.form.company.address.length > 4
     },
     user(): User {
       return this.$store.getters.user
@@ -220,6 +221,9 @@ export default {
     async onSubmit(evt) {
       evt.preventDefault()
       this.loading = true
+      console.log(this.form)
+      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, null)
+      await this.$store.dispatch('GET_USER')
       this.loading = false
     },
     onReset(evt) {
@@ -230,6 +234,10 @@ export default {
       this.form.password = ''
       this.form.passwordConfirm = ''
       this.form.phone = ''
+    },
+    changeAvatar(file) {
+      this.avatarFile = file
+      console.log(file)
     },
     changeFiles(files) {
       console.log(files)
