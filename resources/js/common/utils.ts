@@ -13,3 +13,7 @@ export function stringToHslColor(str: string, s: number, l: number): string {
   const h = hash % 360
   return `hsl(${h}, ${s}%, ${l}%)`
 }
+
+export function isImage(fileName: string): boolean {
+  return /\.(jpe?g|png|gif)$/i.test(fileName)
+}

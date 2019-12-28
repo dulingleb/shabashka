@@ -1,32 +1,42 @@
  <template>
-  <div class="logo" :style="{ backgroundColor: userColor }">
+  <div class="logo" :class="{ edited: isEdit }" :style="{ backgroundColor: userColor }">
 
     <span class="user-title">{{ userTitle  }}</span>
 
-    <div v-if="image" class="img">
+    <div v-if="image && !filePreview" class="img">
       <img src="https://via.placeholder.com/300x350" alt />
     </div>
 
-    <label class="btn change-avatar">
-      <span class="title">Сменить аватар</span>
-      <input type="file" accept="image/*">
-    </label>
+    <template v-if="isEdit">
+      <div v-if="!image && filePreview" class="img">
+        <img :src="filePreview" alt />
+      </div>
+
+      <label v-if="!image && !filePreview" class="btn change-avatar" title="Откройте или перетащите изображение">
+        <font-awesome-icon :icon="['fas', 'folder-open']" class="icon" />
+        <input type="file" accept="image/*" ref="fileinput" @change="previewFile">
+      </label>
+
+      <font-awesome-icon v-if="image || filePreview" :icon="['fas', 'times']" @click="removeAvatar" class="icon-remove" />
+    </template>
 
   </div>
 </template>
 
 <script lang="ts">
 
-import { stringToHslColor } from '../common/utils'
+import { stringToHslColor, isImage } from '../common/utils'
 
 export default {
   name: 'avatar',
   components: {},
-  props: ['userName', 'image'],
+  props: ['userName', 'image', 'isEdit'],
   data() {
     return {
       userColor: '#17a2b8',
-      userTitle: ''
+      userTitle: '',
+      file: null,
+      filePreview: ''
     }
   },
   watch: {
@@ -49,6 +59,31 @@ export default {
       if (this.userName && this.userName.length) {
         this.userTitle = this.userName[0]
       }
+    },
+    previewFile() {
+      const filesInput = this.$refs.fileinput.files
+      if (filesInput && filesInput.length && isImage(filesInput[0].name)) {
+        this.file = filesInput[0]
+        this.$emit('change-file', this.file)
+        this.getImagePreview()
+      }
+    },
+    removeFile() {
+      this.file = null
+      this.filePreview = ''
+      this.$emit('change-file', this.file)
+    },
+    getImagePreview() {
+      let reader = new FileReader()
+      reader.addEventListener('load', function() {
+        this.filePreview = reader.result
+      }.bind(this), false)
+      reader.readAsDataURL(this.file)
+    },
+
+    removeAvatar() {
+      this.image = ''
+      this.removeFile()
     }
   }
 }
@@ -63,18 +98,18 @@ export default {
   width: 100%;
   border-radius: 50%;
   overflow: hidden;
+
   &:after {
     content: "";
     display: block;
     padding-bottom: 100%;
   }
+
   .user-title {
     margin-top: -10%;
     font-size: 700%;
     color: #fff;
     line-height: 0;
-    opacity: 1;
-    transition: 0.4s;
   }
   .logo-wrapp {
     text-transform: uppercase;
@@ -89,36 +124,58 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #333;
-    font-size: 115%;
-    font-weight: bold;
-    cursor: pointer;
-    opacity: 0;
-    transition: 0.4s;
 
     input[type=file] {
       display: none;
     }
   }
 
-  &:hover {
-    .user-title {
-      opacity: 0.2;
-    }
-    .change-avatar {
-      opacity: 0.8;
-    }
+  .icon-remove {
+    position: absolute;
   }
-}
 
-.img {
-  border-radius: 4px;
-  overflow: hidden;
-
-  img {
+  .img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  .user-title, .img {
+    opacity: 1;
+    transition: 0.4s;
+  }
+
+  .change-avatar, .icon-remove {
+    color: #333;
+    font-size: 715%;
+    font-weight: bold;
+    opacity: 0;
+    transition: 0.6s;
+    cursor: pointer;
+  }
+
+  &.edited {
+    &:hover {
+      .user-title, .img {
+        opacity: 0.1;
+      }
+      .change-avatar, .icon-remove {
+        opacity: 0.5;
+      }
+    }
   }
 }
+
+
 
 
 </style>

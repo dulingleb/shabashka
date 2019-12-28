@@ -27,6 +27,8 @@
 
 <script lang="ts">
 
+import { isImage } from '../common/utils'
+
 export default {
   name: 'drag-drop-images',
   components: {},
@@ -53,7 +55,7 @@ export default {
     },
     getImagePreviews() {
       for (let i = 0; i < this.files.length; i++) {
-        if (/\.(jpe?g|png|gif)$/i.test(this.files[i].name)) {
+        if (isImage(this.files[i].name)) {
           let reader = new FileReader()
           reader.addEventListener('load', function() {
             this.$refs['preview' + i][0].src = reader.result

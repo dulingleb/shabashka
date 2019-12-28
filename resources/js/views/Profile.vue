@@ -9,7 +9,7 @@
         <b-form @submit="onSubmit" @reset="onReset">
           <div class="row" v-if="user">
             <div class="col-md-4">
-              <avatar :user-name="userName"></avatar>
+              <avatar :user-name="userName" :is-edit="true"></avatar>
             </div>
             <div class="col-md-8">
               <b-form-group name="name" description>
