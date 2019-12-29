@@ -29,3 +29,17 @@ export interface TaskResponse {
   status: string
   user_id: number
 }
+
+export interface TaskRes {
+  id: number
+  text: string
+  price: number
+  userId: number
+}
+
+export interface TaskResResponse {
+  id: number
+  text: string
+  price: number
+  user_id: number
+}

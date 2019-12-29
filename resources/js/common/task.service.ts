@@ -32,6 +32,15 @@ class TaskService {
     return this.tasks
   }
 
+  async getTask(id: number): Promise<Task> {
+    const response = await apiService.get(`task/${id}`)
+    if (response.success) {
+      const resTask: TaskResponse = response.data
+      this._task = this.convertResTask(resTask)
+    }
+    return this.task
+  }
+
   async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<void> {
     const bodyFormData = new FormData()
     bodyFormData.set('category_id', categoryId)
@@ -56,13 +65,11 @@ class TaskService {
     }
   }
 
-  async getTask(id: number): Promise<Task> {
-    const response = await apiService.get(`task/${id}`)
-    if (response.success) {
-      const resTask: TaskResponse = response.data
-      this._task = this.convertResTask(resTask)
-    }
-    return this.task
+  async getResponses(id: number): Promise<Task> {
+    const response = await apiService.get(`task/${id}/responses`)
+    // if (response.success) {
+    // }
+    return response
   }
 
   private convertResTask(resTask: TaskResponse): Task {

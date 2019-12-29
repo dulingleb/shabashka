@@ -14,7 +14,6 @@
             </div>
           </div>
 
-
         </div>
         <div class="col-md-4">
           <p class="mb-0">
@@ -73,6 +72,7 @@
     <div class="card-header">Откликнулись (0)</div>
 
     <div class="card-body">
+      {{ responses }}
     </div>
 
   </div>
@@ -103,7 +103,8 @@ export default {
         price: 0,
         description: ''
       },
-      formDirty: false
+      formDirty: false,
+      responses: []
     }
   },
   watch: {
@@ -117,6 +118,7 @@ export default {
   async mounted() {
     this.task = await taskService.getTask(this.$route.params.id)
     this.categories = await categoryService.getCategories()
+    this.responses = await taskService.getResponses(this.task.id)
     this.loading = false
   },
   computed: {
