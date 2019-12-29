@@ -212,6 +212,7 @@ class UserController extends Controller
 
     public function _me_data($user, $except = []){
         $data = [
+            'id' => $user->id,
             'name' => $user->name,
             'surname' => $user->surname,
             'logo' => $user->logo,
