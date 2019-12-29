@@ -94,7 +94,7 @@
                   <div class="row">
                     <label class="col-md-3 col-form-label text-md-right" for="phone">Адрес</label>
                     <div class="col-md-9">
-                      <b-form-input class="" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="Введите заголовок" :disabled="loading" required></b-form-input>
+                      <b-form-input v-mask="'+7 (###) ###-##-##'" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="+7 (___) ___-__-__" :disabled="loading"></b-form-input>
                       <b-form-invalid-feedback :state="validatePhone">Введите телефон</b-form-invalid-feedback>
                     </div>
                   </div>
@@ -140,13 +140,13 @@ export default {
   },
   computed: {
     validateCategory() {
-      return this.formDirty ? !!this.category : null
+      return this.formDirty ? !!this.form.category : null
     },
     validateTitle() {
-      return this.formDirty ? !!this.form.title : null
+      return this.formDirty ? !!this.form.title && this.form.description.length > 4 : null
     },
     validateDescription() {
-      return this.formDirty ? !!this.form.description : null
+      return this.formDirty ? !!this.form.description && this.form.description.length > 19 : null
     },
     validateAddress() {
       return this.formDirty ? !!this.form.address : null
@@ -165,6 +165,14 @@ export default {
     this.categories = await categoryService.getCategories()
     this.loading = false
   },
+  watch: {
+    form: {
+      handler() {
+        this.formDirty = true
+      },
+      deep: true
+    }
+  },
   methods: {
     changeFiles(files) {
       this.form.files = files
@@ -172,7 +180,7 @@ export default {
     },
     onSubmit() {
       console.log(this.form)
-      taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, this.form.date, this.form.cost, this.form.phone, this.form.files)
+      taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.cost, this.form.phone, this.form.files)
     }
   }
 }
