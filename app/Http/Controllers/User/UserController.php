@@ -106,81 +106,6 @@ class UserController extends Controller
             'company' => 'array'
         ]);
 
-        if($request->has('company')){
-            if(!$user->company()->exists() && $request->input('company.is_active')==='false') return;
-
-            $request->validate([
-                'company.title' => 'string|min:5|max:56',
-                'company.inn' => 'numeric|digits_between:9,12',
-                'company.description' => 'string',
-                'company.address' => 'string|min:5|max:255',
-                'company.categories' => 'array',
-                'company.categories.*' => 'numeric|min:1|exists:categories,id',
-                'company.documents.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096',
-            ]);
-
-            $company = $request->company;
-            $documents = $user->company->documents;
-
-            if($request->has('company.is_active')){
-                $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
-            }
-
-            if($request->has('company.categories')){
-                $categories = $request->input('company.categories');
-                unset($company['categories']);
-            }
-
-            if($request->has('company.documents_remove')){
-                $documents_remove = $company['documents_remove'];
-                unset($company['documents_remove']);
-
-                foreach ($documents_remove as $item){
-                    $item = basename($item);
-                    if(File::exists(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item)))
-                        File::delete(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item));
-                }
-
-                $documents = array_diff($documents, $documents_remove);
-
-            }
-
-            if($request->has('company.documents')){
-                if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
-                    File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
-
-                $filesName = [];
-
-                foreach ($request->file('company.documents') as $file){
-                    $name = $file->getClientOriginalName();
-                    if(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name)){
-                        $item = 1;
-                        do {
-                            $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
-                            $item++;
-                        } while(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name));
-                    }
-
-                    $path = $file->move(storage_path('app\public\users\\' . \auth('api')->id() . '\\'), $name );
-                    $filesName[] = basename($name);
-                }
-
-                $documents = array_merge($documents, $filesName);
-
-                //$request->offsetUnset('company.documents');
-            }
-
-            $company['documents'] = $documents;
-            $company = Company::updateOrCreate(
-                ['user_id' => auth('api')->id()],
-                $company
-            );
-
-            if(isset($categories))
-                $company->categories()->sync($categories);
-
-        }
-
         if ($request->hasFile('logo')) {
             if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
                 File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
@@ -206,6 +131,79 @@ class UserController extends Controller
         $user->update($request->except(['logo', 'email', 'c_password']));
 
 
+        if($request->has('company')){
+          if(!$user->company()->exists() && $request->input('company.is_active')==='false') return $this->_me_data($user);
+
+          $request->validate([
+              'company.title' => 'string|min:5|max:56',
+              'company.inn' => 'numeric|digits_between:9,12',
+              'company.description' => 'string',
+              'company.address' => 'string|min:5|max:255',
+              'company.categories' => 'array',
+              'company.categories.*' => 'numeric|min:1|exists:categories,id',
+              'company.documents.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096',
+          ]);
+
+          $company = $request->company;
+          $documents = $user->company->documents;
+
+          if($request->has('company.is_active')){
+              $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
+          }
+
+          if($request->has('company.categories')){
+              $categories = $request->input('company.categories');
+              unset($company['categories']);
+          }
+
+          if($request->has('company.documents_remove')){
+              $documents_remove = $company['documents_remove'];
+              unset($company['documents_remove']);
+
+              foreach ($documents_remove as $item){
+                  $item = basename($item);
+                  if(File::exists(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item)))
+                      File::delete(storage_path('app\public\users\\' . \auth('api')->id() . '\\' . $item));
+              }
+
+              $documents = array_diff($documents, $documents_remove);
+
+          }
+
+          if($request->has('company.documents')){
+              if(!File::exists(storage_path('app\public\users\\' . \auth('api')->id())))
+                  File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
+
+              $filesName = [];
+
+              foreach ($request->file('company.documents') as $file){
+                  $name = $file->getClientOriginalName();
+                  if(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name)){
+                      $item = 1;
+                      do {
+                          $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
+                          $item++;
+                      } while(Storage::exists('public\users\\' . \auth('api')->id() . '\\' . $name));
+                  }
+
+                  $path = $file->move(storage_path('app\public\users\\' . \auth('api')->id() . '\\'), $name );
+                  $filesName[] = basename($name);
+              }
+
+              $documents = array_merge($documents, $filesName);
+
+              //$request->offsetUnset('company.documents');
+          }
+
+          $company['documents'] = $documents;
+          $company = Company::updateOrCreate(
+              ['user_id' => auth('api')->id()],
+              $company
+          );
+
+          if(isset($categories))
+              $company->categories()->sync($categories);
+        }
 
         return $this->_me_data($user->load('company'));
     }
