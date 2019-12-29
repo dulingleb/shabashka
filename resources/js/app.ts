@@ -1,7 +1,7 @@
 import './bootstrap'
 import Vue from 'vue'
 import { install as storageInstall } from 'vue-storage-plus'
-import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin } from 'bootstrap-vue'
+import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin, AlertPlugin } from 'bootstrap-vue'
 import VueTheMask from 'vue-the-mask'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -22,10 +22,12 @@ import router from './app.router'
 import App from './views/App.vue'
 
 import DragDropImages from './shared/DragDropImages.vue'
-import Avatar from './shared/avatar.vue'
+import Avatar from './shared/Avatar.vue'
+import Message from './shared/Message.vue'
 
 Vue.component('drag-drop-images', DragDropImages)
 Vue.component('avatar', Avatar)
+Vue.component('message', Message)
 
 Vue.use(storageInstall)
 
@@ -35,6 +37,7 @@ Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(ButtonPlugin)
+Vue.use(AlertPlugin)
 
 Vue.use(VueTheMask)
 
