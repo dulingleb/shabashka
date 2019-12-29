@@ -86,7 +86,7 @@ class UserService {
     if (!company) return bodyFormData
     const newCompany = []
     try {
-      newCompany['is_active'] = company.isActive
+      newCompany['is_active'] = !!company.isActive
       if (company.title && company.title.length) newCompany['title'] = company.title
       if (company.inn && company.inn.length) newCompany['inn'] = company.inn
       if (company.description && company.description.length) newCompany['description'] = company.description
