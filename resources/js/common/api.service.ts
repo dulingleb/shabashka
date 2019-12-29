@@ -32,7 +32,8 @@ class ApiService {
       const res = await Vue.axios.get(`${this.api}/${resource}`, params)
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] QUERY ApiService ${error}`)
+      console.error(`[RWV] QUERY ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -41,7 +42,8 @@ class ApiService {
       const res = await Vue.axios.get(`${this.api}/${resource}/${slug}`, this.getConfig())
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] GET ApiService ${error}`)
+      console.error(`[RWV] GET ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -50,7 +52,8 @@ class ApiService {
       const res = await Vue.axios.post(`${this.api}/${resource}`, params, this.getConfig())
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] POST ApiService ${error}`)
+      console.error(`[RWV] POST ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -59,7 +62,8 @@ class ApiService {
       const res = await Vue.axios.put(`${this.api}/${resource}/${slug}`, params, this.getConfig())
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] UPDATE ApiService ${error}`)
+      console.error(`[RWV] UPDATE ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -68,7 +72,8 @@ class ApiService {
       const res = await Vue.axios.put(`${this.api}/${resource}`, params, this.getConfig())
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] PUT ApiService ${error}`)
+      console.error(`[RWV] PUT ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -77,7 +82,8 @@ class ApiService {
       const res = await Vue.axios.delete(`${this.api}/${resource}`, this.getConfig())
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] DELETE ApiService ${error}`)
+      console.error(`[RWV] DELETE ApiService`, error.response.data)
+      return error.response.data
     }
   }
 
@@ -93,7 +99,8 @@ class ApiService {
       })
       return res.data
     } catch (error) {
-      throw new Error(`[RWV] POST ApiService ${error}`)
+      console.error(`[RWV] POST ApiService`, error.response.data)
+      return error.response.data
     }
   }
 

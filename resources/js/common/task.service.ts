@@ -1,5 +1,6 @@
 import { Task, TaskResponse } from './model/task.model'
 import apiService from './api.service'
+import { ResponseApi } from './model/api.model'
 
 class TaskService {
   private _tasks: Task[]
@@ -53,7 +54,7 @@ class TaskService {
     for (const file of files) {
       bodyFormData.append('files[]', file)
     }
-    const response = await apiService.postFormData('task/store', bodyFormData)
+    const response: ResponseApi = await apiService.postFormData('task/store', bodyFormData)
     console.log('res', response)
   }
 
@@ -65,8 +66,8 @@ class TaskService {
     }
   }
 
-  async getResponses(id: number): Promise<Task> {
-    const response = await apiService.get(`task/${id}/responses`)
+  async getResponses(id: number): Promise<any> {
+    const response: ResponseApi = await apiService.get(`task/${id}/responses`)
     // if (response.success) {
     // }
     return response

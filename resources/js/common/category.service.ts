@@ -1,5 +1,6 @@
 import { CategoryResponse, Category } from './model/category.model'
 import apiService from './api.service'
+import { ResponseApi } from './model/api.model'
 
 class CategoryService {
   private _categories: Category[]
@@ -9,7 +10,7 @@ class CategoryService {
   }
 
   async getCategories(): Promise<Category[]> {
-    const response = await apiService.get('categories')
+    const response: ResponseApi = await apiService.get('categories')
     if (response.success) {
       const resCategories: CategoryResponse[] = response.data
 

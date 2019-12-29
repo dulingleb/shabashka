@@ -2,19 +2,19 @@ import { User, UserResponse } from './model/user.model'
 import apiService from './api.service'
 import jwtService from './jwt.service'
 import { CompanyResponse, Company } from './model/company.model'
+import { ResponseApiAuth, ResponseApi } from './model/api.model'
 
 class UserService {
   async getTestUser(): Promise<User> {
     const response = await apiService.get('user/me')
     if (response.success) {
-      console.log(this.parseUser(response.data))
       return this.parseUser(response.data)
     }
     return null
   }
 
   async auth(email: string, password: string): Promise<boolean> {
-    const response = await apiService.post('oauth/login', { email, password })
+    const response: ResponseApiAuth = await apiService.post('oauth/login', { email, password })
     if (response.success) {
       jwtService.saveToken(response.token)
       const user = await this.getTestUser()
@@ -24,7 +24,7 @@ class UserService {
   }
 
   async register(name: string, email: string, password: string, Cpassword: string): Promise<boolean> {
-    const response = await apiService.post('oauth/register', { name, email, password, c_password: Cpassword })
+    const response: ResponseApiAuth = await apiService.post('oauth/register', { name, email, password, c_password: Cpassword })
     if (response.success) {
       jwtService.saveToken(response.token)
       const user = await this.getTestUser()
@@ -35,7 +35,7 @@ class UserService {
 
   async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company, companyFiles: File[]): Promise<void> {
     const bodyFormData = this.parseChangedFields(name, email, surname, phone, logo, password, cPassword, company, companyFiles)
-    const response = await apiService.postFormData('user/me', bodyFormData)
+    const response: ResponseApi = await apiService.postFormData('user/me', bodyFormData)
     console.log('res', response)
   }
 
