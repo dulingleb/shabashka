@@ -33,14 +33,22 @@
     <div class="card-header">{{ (user && task.userId === user.id) ? 'Управлеине' : 'Откликнуться' }}</div>
 
     <div class="card-body" v-if="user && task.userId !== user.id">
-      <b-form @submit.prevent="onSubmit" @reset.prevent="onReset">
-        <textarea class="form-control" rows="4" name="text" placeholder="Описание, максимум 1000 символов" required></textarea>
+      <b-form @submit.prevent="onSubmitResponse" @reset.prevent="onReset">
+
+        <b-form-group name="description" description="">
+          <div>
+            <b-form-textarea id="description" v-model="form.description" :state="validateDescription" rows="4" required placeholder="Описание, максимум 1000 символов" :disabled="loading"></b-form-textarea>
+            <b-form-invalid-feedback :state="validateDescription">Некорректное описание</b-form-invalid-feedback>
+          </div>
+        </b-form-group>
 
         <b-form-group name="price" description="">
-          <label class="float-left mt-2 mr-3" for="price">Цена:</label>
-          <div>
-            <b-form-input id="price" v-model="form.price" :state="validatePrice" type="text" required placeholder="" :disabled="loading"></b-form-input>
-            <b-form-invalid-feedback :state="validatePrice">Некорректная цена</b-form-invalid-feedback>
+          <div class="row">
+            <label class="col-md-2 col-lg-1 col-form-label" for="price">Цена:</label>
+            <div class="col-md-10 col-lg-11">
+              <b-form-input id="price" v-model="form.price" :state="validatePrice" type="number" min="0" required placeholder="Цена" :disabled="loading"></b-form-input>
+              <b-form-invalid-feedback :state="validatePrice">Некорректная цена</b-form-invalid-feedback>
+            </div>
           </div>
         </b-form-group>
 
@@ -92,8 +100,18 @@ export default {
       task: {} as Task,
       categories: [] as Category[],
       form: {
-        price: 0
-      }
+        price: 0,
+        description: ''
+      },
+      formDirty: false
+    }
+  },
+  watch: {
+    form: {
+      handler() {
+        this.formDirty = true
+      },
+      deep: true
     }
   },
   async mounted() {
@@ -107,7 +125,10 @@ export default {
     },
     validatePrice() {
       const price = +this.form.price
-      return typeof price === 'number' && price >= 0
+      return !this.formDirty || (typeof price === 'number' && price >= 0)
+    },
+    validateDescription() {
+      return !this.formDirty || (this.form.description.length > 19)
     }
   },
   methods: {
@@ -121,6 +142,10 @@ export default {
     onReset(evt) {
       this.form.email = ''
       this.form.password = ''
+    },
+    onSubmitResponse() {
+      console.log(this.form)
+      taskService.responseTask(this.task.id, this.form.description, this.form.price)
     }
   }
 }

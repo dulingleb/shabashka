@@ -48,6 +48,14 @@ class TaskService {
     console.log('res', response)
   }
 
+  async responseTask(id: number, text: string, price: string): Promise<void> {
+    const response = await apiService.post(`task/${id}/response`, { text, price })
+    console.log(response)
+    if (response.success) {
+      const resTask = response.data
+    }
+  }
+
   async getTask(id: number): Promise<Task> {
     const response = await apiService.get(`task/${id}`)
     if (response.success) {
