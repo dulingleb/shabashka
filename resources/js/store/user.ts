@@ -28,6 +28,10 @@ const actions = {
     context.commit('SET_USER', user)
   },
 
+  SET_USER: async(context: any, payload: any) => {
+    context.commit('SET_USER', payload)
+  },
+
   LOGOUT: async(context: any, payload: any) => {
     userService.logout()
     context.commit('SET_USER', {})

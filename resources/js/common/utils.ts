@@ -21,3 +21,10 @@ export function isImage(fileName: string): boolean {
 export function getFileNameByUrl(url: string): string {
   return url ? url.replace(/^.*[\\\/]/, '') : ''
 }
+
+export function getErrTitles(errData: any): string[] {
+  const defaultErr = ['Ошибка. Проверьте данные и поробуйте ещё раз.']
+  if (!errData) { return defaultErr }
+  const res = Object.values(errData).filter(err => err && Array.isArray(err)).map(err => err[0])
+  return res.length ? res : defaultErr
+}

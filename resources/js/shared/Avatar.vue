@@ -1,7 +1,7 @@
  <template>
   <div class="logo" :class="{ edited: isEdit }" :style="{ backgroundColor: userColor }">
 
-    <span class="user-title">{{ userTitle  }}</span>
+    <span class="user-title">{{ userTitle }}</span>
 
     <div v-if="image && !filePreview" class="img">
       <img :src="image" alt />
@@ -44,6 +44,8 @@ export default {
       this.setUserColor()
     },
     image() {
+      this.filePreview = ''
+      this.file = null
       this.setUserColor()
     }
   },
@@ -82,7 +84,6 @@ export default {
     },
 
     removeAvatar() {
-      this.image = ''
       this.removeFile()
     }
   }

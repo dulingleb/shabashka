@@ -131,11 +131,14 @@
             <div class="row">
               <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
               <div class="col-md-9">
-                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles"></drag-drop-images>
+                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles" @remove-file="removeFile"></drag-drop-images>
               </div>
             </div>
 
           </b-collapse>
+
+          <message v-for="(message, key) in messages" :key="key" :message="message" @dismiss="dismissMessage(key)"></message>
+          <message v-for="(error, key) in errMessages" :key="key" :error="error" @dismiss="dismissErr(key)"></message>
 
           <b-form-group>
             <div class="row">
@@ -157,7 +160,7 @@
 import userService from '../common/user.service'
 import { User } from '../common/model/user.model'
 import {
-  capitalizeFirst
+  capitalizeFirst, getErrTitles
 } from '../common/utils'
 
 export default {
@@ -181,7 +184,10 @@ export default {
         }
       },
       avatarFile: undefined,
-      companyFiles: []
+      companyFiles: [],
+      companyFilesRemoved: [],
+      messages: [],
+      errMessages: [],
     }
   },
   computed: {
@@ -216,7 +222,7 @@ export default {
       return this.$store.getters.user
     },
     userName() {
-      return capitalizeFirst(this.user.name) + ' ' + capitalizeFirst(this.user.surname)
+      return capitalizeFirst(this.form.name) + ' ' + capitalizeFirst(this.form.surname)
     }
   },
   created() {
@@ -229,10 +235,17 @@ export default {
   methods: {
     async onSubmit(evt) {
       evt.preventDefault()
-      // this.loading = true
-      console.log(this.form)
-      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company, this.companyFiles)
-      await this.$store.dispatch('GET_USER')
+      this.loading = true
+      this.clearMessages()
+      const response = await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company, this.companyFiles, this.companyFilesRemoved)
+      if (response.success) {
+        // TODO: Don't call method again on get user data
+        await this.$store.dispatch('GET_USER')
+        // await this.$store.dispatch('SET_USER', response.data)
+        this.messages = ['Профиль обновлён.']
+      } else {
+        this.errMessages = getErrTitles(response.error)
+      }
       this.loading = false
     },
     onReset(evt) {
@@ -246,11 +259,29 @@ export default {
     },
     changeAvatar(file) {
       this.avatarFile = file
+      if (!file) {
+        this.user.logo = ''
+      }
       console.log(file)
     },
     changeFiles(files) {
       this.companyFiles = files
       console.log(files)
+    },
+    removeFile(file) {
+      this.companyFilesRemoved.push(file)
+      console.log(file)
+    },
+
+    dismissMessage(key) {
+      this.messages.splice(key, 1)
+    },
+    dismissErr(key) {
+      this.errMessages.splice(key, 1)
+    },
+    clearMessages() {
+      this.messages = []
+      this.errMessages = []
     }
   }
 }
