@@ -131,7 +131,7 @@
             <div class="row">
               <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
               <div class="col-md-9">
-                <drag-drop-images @change-files="changeFiles"></drag-drop-images>
+                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles"></drag-drop-images>
               </div>
             </div>
 

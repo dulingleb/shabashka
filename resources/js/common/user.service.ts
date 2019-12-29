@@ -91,7 +91,6 @@ class UserService {
       if (company.inn && company.inn.length) newCompany['inn'] = company.inn
       if (company.description && company.description.length) newCompany['description'] = company.description
       if (company.address && company.address.length) newCompany['address'] = company.address
-      console.log('newCompany', newCompany)
       Object.keys(newCompany).forEach((key) => {
         bodyFormData.set(`company[${key}]`, newCompany[key])
       })

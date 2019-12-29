@@ -17,3 +17,7 @@ export function stringToHslColor(str: string, s: number, l: number): string {
 export function isImage(fileName: string): boolean {
   return /\.(jpe?g|png|gif)$/i.test(fileName)
 }
+
+export function getFileNameByUrl(url: string): string {
+  return url ? url.replace(/^.*[\\\/]/, '') : ''
+}
