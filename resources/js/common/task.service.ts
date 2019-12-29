@@ -32,22 +32,6 @@ class TaskService {
     return this.tasks
   }
 
-  async addTask(categoryId: string, title: string, description: string, address: string, date: any, cost: string, phone: string, files: any[]): Promise<void> {
-    const bodyFormData = new FormData()
-    bodyFormData.set('category', categoryId)
-    bodyFormData.set('title', title)
-    bodyFormData.set('description', description)
-    bodyFormData.set('address', address)
-    bodyFormData.set('date', date)
-    bodyFormData.set('cost', cost)
-    bodyFormData.set('phone', phone)
-    for (const file of files) {
-      bodyFormData.set('files[]', file)
-    }
-    const response = await apiService.postFormData('task/store', bodyFormData)
-    console.log('res', response)
-  }
-
   async getTask(id: number): Promise<Task> {
     const response = await apiService.get(`task/${id}`)
     if (response.success) {
@@ -55,6 +39,37 @@ class TaskService {
       this._task = this.convertResTask(resTask)
     }
     return this.task
+  }
+
+  async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<void> {
+    const bodyFormData = new FormData()
+    bodyFormData.set('category_id', categoryId)
+    bodyFormData.set('title', title)
+    bodyFormData.set('description', description)
+    bodyFormData.set('address', address)
+    bodyFormData.set('term', term.toISOString())
+    bodyFormData.set('price', price)
+    bodyFormData.set('phone', phone)
+    for (const file of files) {
+      bodyFormData.append('files[]', file)
+    }
+    const response = await apiService.postFormData('task/store', bodyFormData)
+    console.log('res', response)
+  }
+
+  async responseTask(id: number, text: string, price: string): Promise<void> {
+    const response = await apiService.post(`task/${id}/response`, { text, price })
+    console.log(response)
+    if (response.success) {
+      const resTask = response.data
+    }
+  }
+
+  async getResponses(id: number): Promise<Task> {
+    const response = await apiService.get(`task/${id}/responses`)
+    // if (response.success) {
+    // }
+    return response
   }
 
   private convertResTask(resTask: TaskResponse): Task {

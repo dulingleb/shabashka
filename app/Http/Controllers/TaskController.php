@@ -70,7 +70,7 @@ class TaskController extends Controller
             'title' => 'required|string|min:5|max:100',
             'description' => 'required|string|min:20|max:1000',
             'address' => 'nullable|string|min:5|max:255',
-            'term' => 'required|date|date-format:Y-m-d\TH:i:s.u\Z|after:yesterday',
+            'term' => 'required|date|date-format:Y-m-d\TH:i:s.\0\0\0\Z|after:yesterday',
             'price' => 'required|numeric|min:0|max:999999999',
             'phone' => 'required|string|size:18',
             'files' => 'array',
