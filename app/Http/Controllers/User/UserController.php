@@ -145,7 +145,7 @@ class UserController extends Controller
           ]);
 
           $company = $request->company;
-          $documents = $user->company->documents;
+          $documents = $user->company ? $user->company->documents : [];
 
           if($request->has('company.is_active')){
               $company['is_active'] = ($company['is_active']==="true") ? 1 : 0;
