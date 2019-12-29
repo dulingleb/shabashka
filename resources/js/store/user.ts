@@ -1,5 +1,5 @@
 import userService from '../common/user.service'
-import User from '../common/model/user.model'
+import { User } from '../common/model/user.model'
 
 class UserState {
   user: User

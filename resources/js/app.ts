@@ -24,10 +24,12 @@ import App from './views/App.vue'
 import DragDropImages from './shared/DragDropImages.vue'
 import Avatar from './shared/Avatar.vue'
 import Message from './shared/Message.vue'
+import Tasks from './shared/Tasks.vue'
 
 Vue.component('drag-drop-images', DragDropImages)
 Vue.component('avatar', Avatar)
 Vue.component('message', Message)
+Vue.component('tasks', Tasks)
 
 Vue.use(storageInstall)
 
