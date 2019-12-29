@@ -131,7 +131,7 @@
             <div class="row">
               <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
               <div class="col-md-9">
-                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles"></drag-drop-images>
+                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles" @remove-file="removeFile"></drag-drop-images>
               </div>
             </div>
 
@@ -181,7 +181,8 @@ export default {
         }
       },
       avatarFile: undefined,
-      companyFiles: []
+      companyFiles: [],
+      companyFilesRemoved: []
     }
   },
   computed: {
@@ -216,7 +217,7 @@ export default {
       return this.$store.getters.user
     },
     userName() {
-      return capitalizeFirst(this.user.name) + ' ' + capitalizeFirst(this.user.surname)
+      return capitalizeFirst(this.form.name) + ' ' + capitalizeFirst(this.form.surname)
     }
   },
   created() {
@@ -229,10 +230,12 @@ export default {
   methods: {
     async onSubmit(evt) {
       evt.preventDefault()
-      // this.loading = true
-      console.log(this.form)
-      await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company, this.companyFiles)
-      await this.$store.dispatch('GET_USER')
+      const response = await userService.editUser(this.form.name, this.form.email, this.form.surname, this.form.phone, this.avatarFile, this.form.password, this.form.passwordConfirm, this.form.company, this.companyFiles, this.companyFilesRemoved)
+      if (response.success) {
+        // TODO: Don't call method again on get user data
+        await this.$store.dispatch('GET_USER')
+        // await this.$store.dispatch('SET_USER', response.data)
+      }
       this.loading = false
     },
     onReset(evt) {
@@ -246,11 +249,18 @@ export default {
     },
     changeAvatar(file) {
       this.avatarFile = file
+      if (!file) {
+        this.user.logo = ''
+      }
       console.log(file)
     },
     changeFiles(files) {
       this.companyFiles = files
       console.log(files)
+    },
+    removeFile(file) {
+      this.companyFilesRemoved.push(file)
+      console.log(file)
     }
   }
 }
