@@ -42,10 +42,12 @@ class TaskController extends Controller
                 'user_id' => $task->user_id,
                 'title' => $task->title,
                 'description' => $task->description,
+                'phone' => (\auth('api')->id() === $task->user_id || \auth('api')->id() === $task->executor_id) ? $task->phone : null,
                 'price' => $task->price,
                 'category_id' => $task->category_id,
                 'created_at' => $task->created_at,
-                'term' => $task->term
+                'term' => $task->term,
+                'executor_id' => $task->execotor_id
             ];
         }
 
@@ -154,10 +156,10 @@ class TaskController extends Controller
 
     public function show(Task $task){
         $task->load(['responses' => function($q){
-            $q->selectRaw('responses.*, (SELECT executor FROM tasks WHERE responses.user_id=tasks.executor) as executor')->orderBy('executor', 'DESC');
+            $q->selectRaw('responses.*, (SELECT executor_id FROM tasks WHERE responses.user_id=tasks.executor_id) as executor_id')->orderBy('executor_id', 'DESC');
         }])->load('category')->load('user');
 
-        if ($task->executor == null || $task->executor === Auth::id())
+        if ($task->executor_id == null || $task->executor_id === Auth::id())
             $myResponse = Response::with('user')->with('messages')->where('user_id', Auth::id())->where('task_id', $task->id)->first();
 
         $data = [
@@ -165,11 +167,12 @@ class TaskController extends Controller
             'title' => $task->title,
             'description' => $task->description,
             'address' => $task->address,
+            'phone' => $task->phone,
             'files' => $task->files,
             'price' => $task->price,
             'category_id' => $task->category_id,
             'user_id' => $task->user_id,
-            'executor' => $task->executor,
+            'executor_id' => $task->executor_id,
             'status' => $task->status,
             'term' => $task->term,
             'created_at' => $task->created_at,
@@ -182,7 +185,7 @@ class TaskController extends Controller
     }
 
     public function destroy(Task $task){
-        if($task->user_id === auth('api')->id() && $task->executor === null){
+        if($task->user_id === auth('api')->id() && $task->executor_id === null){
             if(Storage::exists('public\tasks\\' . $task->id))
                 Storage::deleteDirectory('public\tasks\\' . $task->id);
             $task->delete();
@@ -190,7 +193,7 @@ class TaskController extends Controller
             return response()->json([
                 'success' => true
             ], 200);
-        } elseif ($task->executor !== null)
+        } elseif ($task->executor_id !== null)
             return response()->json([
                 'success' => false,
                 'error' => "Нельзя удалить задание, если уже назначен исполнитель"

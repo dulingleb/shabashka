@@ -34,7 +34,7 @@ Route::get('task/{task}/responses', 'User\ResponseController@index');
 
 Route::middleware(['auth:api'])->prefix('task')->group(function() {
     Route::post('store', 'TaskController@store');
-    Route::post('{task}/update', 'TaskController@update');
+    Route::post('{task}', 'TaskController@update');
     Route::delete('{task}', 'TaskController@destroy');
     
     Route::post('{task}/response', 'User\ResponseController@store');

@@ -5,6 +5,7 @@ export interface Task {
   title: string
   description: string
   price: number
+  phone: string
   createdAt: string
   created: string
   term: string
@@ -21,6 +22,7 @@ export interface TaskResponse {
   title: string
   description: string
   price: number
+  phone: string
   created_at: string
   term: string
   category_id: number

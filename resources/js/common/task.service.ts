@@ -96,6 +96,7 @@ class TaskService {
       title: resTask.title,
       description: resTask.description,
       price: resTask.price,
+      phone: resTask.phone,
       createdAt: resTask.created_at,
       term: resTask.term,
       categoryId: resTask.category_id,

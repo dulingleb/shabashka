@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -111,8 +112,12 @@ class UserController extends Controller
                 File::makeDirectory(storage_path('app\public\users\\' . \auth('api')->id()));
 
             $image = $request->file('logo');
-            $name = md5(auth('api')->id() . auth('api')->user()->email).'.'.$image->getClientOriginalExtension();
+            $name = Str::random(8) . '.'.$image->getClientOriginalExtension();
             $image->move(storage_path('app/public/users/' . \auth('api')->id()), $name);
+
+            if(\File::exists(public_path($user->logo))){
+                \File::delete(public_path($user->logo));
+            }
 
             $user->logo = 'storage/users/' . \auth('api')->id() . '/' . $name;
             $user->save();

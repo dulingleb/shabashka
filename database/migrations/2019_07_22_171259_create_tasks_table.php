@@ -24,7 +24,7 @@ class CreateTasksTable extends Migration
             $table->string('phone');
             $table->bigInteger('category_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('executor')->unsigned()->nullable();
+            $table->bigInteger('executor_id')->unsigned()->nullable();
             $table->enum('status', ['search_executor', 'doing', 'done'])->default('search_executor');
             $table->timestamps();
 
