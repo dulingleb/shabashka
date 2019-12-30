@@ -260,15 +260,12 @@ export default {
       if (!file) {
         this.user.logo = ''
       }
-      console.log(file)
     },
     changeFiles(files) {
       this.companyFiles = files
-      console.log(files)
     },
     removeFile(file) {
       this.companyFilesRemoved.push(file)
-      console.log(file)
     },
 
     dismissMessage(key) {
