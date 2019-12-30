@@ -1,9 +1,16 @@
 <template>
   <div>
-    <div class="tasks container">
+    <div class="loading" v-if="loading">
+      Loading...
+    </div>
+    <div v-if="!loading && tasks" class="tasks container">
       <section class="row task border-bottom" v-for="(task, index) in tasks" :key="index">
         <div class="col-md-9">
-          <h3 class="title"><router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link> <small class="text-secondary">{{ task.createdAt }}</small></h3>
+          <h3 class="title">
+            <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
+            <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
+            <small class="text-secondary">{{ task.createdAt }}</small>
+          </h3>
           <p class="description">{{ task.description }}</p>
           <footer class="info-footer">
             <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
@@ -11,7 +18,9 @@
           </footer>
         </div>
         <div class="col-md-3 text-center text-secondary">
-          <p class="price">{{ task.price }} руб.</p><router-link :to="{ name: 'task', params: { id: task.id } }" class="btn btn-info text-light task-btn">Откликнуться</router-link>
+          <p class="price">{{ task.price }} руб.</p>
+          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-info text-light task-btn">Откликнуться</router-link>
+          <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-info text-light task-btn">Редактировать</router-link>
         </div>
       </section>
     </div>
@@ -19,16 +28,36 @@
 </template>
 
 <script lang="ts">
-import Aside from '../common/components/Aside.vue'
 import userService from '../common/user.service'
 import categoryService from '../common/category.service'
 import taskService from '../common/task.service'
+import { User } from '../common/model/user.model'
 
 export default {
   name: 'tasks',
-  props: ['tasks', 'categories'],
+  props: ['taskOptions', 'categories'],
   data() {
     return {
+      loading: true
+    }
+  },
+  watch: {
+    taskOptions: {
+      handler() {
+        this.getTasks()
+      },
+      deep: true
+    },
+    categories() {
+      this.getTasks()
+    }
+  },
+  mounted() {
+    this.getTasks()
+  },
+  computed: {
+    user(): User {
+      return this.$store.getters.user
     }
   },
   methods: {
@@ -36,12 +65,17 @@ export default {
       this.$emit('change-category', checkedCategory)
     },
 
+    async getTasks() {
+      this.loading = true
+      this.tasks = await taskService.getTasks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, this.taskOptions.checkedCategory, this.taskOptions.search, this.taskOptions.userId)
+      this.$forceUpdate()
+      await this.$nextTick()
+      this.loading = false
+    },
+
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
     }
-  },
-  components: {
-    'app-aside': Aside,
   }
 }
 </script> 

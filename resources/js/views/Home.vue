@@ -5,12 +5,7 @@
         </div>
         <div class="col-md-8 col-lg-9">
            <div class="tasks">
-            <div class="loading" v-if="loading">
-              Loading...
-            </div>
-
-            <tasks v-if="!loading && tasks" :tasks="tasks" :categories="categories" @change-category="changeCategory"></tasks>
-
+            <tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory"></tasks>
           </div>
         </div>
       </div>
@@ -25,7 +20,6 @@ import taskService from '../common/task.service'
 export default {
   data() {
     return {
-      loading: false,
       categories: [],
       tasks: [],
       taskOptions: {
@@ -44,29 +38,18 @@ export default {
   watch: {
     '$route.query.search'(prevVal: string, newVal: string) {
       this.taskOptions.search = this.$router.currentRoute.query.search
-      this.getTasks()
     }
   },
   methods: {
     async fetchData() {
-      this.loading = true
       const categories = await categoryService.getCategories()
       this.categories = categories
-      await this.getTasks()
     },
 
     async changeCategory(checkedCategory: string) {
-      this.taskOptions.checkedCategory = [checkedCategory]
-      await this.getTasks()
+      this.taskOptions.checkedCategory = checkedCategory
     },
 
-    async getTasks() {
-      this.loading = true
-      this.tasks = await taskService.getTasks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, this.taskOptions.checkedCategory, this.taskOptions.search)
-      this.$forceUpdate()
-      await this.$nextTick()
-      this.loading = false
-    }
   },
   components: {
     'app-aside': Aside,

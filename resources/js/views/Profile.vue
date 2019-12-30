@@ -159,9 +159,7 @@
 <script lang="ts">
 import userService from '../common/user.service'
 import { User } from '../common/model/user.model'
-import {
-  capitalizeFirst, getErrTitles
-} from '../common/utils'
+import { capitalizeFirst, getErrTitles } from '../common/utils'
 
 export default {
   name: 'app-login',

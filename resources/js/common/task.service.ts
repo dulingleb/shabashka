@@ -14,7 +14,7 @@ class TaskService {
     return this._task
   }
 
-  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = ''): Promise<Task[]> {
+  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = '', userId = null): Promise<Task[]> {
     let query = `?start=${start}`
     if (limit) {
       query += `&limit=${limit}`
@@ -24,6 +24,9 @@ class TaskService {
     }
     if (search && search.length > 2) {
       query += `&search=${search}`
+    }
+    if (userId !== null) {
+      query += `&user_id=${userId}`
     }
     const response = await apiService.get('tasks', query)
     if (response.success) {
