@@ -19,13 +19,13 @@
             </div>
           </div>
 
-          <div v-for="(file, key) in files" :key="key" class="file-listing">
+          <div v-for="(file, index) in files" :key="index + 'files'" class="file-listing">
             <div class="img-wrapp">
-              <img class="img" :ref="'preview' + key"/>
+              <img class="img" :ref="'preview' + index"/>
             </div>
             <p class="image-name">{{ file.name }}</p>
             <div class="remove-container">
-              <button class="btn btn-danger btn-remove" type="button" @click="removeFile(key)">Удалить</button>
+              <button class="btn btn-danger btn-remove" type="button" @click="removeFile(parseInt(index))">Удалить</button>
             </div>
           </div>
 
@@ -44,17 +44,18 @@ import { isImage, getFileNameByUrl } from '../common/utils'
 export default {
   name: 'drag-drop-images',
   components: {},
-  props: ['urls'],
+  props: ['urls', 'reset'],
   data() {
     return {
-      dragAndDropCapable: false,
-      files: [],
-      uploadPercentage: 0
+      files: []
     }
   },
 
-  // tslint:disable-next-line:no-empty
-  mounted() { },
+  watch: {
+    reset() {
+      this.files = []
+    }
+  },
 
   methods: {
 

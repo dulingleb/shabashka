@@ -131,7 +131,7 @@
             <div class="row">
               <label class="col-md-3 col-form-label text-md-right" for="title">Файлы:</label>
               <div class="col-md-9">
-                <drag-drop-images :urls="user && user.company ? user.company.documents : []" @change-files="changeFiles" @remove-file="removeFile"></drag-drop-images>
+                <drag-drop-images :urls="user && user.company ? user.company.documents : []" :reset="resetFiles" @change-files="changeFiles" @remove-file="removeFile"></drag-drop-images>
               </div>
             </div>
 
@@ -186,6 +186,7 @@ export default {
       companyFilesRemoved: [],
       messages: [],
       errMessages: [],
+      resetFiles: null
     }
   },
   computed: {
@@ -241,6 +242,7 @@ export default {
         await this.$store.dispatch('GET_USER')
         // await this.$store.dispatch('SET_USER', response.data)
         this.messages = ['Профиль обновлён.']
+        this.resetFiles = {}
       } else {
         this.errMessages = getErrTitles(response.error)
       }

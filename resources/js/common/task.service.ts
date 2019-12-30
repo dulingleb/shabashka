@@ -51,8 +51,8 @@ class TaskService {
     return response
   }
 
-  async editTask(id: string, categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<ResponseApi> {
-    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files)
+  async editTask(id: string, categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[], filesRemoved: File[]): Promise<ResponseApi> {
+    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files, filesRemoved)
     const response: ResponseApi = await apiService.postFormData(`task/${id}`, bodyFormData)
     return response
   }
@@ -72,7 +72,7 @@ class TaskService {
     return response
   }
 
-  parseChangedFields(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): FormData {
+  parseChangedFields(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[], filesRemoved: File[] = []): FormData {
     const bodyFormData = new FormData()
     bodyFormData.set('category_id', categoryId)
     bodyFormData.set('title', title)
@@ -83,6 +83,9 @@ class TaskService {
     bodyFormData.set('phone', phone)
     for (const file of files) {
       bodyFormData.append('files[]', file)
+    }
+    for (const file of filesRemoved) {
+      bodyFormData.append('files_remove[]', file)
     }
     return bodyFormData
   }

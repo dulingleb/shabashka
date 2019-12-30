@@ -48,23 +48,23 @@
           <div class="row">
             <label class="col-md-2 col-form-label text-md-right" for="title">Файлы</label>
             <div class="col-md-10">
-              <drag-drop-images @change-files="changeFiles" :urls="task && task.files ? task.files : []"></drag-drop-images>
+              <drag-drop-images :urls="task && task.files ? task.files : []" @change-files="changeFiles" @remove-file="removeFile" :reset="resetFiles"></drag-drop-images>
             </div>
           </div>
 
 
-          <b-form-group  name="address" description="">
-            <div class="row">
-              <label class="col-md-2 col-form-label text-md-right" for="address">Адрес</label>
-              <div class="col-md-10">
-                <b-form-input class="" id="address" v-model="form.address" :state="validateAddress" type="text" placeholder="Ул. Советская, 36" :disabled="loading" required></b-form-input>
-                <b-form-invalid-feedback :state="validateAddress">Введите адрес</b-form-invalid-feedback>
-              </div>
-            </div>
-          </b-form-group>
-
           <div class="row">
             <div class="col-md-6">
+
+              <b-form-group  name="address" description="">
+                <div class="row">
+                  <label class="col-md-4 col-form-label text-md-right" for="address">Адрес</label>
+                  <div class="col-md-8">
+                    <b-form-input class="" id="address" v-model="form.address" :state="validateAddress" type="text" placeholder="Ул. Советская, 36" :disabled="loading" required></b-form-input>
+                    <b-form-invalid-feedback :state="validateAddress">Введите адрес</b-form-invalid-feedback>
+                  </div>
+                </div>
+              </b-form-group>
 
               <b-form-group  name="date" description="">
                 <div class="row">
@@ -85,6 +85,16 @@
                   <div class="col-md-9">
                     <b-form-input class="" id="price" v-model="form.price" :state="validatePrice" type="number" min="0" placeholder="0" :disabled="loading" required></b-form-input>
                     <b-form-invalid-feedback :state="validatePrice">Введите цену</b-form-invalid-feedback>
+                  </div>
+                </div>
+              </b-form-group>
+
+              <b-form-group  name="phone" description="">
+                <div class="row">
+                  <label class="col-md-3 col-form-label text-md-right" for="phone">Телефон</label>
+                  <div class="col-md-9">
+                    <b-form-input v-mask="'+7 (###) ###-##-##'" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="+7 (___) ___-__-__" :disabled="loading"></b-form-input>
+                    <b-form-invalid-feedback :state="validatePhone">Введите телефон</b-form-invalid-feedback>
                   </div>
                 </div>
               </b-form-group>
@@ -124,11 +134,14 @@ export default {
         address: '',
         date: (new Date(new Date().getTime() + (24 * 60 * 60 * 1000))).toISOString().split('T')[0],
         price: 0,
+        phone: '',
         files: []
       },
+      filesRemoved: [],
       formDirty: false,
       messages: [],
-      errMessages: []
+      errMessages: [],
+      resetFiles: null
     }
   },
   computed: {
@@ -150,6 +163,9 @@ export default {
     validatePrice() {
       return this.formDirty ? this.form.price >= 0 : null
     },
+    validatePhone() {
+      return this.formDirty ? !!this.form.phone : null
+    },
   },
   async mounted() {
     this.loading = true
@@ -162,6 +178,7 @@ export default {
       this.form.address = this.task.address
       this.form.date = new Date(this.task.term).toISOString().split('T')[0]
       this.form.price = this.task.price
+      this.form.phone = this.task.phone
     }
   },
   watch: {
@@ -176,6 +193,9 @@ export default {
     changeFiles(files) {
       this.form.files = files
     },
+    removeFile(file) {
+      this.filesRemoved.push(file)
+    },
     async onSubmit() {
       this.loading = true
       this.clearMessages()
@@ -183,6 +203,7 @@ export default {
       this.loading = false
       if (response.success) {
         this.messages = [response.message]
+        this.resetFiles = {}
         this.$emit('saved-task', response)
         return
       }
@@ -192,7 +213,7 @@ export default {
     async saveTask() {
       let response = null
       if (this.task) {
-        response = await taskService.editTask(this.task.id, this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.price, this.form.phone, this.form.files)
+        response = await taskService.editTask(this.task.id, this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.price, this.form.phone, this.form.files, this.filesRemoved)
       } else {
         response = await taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.price, this.form.phone, this.form.files)
       }
