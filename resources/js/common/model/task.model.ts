@@ -7,6 +7,7 @@ export interface Task {
   price: number
   createdAt: string
   created: string
+  term: string
   categoryId: number
   address: string
   executor: number

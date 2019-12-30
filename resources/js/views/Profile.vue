@@ -159,9 +159,7 @@
 <script lang="ts">
 import userService from '../common/user.service'
 import { User } from '../common/model/user.model'
-import {
-  capitalizeFirst, getErrTitles
-} from '../common/utils'
+import { capitalizeFirst, getErrTitles } from '../common/utils'
 
 export default {
   name: 'app-login',
@@ -262,15 +260,12 @@ export default {
       if (!file) {
         this.user.logo = ''
       }
-      console.log(file)
     },
     changeFiles(files) {
       this.companyFiles = files
-      console.log(files)
     },
     removeFile(file) {
       this.companyFilesRemoved.push(file)
-      console.log(file)
     },
 
     dismissMessage(key) {

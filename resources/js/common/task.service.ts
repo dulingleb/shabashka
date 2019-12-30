@@ -14,7 +14,7 @@ class TaskService {
     return this._task
   }
 
-  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = ''): Promise<Task[]> {
+  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = '', userId = null): Promise<Task[]> {
     let query = `?start=${start}`
     if (limit) {
       query += `&limit=${limit}`
@@ -24,6 +24,9 @@ class TaskService {
     }
     if (search && search.length > 2) {
       query += `&search=${search}`
+    }
+    if (userId !== null) {
+      query += `&user_id=${userId}`
     }
     const response = await apiService.get('tasks', query)
     if (response.success) {
@@ -42,20 +45,16 @@ class TaskService {
     return this.task
   }
 
-  async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<void> {
-    const bodyFormData = new FormData()
-    bodyFormData.set('category_id', categoryId)
-    bodyFormData.set('title', title)
-    bodyFormData.set('description', description)
-    bodyFormData.set('address', address)
-    bodyFormData.set('term', term.toISOString())
-    bodyFormData.set('price', price)
-    bodyFormData.set('phone', phone)
-    for (const file of files) {
-      bodyFormData.append('files[]', file)
-    }
+  async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<ResponseApi> {
+    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files)
     const response: ResponseApi = await apiService.postFormData('task/store', bodyFormData)
-    console.log('res', response)
+    return response
+  }
+
+  async editTask(id: string, categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<ResponseApi> {
+    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files)
+    const response: ResponseApi = await apiService.postFormData(`task/${id}`, bodyFormData)
+    return response
   }
 
   async responseTask(id: number, text: string, price: string): Promise<void> {
@@ -73,6 +72,21 @@ class TaskService {
     return response
   }
 
+  parseChangedFields(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): FormData {
+    const bodyFormData = new FormData()
+    bodyFormData.set('category_id', categoryId)
+    bodyFormData.set('title', title)
+    bodyFormData.set('description', description)
+    bodyFormData.set('address', address)
+    bodyFormData.set('term', term.toISOString())
+    bodyFormData.set('price', price)
+    bodyFormData.set('phone', phone)
+    for (const file of files) {
+      bodyFormData.append('files[]', file)
+    }
+    return bodyFormData
+  }
+
   private convertResTask(resTask: TaskResponse): Task {
     return {
       id: resTask.id,
@@ -80,7 +94,7 @@ class TaskService {
       description: resTask.description,
       price: resTask.price,
       createdAt: resTask.created_at,
-      created: resTask.term,
+      term: resTask.term,
       categoryId: resTask.category_id,
       address: resTask.address,
       executor: resTask.executor,
