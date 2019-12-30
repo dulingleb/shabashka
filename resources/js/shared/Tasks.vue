@@ -13,7 +13,7 @@
           </h3>
           <p class="description">{{ task.description }}</p>
           <footer class="info-footer">
-            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
+            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.term }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
             <span class="btn btn-link text-info category-link" @click="changeCategory(task.categoryId)">{{ getCategoryName(task.categoryId) }}</span>
           </footer>
         </div>

@@ -30,13 +30,18 @@ class CategoryService {
     return this.categories
   }
 
-  getCategoryName(categories: Category[], id: number): string {
+  getCategoryById(categories: Category[], id: number): Category {
     for (const categoryParent of categories) {
       const category = categoryParent.children.find(category => category.id === id)
       if (category) {
-        return category.title
+        return category
       }
     }
+  }
+
+  getCategoryName(categories: Category[], id: number): string {
+    const category = this.getCategoryById(categories, id)
+    return category ? category.title : ''
   }
 
   getIds(categories: Category[]): string[] {

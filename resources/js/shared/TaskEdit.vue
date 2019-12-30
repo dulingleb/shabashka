@@ -1,7 +1,7 @@
  <template>
   <div>
     <div class="card">
-      <div class="card-header">Создать задание</div>
+      <div class="card-header">{{ task ? 'Редактировать задание' : 'Создать задание' }}</div>
 
       <div class="card-body">
         <p v-if="loading">Loading...</p>
@@ -46,24 +46,25 @@
           </b-form-group>
 
           <div class="row">
-              <label class="col-md-2 col-form-label text-md-right" for="title">Файлы</label>
+            <label class="col-md-2 col-form-label text-md-right" for="title">Файлы</label>
+            <div class="col-md-10">
+              <drag-drop-images @change-files="changeFiles" :urls="task && task.files ? task.files : []"></drag-drop-images>
+            </div>
+          </div>
+
+
+          <b-form-group  name="address" description="">
+            <div class="row">
+              <label class="col-md-2 col-form-label text-md-right" for="address">Адрес</label>
               <div class="col-md-10">
-                <drag-drop-images @change-files="changeFiles" :urls="[]"></drag-drop-images>
+                <b-form-input class="" id="address" v-model="form.address" :state="validateAddress" type="text" placeholder="Ул. Советская, 36" :disabled="loading" required></b-form-input>
+                <b-form-invalid-feedback :state="validateAddress">Введите адрес</b-form-invalid-feedback>
               </div>
             </div>
+          </b-form-group>
 
           <div class="row">
             <div class="col-md-6">
-
-              <b-form-group  name="address" description="">
-                <div class="row">
-                  <label class="col-md-4 col-form-label text-md-right" for="address">Адрес</label>
-                  <div class="col-md-8">
-                    <b-form-input class="" id="address" v-model="form.address" :state="validateAddress" type="text" placeholder="Ул. Советская, 36" :disabled="loading" required></b-form-input>
-                    <b-form-invalid-feedback :state="validateAddress">Введите адрес</b-form-invalid-feedback>
-                  </div>
-                </div>
-              </b-form-group>
 
               <b-form-group  name="date" description="">
                 <div class="row">
@@ -78,22 +79,12 @@
             </div>
             <div class="col-md-6">
               
-              <b-form-group  name="cost" description="">
+              <b-form-group  name="price" description="">
                 <div class="row">
-                  <label class="col-md-3 col-form-label text-md-right" for="cost">Цена, руб.</label>
+                  <label class="col-md-3 col-form-label text-md-right" for="price">Цена, руб.</label>
                   <div class="col-md-9">
-                    <b-form-input class="" id="cost" v-model="form.cost" :state="validateCost" type="number" min="0" placeholder="0" :disabled="loading" required></b-form-input>
-                    <b-form-invalid-feedback :state="validateCost">Введите цену</b-form-invalid-feedback>
-                  </div>
-                </div>
-              </b-form-group>
-
-              <b-form-group  name="phone" description="">
-                <div class="row">
-                  <label class="col-md-3 col-form-label text-md-right" for="phone">Телефон</label>
-                  <div class="col-md-9">
-                    <b-form-input v-mask="'+7 (###) ###-##-##'" id="phone" v-model="form.phone" :state="validatePhone" type="text" placeholder="+7 (___) ___-__-__" :disabled="loading"></b-form-input>
-                    <b-form-invalid-feedback :state="validatePhone">Введите телефон</b-form-invalid-feedback>
+                    <b-form-input class="" id="price" v-model="form.price" :state="validatePrice" type="number" min="0" placeholder="0" :disabled="loading" required></b-form-input>
+                    <b-form-invalid-feedback :state="validatePrice">Введите цену</b-form-invalid-feedback>
                   </div>
                 </div>
               </b-form-group>
@@ -105,7 +96,7 @@
           <message v-for="(error, key) in errMessages" :key="key" :error="error" @dismiss="dismissErr(key)"></message>
 
           <div class="btn-container mt-3 text-right">
-            <button class="btn btn-info">Создать задание</button>
+            <button class="btn btn-info">{{ task ? 'Редактировать задание' : 'Создать задание' }}</button>
           </div>
 
         </b-form>
@@ -121,7 +112,7 @@ import { getErrTitles } from '../common/utils'
 
 export default {
   name: 'task-edit',
-  components: {},
+  props: ['task'],
   data() {
     return {
       loading: true,
@@ -132,8 +123,7 @@ export default {
         description: '',
         address: '',
         date: (new Date(new Date().getTime() + (24 * 60 * 60 * 1000))).toISOString().split('T')[0],
-        cost: 0,
-        phone: '',
+        price: 0,
         files: []
       },
       formDirty: false,
@@ -157,16 +147,22 @@ export default {
     validateDate() {
       return this.formDirty ? !!this.form.date : null
     },
-    validateCost() {
-      return this.formDirty ? this.form.cost >= 0 : null
-    },
-    validatePhone() {
-      return this.formDirty ? !!this.form.phone : null
+    validatePrice() {
+      return this.formDirty ? this.form.price >= 0 : null
     },
   },
-  async created() {
+  async mounted() {
+    this.loading = true
     this.categories = await categoryService.getCategories()
     this.loading = false
+    if (this.task) {
+      this.form.category = categoryService.getCategoryById(this.categories, this.task.categoryId)
+      this.form.title = this.task.title
+      this.form.description = this.task.description
+      this.form.address = this.task.address
+      this.form.date = new Date(this.task.term).toISOString().split('T')[0]
+      this.form.price = this.task.price
+    }
   },
   watch: {
     form: {
@@ -183,7 +179,7 @@ export default {
     async onSubmit() {
       this.loading = true
       this.clearMessages()
-      const response = await taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.cost, this.form.phone, this.form.files)
+      const response = await this.saveTask()
       this.loading = false
       if (response.success) {
         this.messages = [response.message]
@@ -191,6 +187,16 @@ export default {
         return
       }
       this.errMessages = getErrTitles(response.error)
+    },
+
+    async saveTask() {
+      let response = null
+      if (this.task) {
+        response = await taskService.editTask(this.task.id, this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.price, this.form.phone, this.form.files)
+      } else {
+        response = await taskService.addTask(this.form.category.id, this.form.title, this.form.description, this.form.address, new Date(this.form.date), this.form.price, this.form.phone, this.form.files)
+      }
+      return response
     },
 
     dismissMessage(key) {

@@ -1,5 +1,5 @@
  <template>
-  <div class="">
+  <div>
     <task-edit @saved-task="savedTask"></task-edit>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
 
   methods: {
     savedTask(task) {
-      setTimeout(() => this.$router.push('/'), 1000)
+      setTimeout(() => this.$router.push('/my-tasks'), 1000)
     }
   }
 }

@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-4">
           <p class="mb-0">
-            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.created }}</p>
+            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.term }}</p>
           <p class="mb-0">
             <font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
           <p class="mb-0">
