@@ -10,7 +10,7 @@ export interface Task {
   term: string
   categoryId: number
   address: string
-  executor: number
+  executorId: number
   files: string[]
   status: string
   userId: number
@@ -25,7 +25,7 @@ export interface TaskResponse {
   term: string
   category_id: number
   address: string
-  executor: number
+  executor_id: number
   files: string[]
   status: string
   user_id: number

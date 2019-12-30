@@ -100,7 +100,7 @@ class TaskService {
       term: resTask.term,
       categoryId: resTask.category_id,
       address: resTask.address,
-      executor: resTask.executor,
+      executorId: resTask.executor_id,
       files: resTask.files,
       status: resTask.status,
       userId: resTask.user_id,
