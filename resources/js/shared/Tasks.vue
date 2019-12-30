@@ -28,6 +28,8 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash'
+
 import userService from '../common/user.service'
 import categoryService from '../common/category.service'
 import taskService from '../common/task.service'
@@ -44,16 +46,13 @@ export default {
   watch: {
     taskOptions: {
       handler() {
-        this.getTasks()
+        this.getTasks(this)
       },
       deep: true
     },
     categories() {
-      this.getTasks()
+      this.getTasks(this)
     }
-  },
-  mounted() {
-    this.getTasks()
   },
   computed: {
     user(): User {
@@ -65,13 +64,13 @@ export default {
       this.$emit('change-category', checkedCategory)
     },
 
-    async getTasks() {
-      this.loading = true
-      this.tasks = await taskService.getTasks(this.taskOptions.start, this.taskOptions.limit, this.taskOptions.sort, this.taskOptions.checkedCategory, this.taskOptions.search, this.taskOptions.userId)
-      this.$forceUpdate()
-      await this.$nextTick()
-      this.loading = false
-    },
+    getTasks: _.debounce(async(self) => {
+      self.loading = true
+      self.tasks = await taskService.getTasks(self.taskOptions.start, self.taskOptions.limit, self.taskOptions.sort, self.taskOptions.checkedCategory, self.taskOptions.search, self.taskOptions.userId)
+      self.$forceUpdate()
+      await self.$nextTick()
+      self.loading = false
+    }, 500),
 
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
