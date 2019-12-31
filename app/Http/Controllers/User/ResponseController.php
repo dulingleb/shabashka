@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Response;
+use App\Review;
 use App\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,10 +17,19 @@ class ResponseController extends Controller
         foreach ($task->responses as $respons){
             $data[] = [
                 'id' => $respons->id,
-                'user_id' => $respons->user_id,
                 'text' => $respons->text,
                 'price' => $respons->price,
-                'created_at' => Carbon::parse($respons->created_at)
+                'created_at' => Carbon::parse($respons->created_at),
+                'user' => [
+                    'id' => $respons->user_id,
+                    'name' => ($respons->user->company()->exists() && $respons->user->company->is_active && $respons->user->company->moderate_status === 'success') ? $respons->user->company->title : $respons->user->lastname . ' ' . $respons->user->name,
+                    'logo' => $respons->user->logo,
+                    'rate' => [
+                        'assessment' => Review::where('user_id', $respons->user->id)->avg('assessment'),
+                        'count_assessment' => Review::where('user_id', $respons->user->id)->count(),
+                        'count_done' => Task::where('executor_id', $respons->user->id)->where('status', 'success')->count()
+                    ]
+                ],
             ];
         }
         return response()->json([

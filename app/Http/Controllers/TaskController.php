@@ -32,6 +32,8 @@ class TaskController extends Controller
             $tasks = $tasks->where("title", 'LIKE', '%'.$request->search.'%')->orWhere('description', 'LIKE', '%'.$request->search.'%');
         if($request->user_id)
             $tasks = $tasks->where('user_id', (int)$request->user_id);
+        if($request->status)
+            $tasks = $tasks->where('status', $request->status);
 
         $tasks = Filter::SLS($tasks, $request);
 
@@ -40,6 +42,7 @@ class TaskController extends Controller
             $data[] = [
                 'id' => $task->id,
                 'user_id' => $task->user_id,
+                'user_name' => ($task->user->company()->exists() && $task->user->company->is_active && $task->user->company->moderate_status === 'success') ? $task->user->company->title : $task->user->lastname . ' ' . $task->user->name,
                 'title' => $task->title,
                 'description' => $task->description,
                 'phone' => (\auth('api')->id() === $task->user_id || \auth('api')->id() === $task->executor_id) ? $task->phone : null,
@@ -47,8 +50,11 @@ class TaskController extends Controller
                 'category_id' => $task->category_id,
                 'created_at' => $task->created_at,
                 'term' => $task->term,
-                'executor_id' => $task->execotor_id
+                'executor_id' => $task->execotor_id,
+                'status' => $task->status,
+                'files' => $task->files,
             ];
+
         }
 
         return response()->json([
@@ -101,10 +107,7 @@ class TaskController extends Controller
             $task->save();
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Задание успешно доавлено!'
-        ]);
+        return $this->_return_data($task);
     }
 
     public function update(Task $task, Request $request){
@@ -148,10 +151,7 @@ class TaskController extends Controller
             $task->save();
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Задание успешно обновлено!'
-        ]);
+        return $this->_return_data($task);
     }
 
     public function show(Task $task){
@@ -162,26 +162,7 @@ class TaskController extends Controller
         if ($task->executor_id == null || $task->executor_id === Auth::id())
             $myResponse = Response::with('user')->with('messages')->where('user_id', Auth::id())->where('task_id', $task->id)->first();
 
-        $data = [
-            'id' => $task->id,
-            'title' => $task->title,
-            'description' => $task->description,
-            'address' => $task->address,
-            'phone' => $task->phone,
-            'files' => $task->files,
-            'price' => $task->price,
-            'category_id' => $task->category_id,
-            'user_id' => $task->user_id,
-            'executor_id' => $task->executor_id,
-            'status' => $task->status,
-            'term' => $task->term,
-            'created_at' => $task->created_at,
-        ];
-
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ], 200);
+        return $this->_return_data($task);
     }
 
     public function destroy(Task $task){
@@ -203,6 +184,29 @@ class TaskController extends Controller
                 'success' => false,
                 'error' => "Что-то пошло не так или ты хаккер"
             ], 419);
+    }
+
+    private function _return_data($task){
+        $data = [
+            'id' => $task->id,
+            'title' => $task->title,
+            'description' => $task->description,
+            'address' => $task->address,
+            'phone' => $task->phone,
+            'files' => $task->files,
+            'price' => $task->price,
+            'category_id' => $task->category_id,
+            'user_id' => $task->user_id,
+            'executor_id' => $task->executor_id,
+            'status' => $task->status,
+            'term' => $task->term,
+            'created_at' => $task->created_at,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
     }
 
     public function categories(){
