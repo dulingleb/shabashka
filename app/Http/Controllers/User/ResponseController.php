@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Response;
+use App\ResponseMessage;
 use App\Review;
 use App\Task;
 use Carbon\Carbon;
@@ -14,7 +15,21 @@ class ResponseController extends Controller
 {
     public function index(Task $task){
         $data = [];
+
         foreach ($task->responses as $respons){
+            $_messages = ResponseMessage::where('response_id', $respons->id)->orWhere('user_id', $respons->user_id)->orWhere('user_id', $task->user_id)->get();
+            $messages = [];
+            foreach ($_messages as $message){
+                $messages[] = [
+                    'id' => $message->id,
+                    'response_id' => $message->response_id,
+                    'user_id' => $message->user_id,
+                    'text' => $message->text,
+                    'created_at' => Carbon::parse($message->created_at)
+                ];
+            }
+
+
             $data[] = [
                 'id' => $respons->id,
                 'text' => $respons->text,
@@ -30,6 +45,7 @@ class ResponseController extends Controller
                         'count_done' => Task::where('executor_id', $respons->user->id)->where('status', 'success')->count()
                     ]
                 ],
+                'messages' => $messages
             ];
         }
         return response()->json([

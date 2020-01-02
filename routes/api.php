@@ -38,6 +38,7 @@ Route::middleware(['auth:api'])->prefix('task')->group(function() {
     Route::delete('{task}', 'TaskController@destroy');
     
     Route::post('{task}/response', 'User\ResponseController@store');
+    Route::post('{task}/message', 'User\ResponseMessageController@store');
 });
 
 

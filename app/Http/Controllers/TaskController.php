@@ -114,13 +114,13 @@ class TaskController extends Controller
         if($task->user_id !== \auth('api')->id())
             return response()->json([
                 'success' => false,
-                'message' => 'Не ваше задание'
+                'error' => ['message' => 'Не ваше задание']
             ], 419);
 
         if($task->status !== 'search_executor')
             return response()->json([
                 'success' => false,
-                'message' => 'Задание в работе или завершенное редактировать нельзя'
+                'error' => ['message' => 'Задание в работе или завершенное редактировать нельзя']
             ], 401);
 
         $this->_validate($request);
@@ -177,12 +177,12 @@ class TaskController extends Controller
         } elseif ($task->executor_id !== null)
             return response()->json([
                 'success' => false,
-                'error' => "Нельзя удалить задание, если уже назначен исполнитель"
+                'error' => ['message' => 'Нельзя удалить задание, если уже назначен исполнитель']
             ], 200);
         else
             return response()->json([
                 'success' => false,
-                'error' => "Что-то пошло не так или ты хаккер"
+                'error' => ['message' => 'Что-то пошло не так или ты хаккер']
             ], 419);
     }
 
