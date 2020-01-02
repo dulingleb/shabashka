@@ -1,4 +1,4 @@
-import { Task, TaskResponse } from './model/task.model'
+import { Task, TaskResponse, TaskOptions } from './model/task.model'
 import apiService from './api.service'
 import { ResponseApi } from './model/api.model'
 
@@ -14,19 +14,19 @@ class TaskService {
     return this._task
   }
 
-  async getTasks(start = 0, limit = 10, sort = 'DESC', categories = null, search = '', userId = null): Promise<Task[]> {
-    let query = `?start=${start}`
-    if (limit) {
-      query += `&limit=${limit}`
+  async getTasks(taskOptions: TaskOptions): Promise<Task[]> {
+    let query = `?start=${taskOptions.start}`
+    if (taskOptions.limit) {
+      query += `&limit=${taskOptions.limit}`
     }
-    if (categories && categories.length) {
-      query += `&categories=[${categories}]`
+    if (taskOptions.categories && taskOptions.categories.length) {
+      query += `&categories=[${taskOptions.categories}]`
     }
-    if (search && search.length > 2) {
-      query += `&search=${search}`
+    if (taskOptions.search && taskOptions.search.length > 2) {
+      query += `&search=${taskOptions.search}`
     }
-    if (userId !== null) {
-      query += `&user_id=${userId}`
+    if (taskOptions.userId || taskOptions.userId === 0) {
+      query += `&user_id=${taskOptions.userId}`
     }
     const response = await apiService.get('tasks', query)
     if (response.success) {
@@ -97,8 +97,8 @@ class TaskService {
       description: resTask.description,
       price: resTask.price,
       phone: resTask.phone,
-      createdAt: resTask.created_at,
-      term: resTask.term,
+      createdAt: new Date(resTask.created_at),
+      term: new Date(resTask.term),
       categoryId: resTask.category_id,
       address: resTask.address,
       executorId: resTask.executor_id,

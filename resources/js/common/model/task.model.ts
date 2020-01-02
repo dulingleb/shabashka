@@ -6,9 +6,9 @@ export interface Task {
   description: string
   price: number
   phone: string
-  createdAt: string
+  createdAt: Date
   created: string
-  term: string
+  term: Date
   categoryId: number
   address: string
   executorId: number
@@ -47,4 +47,13 @@ export interface TaskResResponse {
   text: string
   price: number
   user_id: number
+}
+
+export interface TaskOptions {
+  start: number
+  limit: number
+  sort: string
+  categories: number[]
+  search: string
+  userId: number
 }

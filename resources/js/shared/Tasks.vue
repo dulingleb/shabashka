@@ -9,12 +9,15 @@
           <h3 class="title">
             <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
             <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
-            <small class="text-secondary">{{ task.createdAt }}</small>
+            <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small>
           </h3>
           <p class="description">{{ task.description }}</p>
           <footer class="info-footer">
-            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.term }}<font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
+            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ getTextDate(task.term) }}
+            <font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
             <span class="btn btn-link text-info category-link" @click="changeCategory(task.categoryId)">{{ getCategoryName(task.categoryId) }}</span>
+            <font-awesome-icon :icon="['fas', 'user']" class="ml-3 text-secondary" />
+            <span class="btn btn-link text-info category-link" @click="changeUser(task.userId)">{{ task.userTitle }}</span>
           </footer>
         </div>
         <div class="col-md-3 text-center text-secondary">
@@ -34,6 +37,7 @@ import userService from '../common/user.service'
 import categoryService from '../common/category.service'
 import taskService from '../common/task.service'
 import { User } from '../common/model/user.model'
+import { getTextDate } from '../common/utils'
 
 export default {
   name: 'tasks',
@@ -60,13 +64,17 @@ export default {
     }
   },
   methods: {
-    async changeCategory(checkedCategory: string) {
-      this.$emit('change-category', checkedCategory)
+    async changeCategory(category: string) {
+      this.$emit('change-category', [category])
+    },
+    async changeUser(userId: string) {
+      this.$emit('change-user', userId)
     },
 
     getTasks: _.debounce(async(self) => {
       self.loading = true
-      self.tasks = await taskService.getTasks(self.taskOptions.start, self.taskOptions.limit, self.taskOptions.sort, self.taskOptions.checkedCategory, self.taskOptions.search, self.taskOptions.userId)
+      console.log(self.taskOptions)
+      self.tasks = await taskService.getTasks(self.taskOptions)
       self.$forceUpdate()
       await self.$nextTick()
       self.loading = false
@@ -74,6 +82,10 @@ export default {
 
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
+    },
+
+    getTextDate(date: Date) {
+      return getTextDate(date)
     }
   }
 }
