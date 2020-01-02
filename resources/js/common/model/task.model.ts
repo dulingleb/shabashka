@@ -15,6 +15,7 @@ export interface Task {
   files: string[]
   status: string
   userId: number
+  userTitle: string
 }
 
 export interface TaskResponse {
@@ -31,6 +32,7 @@ export interface TaskResponse {
   files: string[]
   status: string
   user_id: number
+  user_title: string
 }
 
 export interface TaskRes {
