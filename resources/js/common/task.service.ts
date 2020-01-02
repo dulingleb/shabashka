@@ -59,7 +59,6 @@ class TaskService {
 
   async responseTask(id: number, text: string, price: string): Promise<void> {
     const response = await apiService.post(`task/${id}/response`, { text, price })
-    console.log(response)
     if (response.success) {
       const resTask = response.data
     }
@@ -102,7 +101,7 @@ class TaskService {
       categoryId: resTask.category_id,
       address: resTask.address,
       executorId: resTask.executor_id,
-      files: resTask.files,
+      files: resTask.files || [],
       status: resTask.status,
       userId: resTask.user_id,
       userTitle: resTask.user_title,

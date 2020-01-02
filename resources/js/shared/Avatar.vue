@@ -1,7 +1,7 @@
  <template>
-  <div class="logo" :class="{ edited: isEdit }" :style="{ backgroundColor: userColor }">
+  <div class="logo" :class="{ edited: isEdit, mini: mini }" :style="{ backgroundColor: userColor }">
 
-    <span class="user-title">{{ userTitle }}</span>
+    <span class="logo-title">{{ logoTitle }}</span>
 
     <div v-if="image && !filePreview" class="img">
       <img :src="image" alt />
@@ -30,17 +30,17 @@ import { stringToHslColor, isImage } from '../common/utils'
 export default {
   name: 'avatar',
   components: {},
-  props: ['userName', 'image', 'isEdit'],
+  props: ['title', 'image', 'isEdit', 'mini'],
   data() {
     return {
       userColor: '#17a2b8',
-      userTitle: '',
+      logoTitle: '',
       file: null,
       filePreview: ''
     }
   },
   watch: {
-    userName() {
+    title() {
       this.setUserColor()
     },
     image() {
@@ -50,16 +50,15 @@ export default {
     }
   },
 
-  // tslint:disable-next-line:no-empty
   mounted() {
     this.setUserColor()
   },
 
   methods: {
     setUserColor(): void {
-      this.userColor = stringToHslColor(this.userName, 30, 80)
-      if (this.userName && this.userName.length) {
-        this.userTitle = this.userName[0]
+      this.userColor = stringToHslColor(this.title, 30, 80)
+      if (this.title && this.title.length) {
+        this.logoTitle = this.title[0]
       }
     },
     previewFile() {
@@ -97,6 +96,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
+  text-transform: uppercase;
   border-radius: 50%;
   overflow: hidden;
 
@@ -106,7 +106,7 @@ export default {
     padding-bottom: 100%;
   }
 
-  .user-title {
+  .logo-title {
     margin-top: -10%;
     font-size: 700%;
     color: #fff;
@@ -131,6 +131,13 @@ export default {
     }
   }
 
+  &.mini {
+    .logo-title {
+      margin-top: -8%;
+      font-size: 42px;
+    }
+  }
+
   .icon-remove {
     position: absolute;
   }
@@ -150,7 +157,7 @@ export default {
     }
   }
 
-  .user-title, .img {
+  .logo-title, .img {
     opacity: 1;
     transition: 0.4s;
   }
@@ -166,7 +173,7 @@ export default {
 
   &.edited {
     &:hover {
-      .user-title, .img {
+      .logo-title, .img {
         opacity: 0.1;
       }
       .change-avatar, .icon-remove {
