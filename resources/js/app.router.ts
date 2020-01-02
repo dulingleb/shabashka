@@ -8,6 +8,7 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Reg.vue'
 import Profile from './views/Profile.vue'
+import Settings from './views/Settings.vue'
 import Task from './views/task/Task.vue'
 import NewTask from './views/task/NewTask.vue'
 import MyTasks from './views/task/MyTasks.vue'
@@ -44,6 +45,12 @@ const router = new VueRouter({
       name: 'profile',
       meta: { requiresAuth: true },
       component: Profile
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      meta: { requiresAuth: true },
+      component: Settings
     },
     {
       path: '/task/new',

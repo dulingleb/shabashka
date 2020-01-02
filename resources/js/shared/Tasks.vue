@@ -6,14 +6,20 @@
     <div v-if="!loading && tasks" class="tasks container">
       <section class="row task border-bottom" v-for="(task, index) in tasks" :key="index">
         <div class="col-md-9">
-          <h3 class="title">
-            <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
-            <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
-            <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small>
-          </h3>
-          <p class="description">{{ task.description }}</p>
+          <div class="task-data">
+            <div class="logo-wrapp">
+              <avatar :title="task.title" :image="getFirstImage(task.files)" :mini="true"></avatar>
+            </div>
+            <div class="data">
+              <h3 class="title">
+              <router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link>
+              <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small>
+              </h3>
+              <p class="description">{{ task.description }}</p>
+            </div>
+          </div>
           <footer class="info-footer">
-            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ getTextDate(task.term) }}
+            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />До {{ getTextDate(task.term) }}
             <font-awesome-icon :icon="['fa', 'folder']" class="ml-3 text-secondary" />
             <span class="btn btn-link text-info category-link" @click="changeCategory(task.categoryId)">{{ getCategoryName(task.categoryId) }}</span>
             <font-awesome-icon :icon="['fas', 'user']" class="ml-3 text-secondary" />
@@ -37,7 +43,7 @@ import userService from '../common/user.service'
 import categoryService from '../common/category.service'
 import taskService from '../common/task.service'
 import { User } from '../common/model/user.model'
-import { getTextDate } from '../common/utils'
+import { getTextDate, isImage } from '../common/utils'
 
 export default {
   name: 'tasks',
@@ -73,7 +79,6 @@ export default {
 
     getTasks: _.debounce(async(self) => {
       self.loading = true
-      console.log(self.taskOptions)
       self.tasks = await taskService.getTasks(self.taskOptions)
       self.$forceUpdate()
       await self.$nextTick()
@@ -86,7 +91,12 @@ export default {
 
     getTextDate(date: Date) {
       return getTextDate(date)
-    }
+    },
+
+    getFirstImage(files: string[]) {
+      return files.find(file => isImage(file))
+    },
+
   }
 }
 </script> 
@@ -97,6 +107,14 @@ export default {
     box-shadow: 0px 0px 10px -3px rgba(0,0,0,0.25);
     .task {
       padding: 10px 0;
+      .task-data {
+        display: flex;
+        align-items: flex-start;
+        .logo-wrapp {
+          margin-right: 10px;
+          width: 70px;
+        }
+      }
       small {
         font-size: 12px;
       }

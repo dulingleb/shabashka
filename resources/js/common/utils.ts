@@ -30,7 +30,7 @@ export function getErrTitles(errData: any): string[] {
 }
 
 export function getTextDate(date: Date): string {
-  console.log(date)
+  if (!date) { return '' }
   const nowTime = new Date().getTime()
   const dateTime = date.getTime()
   const diferendTime = Math.floor(nowTime - dateTime)

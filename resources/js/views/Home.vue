@@ -50,13 +50,11 @@ export default {
     async changeCategory(categories: string[]) {
       this.taskOptions.categories = categories
       this.taskOptions.userId = ''
-      console.log(this.taskOptions)
     },
 
     async changeUser(userId: string) {
       this.taskOptions.userId = userId
       this.taskOptions.categories = []
-      console.log(this.taskOptions)
     },
 
   },

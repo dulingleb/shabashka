@@ -27,9 +27,10 @@
               <template v-slot:button-content>
               <span class="text-white">{{ userName }}</span>
               </template>
-              <b-dropdown-item :to="{ name: 'profile' }">Профиль</b-dropdown-item>
-              <b-dropdown-item :to="{ name: 'myTasks' }">Мои задания</b-dropdown-item>
-              <b-dropdown-item @click="logout()">Выход </b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'settings' }"><font-awesome-icon :icon="['fas', 'cog']" class="mr-2 text-secondary" />Настройки</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'profile' }"><font-awesome-icon :icon="['fas', 'user']" class="mr-2 text-secondary" />Профиль</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'myTasks' }"><font-awesome-icon :icon="['fas', 'tasks']" class="mr-2 text-secondary" />Мои задания</b-dropdown-item>
+              <b-dropdown-item @click="logout()"><font-awesome-icon :icon="['fas', 'sign-out-alt']" class="mr-2 text-secondary" />Выход </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>

@@ -40,6 +40,17 @@ export interface TaskRes {
   text: string
   price: number
   userId: number
+  createdAt: Date
+  user: {
+    id: number
+    name: string
+    logo: string,
+    rate: {
+      assessment: number
+      countAssessment: number
+      countDone: number
+    }
+  }
 }
 
 export interface TaskResResponse {
@@ -47,6 +58,17 @@ export interface TaskResResponse {
   text: string
   price: number
   user_id: number
+  created_at: string
+  user: {
+    id: number
+    name: string
+    logo: string,
+    rate: {
+      assessment: number
+      count_assessment: number
+      count_done: number
+    }
+  }
 }
 
 export interface TaskOptions {
