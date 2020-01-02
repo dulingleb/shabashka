@@ -105,6 +105,7 @@ class TaskService {
       files: resTask.files,
       status: resTask.status,
       userId: resTask.user_id,
+      userTitle: resTask.user_title,
     } as Task
   }
 
