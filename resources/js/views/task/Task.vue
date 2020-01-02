@@ -1,23 +1,37 @@
 <template>
 <div class="">
   <div class="card">
-    <div class="card-header">{{ task ? task.title : '' }}</div>
+    <div class="card-header" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></div>
 
     <div class="card-body">
       <p v-if="loading">Loading...</p>
       <div v-if="!loading" class="row">
         <div class="col-md-8">
-          <p>{{ task.description }}</p>
-          <div v-if="task.files">
-            <div class="file" v-for="(file, index) in task.files" :key="index">
-              <img :src="file" alt="">
+          <div class="user-wrapp">
+            <div class="logo-wrapp">
+              <avatar v-if="customer" :title="userName" :image="customer.logo" :mini="true"></avatar>
             </div>
+            <div class="user-data">
+                <p class="m-0 name">{{ userName }}</p>
+                <p class="m-0 rating"> <a href="" class="text-secondary">нет отзывов</a></p>
+            </div>
+          </div>
+          <p>{{ task.description }}</p>
+          <div v-if="task.files" class="files">
+            <a class="file" v-for="(file, index) in task.files" :key="index" :href="file" :title="getFileNameByUrl(file)" target="_blank">
+              <div v-if="isImage(file)" class="img">
+                <img :src="file" alt="">
+              </div>
+              <div v-if="!isImage(file)" class="doc">
+                <font-awesome-icon :icon="['fas', 'file-alt']" class="icon text-secondary" />
+              </div>
+            </a>
           </div>
 
         </div>
         <div class="col-md-4">
           <p class="mb-0">
-            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ task.term }}</p>
+            <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ getTextDate(task.term) }}</p>
           <p class="mb-0">
             <font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
           <p class="mb-0">
@@ -59,7 +73,7 @@
 
     <div class="card-body" v-if="user && task.userId === user.id">
       <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-info text-light task-btn">Редактировать</router-link>
-      <button class="btn btn-danger">Удалить</button>
+      <button class="btn btn-danger" @click="deleteTask">Удалить</button>
     </div>
 
     <div v-if="!user" class="card-body">
@@ -80,16 +94,14 @@
 </template>
 
 <script lang="ts">
-import {
-  Task
-} from '../../common/model/task.model'
-import {
-  Category
-} from '../../common/model/category.model'
+import { Task } from '../../common/model/task.model'
+import { Category } from '../../common/model/category.model'
 import { User } from 'resources/js/common/model/user.model'
 
 import taskService from '../../common/task.service'
 import categoryService from '../../common/category.service'
+import { getFileNameByUrl, getTextDate, capitalizeFirst, isImage } from '../../common/utils'
+import userService from '../../common/user.service'
 
 export default {
   name: 'app-register',
@@ -97,7 +109,8 @@ export default {
   data() {
     return {
       loading: true,
-      task: {} as Task,
+      task: null,
+      customer: null,
       categories: [] as Category[],
       form: {
         price: 0,
@@ -117,7 +130,14 @@ export default {
   },
   async mounted() {
     this.task = await taskService.getTask(this.$route.params.id)
+    if (!this.task) {
+      this.$router.push('/')
+    }
     this.categories = await categoryService.getCategories()
+    this.customer = this.task.userId === this.user.id ? this.user : await userService.getUserById(this.task.userId)
+    if (!this.customer) {
+      this.$router.push('/')
+    }
     this.responses = await taskService.getResponses(this.task.id)
     this.loading = false
   },
@@ -131,27 +151,81 @@ export default {
     },
     validateDescription() {
       return !this.formDirty || (this.form.description.length > 19)
+    },
+    userName() {
+      return capitalizeFirst(this.customer.name) + ' ' + capitalizeFirst(this.customer.surname)
     }
   },
   methods: {
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
     },
+
     async onSubmit(evt) {
       this.loading = true
       this.loading = false
     },
+
     onReset(evt) {
       this.form.email = ''
       this.form.password = ''
     },
+
     onSubmitResponse() {
-      console.log(this.form)
       taskService.responseTask(this.task.id, this.form.description, this.form.price)
+    },
+
+    async deleteTask() {
+      const response = await taskService.deleteTask(this.task.id)
+      this.$router.push('/my-tasks')
+    },
+
+    isImage(url: string) {
+      return isImage(url)
+    },
+
+    getTextDate(date: Date) {
+      return getTextDate(date)
+    },
+
+    getFileNameByUrl(url: string) {
+      return getFileNameByUrl(url)
     }
   }
 }
 </script> 
 
 <style lang="scss" scoped>
+.user-wrapp {
+  padding-bottom: 10px;
+  display: flex;
+  .logo-wrapp {
+    margin-right: 10px;
+    width: 70px;
+  }
+  .user-data {
+
+  }
+}
+.files {
+  margin: 0 -5px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  .file {
+    display: inline-block;
+    margin: 0 5px;
+    .img {
+      display: flex;
+      max-height: 70px;
+      img {
+        max-height: 100%;
+      }
+    }
+    .doc {
+      font-size: 58px;
+      line-height: 1;
+    }
+  }
+}
 </style>

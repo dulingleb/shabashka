@@ -5,8 +5,17 @@ import { CompanyResponse, Company } from './model/company.model'
 import { ResponseApiAuth, ResponseApi } from './model/api.model'
 
 class UserService {
+
   async getTestUser(): Promise<User> {
     const response = await apiService.get('user/me')
+    if (response.success) {
+      return this.parseUser(response.data)
+    }
+    return null
+  }
+
+  async getUserById(id: number): Promise<User> {
+    const response = await apiService.get(`user/${id}`)
     if (response.success) {
       return this.parseUser(response.data)
     }

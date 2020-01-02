@@ -40,9 +40,9 @@ class TaskService {
     const response = await apiService.get(`task/${id}`)
     if (response.success) {
       const resTask: TaskResponse = response.data
-      this._task = this.convertResTask(resTask)
+      return this.convertResTask(resTask)
     }
-    return this.task
+    return null
   }
 
   async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<ResponseApi> {
@@ -59,6 +59,13 @@ class TaskService {
 
   async responseTask(id: number, text: string, price: string): Promise<void> {
     const response = await apiService.post(`task/${id}/response`, { text, price })
+    if (response.success) {
+      const resTask = response.data
+    }
+  }
+
+  async deleteTask(id: number): Promise<void> {
+    const response = await apiService.delete(`task/${id}`)
     if (response.success) {
       const resTask = response.data
     }
