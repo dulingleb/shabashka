@@ -5,7 +5,7 @@
         </div>
         <div class="col-md-8 col-lg-9">
            <div class="tasks">
-            <tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory"></tasks>
+            <tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory" @change-user="changeUser"></tasks>
           </div>
         </div>
       </div>
@@ -26,8 +26,9 @@ export default {
         start: 0,
         limit: 10,
         sort: 'DESC',
-        checkedCategory: [],
-        search: ''
+        categories: [],
+        search: '',
+        userId: ''
       }
     }
   },
@@ -46,8 +47,16 @@ export default {
       this.categories = categories
     },
 
-    async changeCategory(checkedCategory: string) {
-      this.taskOptions.checkedCategory = checkedCategory
+    async changeCategory(categories: string[]) {
+      this.taskOptions.categories = categories
+      this.taskOptions.userId = ''
+      console.log(this.taskOptions)
+    },
+
+    async changeUser(userId: string) {
+      this.taskOptions.userId = userId
+      this.taskOptions.categories = []
+      console.log(this.taskOptions)
     },
 
   },

@@ -28,3 +28,19 @@ export function getErrTitles(errData: any): string[] {
   const res = Object.values(errData).filter(err => err && Array.isArray(err)).map(err => err[0])
   return res.length ? res : defaultErr
 }
+
+export function getTextDate(date: Date): string {
+  console.log(date)
+  const nowTime = new Date().getTime()
+  const dateTime = date.getTime()
+  const diferendTime = Math.floor(nowTime - dateTime)
+  switch (diferendTime) {
+    case 0:
+      return 'сегодня'
+    case 1:
+      return 'вчера'
+    case -1:
+      return 'завтра'
+  }
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+}
