@@ -7,8 +7,7 @@
       <section class="row task border-bottom" v-for="(task, index) in tasks" :key="index">
         <div class="col-md-9">
           <h3 class="title">
-            <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
-            <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="text-decoration-none text-info">{{ task.title }}</router-link>
+            <router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link>
             <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small>
           </h3>
           <p class="description">{{ task.description }}</p>

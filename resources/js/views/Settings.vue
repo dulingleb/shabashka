@@ -162,7 +162,7 @@ import { User } from '../common/model/user.model'
 import { capitalizeFirst, getErrTitles } from '../common/utils'
 
 export default {
-  name: 'app-profile',
+  name: 'app-settings',
   data() {
     return {
       loading: false,
