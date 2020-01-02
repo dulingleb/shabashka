@@ -82,8 +82,8 @@
 
   </div>
 
-  <div class="card mt-4" v-if="!loading">
-    <div class="card-header">Откликнулись (0)</div>
+  <div class="card mt-4" v-if="!loadingResponses">
+    <div class="card-header">Откликнулись ({{ responsesCount }})</div>
 
     <div class="card-body">
       {{ responses }}
@@ -109,6 +109,7 @@ export default {
   data() {
     return {
       loading: true,
+      loadingResponses: true,
       task: null,
       customer: null,
       categories: [] as Category[],
@@ -117,7 +118,8 @@ export default {
         description: ''
       },
       formDirty: false,
-      responses: []
+      responses: [],
+      responsesCount: []
     }
   },
   watch: {
@@ -138,8 +140,11 @@ export default {
     if (!this.customer) {
       this.$router.push('/')
     }
-    this.responses = await taskService.getResponses(this.task.id)
     this.loading = false
+    const res = await taskService.getResponses(this.task.id)
+    this.responses = res.responses
+    this.responsesCount = res.total
+    this.loadingResponses = false
   },
   computed: {
     user(): User {

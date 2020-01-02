@@ -1,4 +1,4 @@
-import { Task, TaskResponse, TaskOptions } from './model/task.model'
+import { Task, TaskResponse, TaskOptions, TaskResResponse, TaskRes } from './model/task.model'
 import apiService from './api.service'
 import { ResponseApi } from './model/api.model'
 
@@ -71,11 +71,16 @@ class TaskService {
     }
   }
 
-  async getResponses(id: number): Promise<any> {
+  async getResponses(id: number): Promise<{ responses: TaskRes[], total: number }> {
     const response: ResponseApi = await apiService.get(`task/${id}/responses`)
-    // if (response.success) {
-    // }
-    return response
+    if (response.success) {
+      const responses: TaskRes[] = []
+      for (let res of response.data) {
+        responses.push(this.convertRes(res))
+      }
+      return { responses, total: response.total }
+    }
+    return { responses: [], total: -1 }
   }
 
   parseChangedFields(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[], filesRemoved: File[] = []): FormData {
@@ -113,6 +118,27 @@ class TaskService {
       userId: resTask.user_id,
       userTitle: resTask.user_title,
     } as Task
+  }
+
+  private convertRes(res: TaskResResponse): TaskRes {
+    const user = {
+      id: res.user.id,
+      name: res.user.name,
+      logo: res.user.logo,
+      rate: {
+        assessment: res.user.rate.assessment,
+        countAssessment: res.user.rate.count_assessment,
+        countDone: res.user.rate.count_done
+      }
+    }
+    return {
+      id: res.id,
+      text: res.text,
+      price: res.price,
+      userId: res.user_id,
+      createdAt: new Date(res.created_at),
+      user
+    } as TaskRes
   }
 
 }
