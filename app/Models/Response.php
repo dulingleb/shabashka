@@ -15,4 +15,8 @@ class Response extends Model
     public function messages(){
         return $this->hasMany(ResponseMessage::class);
     }
+
+    public function task(){
+        return $this->belongsTo(Task::class);
+    }
 }

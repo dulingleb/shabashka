@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Func\Filter;
+use App\Func\ResponseJson;
 use App\Response;
 use App\Task;
 use Carbon\Carbon;
@@ -39,15 +40,15 @@ class TaskController extends Controller
 
         $data = [];
         foreach ($tasks->get() as $task) {
-            $data[] = $this->get_task_array($task);
+            $data[] = $this->getTaskArray($task);
         }
 
-        return $this->get_response_success($data, $total);
+        return ResponseJson::getSuccess($data, $total);
     }
 
     public function store(Request $request)
     {
-        $this->validate_task($request);
+        $this->validateTask($request);
 
         $task = Task::create([
             'category_id' => $request->category_id,
@@ -66,20 +67,19 @@ class TaskController extends Controller
             $task->save();
         }
 
-        return $this->get_task_response($task);
+        return $this->getTaskResponse($task);
     }
 
     public function update(Task $task, Request $request) {
         if ($task->user_id !== \auth('api')->id()) {
-          return $this->get_response_err(['message' => 'Не ваше задание']);
+          return ResponseJson::getError(['message' => 'Не ваше задание']);
         }
 
         if ($task->status !== 'search_executor') {
-          return $this->get_response_err(['message' => 'Не ваше задание'], 401);
+          return ResponseJson::getError(['message' => 'Не ваше задание'], 401);
         }
 
-        $this->validate_task($request);
-
+        $this->validateTask($request);
 
         $task->category_id = $request->category_id;
         $task->title = $request->title;
@@ -106,18 +106,11 @@ class TaskController extends Controller
             $task->save();
         }
 
-        return $this->get_task_response($task);
+        return $this->getTaskResponse($task);
     }
 
     public function show(Task $task) {
-        $task->load(['responses' => function($q) {
-            $q->selectRaw('responses.*, (SELECT executor_id FROM tasks WHERE responses.user_id=tasks.executor_id) as executor_id')->orderBy('executor_id', 'DESC');
-        }])->load('category')->load('user');
-
-        if ($task->executor_id == null || $task->executor_id === Auth::id())
-            $myResponse = Response::with('user')->with('messages')->where('user_id', Auth::id())->where('task_id', $task->id)->first();
-
-        return $this->get_task_response($task);
+        return $this->getTaskResponse($task);
     }
 
     public function destroy(Task $task) {
@@ -130,35 +123,35 @@ class TaskController extends Controller
                 'success' => true
             ], 200);
         } elseif ($task->executor_id !== null) {
-          return $this->get_response_err(['message' => 'Нельзя удалить задание, если уже назначен исполнитель']);
+          return ResponseJson::getError(['message' => 'Нельзя удалить задание, если уже назначен исполнитель']);
         } else {
-          return $this->get_response_err(['message' => 'Что-то пошло не так или ты хаккер']);
+          return ResponseJson::getError(['message' => 'Что-то пошло не так или ты хаккер']);
         }
     }
 
     public function categories() {
       $categories = Category::all();
       $total = $categories->count();
-      return $this->get_response_success($categories, $total);
+      return ResponseJson::getSuccess($categories, $total);
     }
 
-    private function get_task_response($task) {
-      $data = $this->get_task_array($task);
-      return $this->get_response_success($data);
+    private function getTaskResponse($task) {
+      $data = $this->getTaskArray($task);
+      return ResponseJson::getSuccess($data);
     }
 
-    private function get_task_array($task) {
+    private function getTaskArray($task) {
       $data = [
           'id' => $task->id,
           'title' => $task->title,
           'description' => $task->description,
           'address' => $task->address,
-          'phone' => $this->get_task_phone($task),
+          'phone' => $this->getTaskPhone($task),
           'files' => $task->files,
           'price' => $task->price,
           'category_id' => $task->category_id,
           'user_id' => $task->user_id,
-          'user_title' => $this->get_user_title($task),
+          'user_title' => $this->getUserTitle($task),
           'executor_id' => $task->executor_id,
           'status' => $task->status,
           'term' => $task->term,
@@ -168,17 +161,17 @@ class TaskController extends Controller
       return $data;
     }
 
-    private function get_user_title($task) {
+    private function getUserTitle($task) {
       return $task->user->company()->exists() && $task->user->company->is_active && $task->user->company->moderate_status === 'success'
               ? $task->user->company->title
               : $task->user->lastname . ' ' . $task->user->name;
     }
 
-    private function get_task_phone($task) {
+    private function getTaskPhone($task) {
       return (\auth('api')->id() === $task->user_id || \auth('api')->id() === $task->executor_id) ? $task->phone : null;
     }
 
-    private function validate_task($request) {
+    private function validateTask($request) {
       $request->validate([
           'category_id' => [
               'required',
@@ -199,25 +192,4 @@ class TaskController extends Controller
           'files.*' => 'file|mimes:jpeg,png,jpg,doc,docx,xls,xlsx,pdf,rtf|max:4096'
       ]);
     }
-
-    private function get_response_success($data = [], $total = 1, $status = 200) {
-      return $this->get_response(true, $data, [], $total, $status);
-    }
-
-    private function get_response_err($error = [], $status = 419) {
-      return $this->get_response(true, [], $error, 1, $status);
-    }
-
-    private function get_response($success, $data = [], $error = [], $total = 1, $status = 200) {
-      $response['success'] = $success;
-      if ($success) {
-        $response['data'] = $data;
-        $response['total'] = $total;
-      } else {
-        $response['error'] = $error;
-      }
-
-      return response()->json($response, $status);
-    }
-
 }

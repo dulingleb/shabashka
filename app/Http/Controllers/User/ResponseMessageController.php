@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Func\ResponseJson;
 use App\Response;
 use App\ResponseMessage;
 use App\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class ResponseMessageController extends Controller
 {
@@ -25,21 +25,26 @@ class ResponseMessageController extends Controller
             ]
         ]);
 
-        $message = ResponseMessage::create([
+        $response_message = ResponseMessage::create([
             'response_id' => $request->response_id,
             'text' => $request->text,
             'user_id' => \auth('api')->id()
         ]);
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $message->id,
-                'user_id' => $message->user_id,
-                'response_id' => $message->response_id,
-                'text' => $message->text,
-                'created_at' => Carbon::parse($message->created_at)
-            ]
-        ], 200);
+        $data = $this->getResponseMessageArray($response_message);
+
+        return ResponseJson::getSuccess($data);
+    }
+
+    private function getResponseMessageArray(ResponseMessage $response_message){
+        $data = [
+            'id' => $response_message->id,
+            'user_id' => $response_message->user_id,
+            'response_id' => $response_message->response_id,
+            'text' => $response_message->text,
+            'created_at' => $response_message->created_at
+        ];
+
+        return $data;
     }
 }
