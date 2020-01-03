@@ -10,6 +10,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import StarRating from 'vue-star-rating'
 
 import PrettyCheckbox from 'pretty-checkbox-vue'
 import 'pretty-checkbox/src/pretty-checkbox.scss'
@@ -47,6 +48,7 @@ Vue.use(VueTheMask)
 
 library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('star-rating', StarRating)
 Vue.config.productionTip = false
 
 Vue.component('multiselect', Multiselect)

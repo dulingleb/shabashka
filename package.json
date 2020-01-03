@@ -41,6 +41,7 @@
         "v-mask": "^2.0.1",
         "vue-axios": "^2.1.5",
         "vue-multiselect": "^2.1.6",
+        "vue-star-rating": "^1.6.1",
         "vue-storage-plus": "^2.0.0",
         "vue-the-mask": "^0.11.1",
         "vuejs-datepicker": "^1.6.2",

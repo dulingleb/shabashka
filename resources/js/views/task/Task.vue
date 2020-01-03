@@ -13,6 +13,7 @@
             </div>
             <div class="user-data">
                 <p class="m-0 name">{{ userName }}</p>
+                <star-rating v-model="rating" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
                 <p class="m-0 rating"> <a href="" class="text-secondary">нет отзывов</a></p>
             </div>
           </div>
@@ -119,7 +120,8 @@ export default {
       },
       formDirty: false,
       responses: [],
-      responsesCount: []
+      responsesCount: [],
+      rating: 3
     }
   },
   watch: {
