@@ -28,7 +28,7 @@
 import { stringToHslColor, isImage } from '../common/utils'
 
 export default {
-  name: 'avatar',
+  name: 'app-avatar',
   components: {},
   props: ['title', 'image', 'isEdit', 'mini'],
   data() {

@@ -1,6 +1,6 @@
  <template>
   <div>
-    <task-edit v-if="!loading" :task="task" @saved-task="savedTask"></task-edit>
+    <app-task-edit v-if="!loading" :task="task" @saved-task="savedTask"></app-task-edit>
   </div>
 </template>
 

@@ -15,7 +15,7 @@
             </div>
             <p class="image-name">{{ getFileNameByUrl(url) }}</p>
             <div class="remove-container">
-              <button class="btn btn-danger btn-remove" type="button" @click="removeExistFile(key)">Удалить</button>
+              <button class="btn btn-outline-danger btn-remove" type="button" @click="removeExistFile(key)">Удалить</button>
             </div>
           </div>
 
@@ -25,7 +25,7 @@
             </div>
             <p class="image-name">{{ file.name }}</p>
             <div class="remove-container">
-              <button class="btn btn-danger btn-remove" type="button" @click="removeFile(parseInt(index))">Удалить</button>
+              <button class="btn btn-outline-danger btn-remove" type="button" @click="removeFile(parseInt(index))">Удалить</button>
             </div>
           </div>
 
@@ -42,7 +42,7 @@
 import { isImage, getFileNameByUrl } from '../common/utils'
 
 export default {
-  name: 'drag-drop-images',
+  name: 'app-drag-drop-images',
   components: {},
   props: ['urls', 'reset'],
   data() {

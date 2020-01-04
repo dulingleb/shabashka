@@ -1,20 +1,20 @@
 <template>
   <div>
-    <div class="loading" v-if="loading">
-      Loading...
-    </div>
+    
+    <app-loading v-if="loading"></app-loading>
+
     <div v-if="!loading && tasks" class="tasks container">
-      <section class="row task border-bottom" v-for="(task, index) in tasks" :key="index">
+      <section class="row task" v-for="(task, index) in tasks" :key="index">
         <div class="col-md-9">
           <div class="task-data">
             <div class="logo-wrapp">
-              <avatar :title="task.title" :image="getFirstImage(task.files)" :mini="true"></avatar>
+              <app-avatar :title="task.title" :image="getFirstImage(task.files)" :mini="true"></app-avatar>
             </div>
             <div class="data">
-              <h3 class="title">
+              <h5 class="title">
               <router-link :to="{ name: 'task', params: { id: task.id } }" class="text-decoration-none text-info">{{ task.title }}</router-link>
               <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small>
-              </h3>
+              </h5>
               <p class="description">{{ task.description }}</p>
             </div>
           </div>
@@ -28,8 +28,8 @@
         </div>
         <div class="col-md-3 text-center text-secondary">
           <p class="price">{{ task.price }} руб.</p>
-          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-info text-light task-btn">Откликнуться</router-link>
-          <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-info text-light task-btn">Редактировать</router-link>
+          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
+          <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-outline-info task-btn">Редактировать</router-link>
         </div>
       </section>
     </div>
@@ -46,7 +46,7 @@ import { User } from '../common/model/user.model'
 import { getTextDate, isImage } from '../common/utils'
 
 export default {
-  name: 'tasks',
+  name: 'app-tasks',
   props: ['taskOptions', 'categories'],
   data() {
     return {
@@ -103,13 +103,14 @@ export default {
 
 <style lang="scss" scoped>
   .tasks {
-    background:#fff;
-    box-shadow: 0px 0px 10px -3px rgba(0,0,0,0.25);
+    padding: 15px 0;
     .task {
       padding: 10px 0;
+      border-bottom: 1px solid #dee2e6;
       .task-data {
         display: flex;
         align-items: flex-start;
+        margin-bottom: 15px;
         .logo-wrapp {
           margin-right: 10px;
           width: 70px;
@@ -131,10 +132,13 @@ export default {
       }
       .price {
         font-size: 20px;
-        font-weight: 600;
+        font-weight: 500;
       }
       .task-btn {
         width: 140px;
+      }
+      &:last-child {
+        border-bottom: none;
       }
     }
   }

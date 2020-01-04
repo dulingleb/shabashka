@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 const TSLintPlugin = require('tslint-webpack-plugin');
 
 mix.ts('resources/js/app.ts', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css')
+    .sass('resources/scss/app.scss', 'public/css')
     .webpackConfig({
         module: {
           rules: [

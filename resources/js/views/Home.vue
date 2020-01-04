@@ -1,14 +1,14 @@
 <template>
-  <div class="row">
-        <div class="col-md-4 col-lg-3">
-          <app-aside :categories="categories" @change-category="changeCategory"></app-aside>
-        </div>
-        <div class="col-md-8 col-lg-9">
-           <div class="tasks">
-            <tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory" @change-user="changeUser"></tasks>
-          </div>
-        </div>
+  <div class="row main-content">
+    <div class="col-md-4 col-lg-3 aside-wrapp">
+      <app-aside :categories="categories" @change-category="changeCategory"></app-aside>
+    </div>
+    <div class="col-md-8 col-lg-9">
+        <div class="tasks">
+        <app-tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory" @change-user="changeUser"></app-tasks>
       </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">

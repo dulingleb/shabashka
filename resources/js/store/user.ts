@@ -12,7 +12,7 @@ const state = new UserState()
 
 const getters = {
   user: (state: UserState) => {
-    return state.user.id !== undefined && state.user
+    return state.user && state.user.id !== undefined && state.user.id !== null && state.user
   },
 }
 

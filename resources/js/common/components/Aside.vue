@@ -1,13 +1,12 @@
  <template>
   <aside>
       <div v-if="categories">
-        <div v-for="category in categories" :key="category.id">
-          <h6 v-b-toggle="'collapse-' + category.id" class="bg-info category-title"><span class="title">{{ category.title }}</span><font-awesome-icon :icon="['fas', 'chevron-left']" class="icon" /></h6>
+        <div v-for="category in categories" :key="category.id" class="pb-2">
+          <h6 v-b-toggle="'collapse-' + category.id" class="category-title"><span class="title">{{ category.title }}</span><font-awesome-icon :icon="['fas', 'chevron-left']" class="icon" /></h6>
           <b-collapse :id="'collapse-' + category.id">
             <div class="sub-category" v-for="subCategory in category.children" :key="subCategory.id">
               <p-check name="category" color="info" :value="subCategory.id" v-model="checkedCategory" @change="checkboxToggle()">{{ subCategory.title }}</p-check>
             </div>
-            {{ checkedCategory }}
           </b-collapse>
         </div>
       </div>
@@ -42,14 +41,14 @@ export default {
 
 <style lang="scss" scoped>
   aside {
-    background: #fff;
-    box-shadow: 0px 0px 10px -3px rgba(0,0,0,0.25);
+    padding: 20px 10px;
     .category-title {
       display: flex;
       justify-content: space-between;
-      padding: 5px 10px;
-      color:white;
+      padding: 5px 0px;
+      margin: 0;
       font-weight: 500;
+      color: #343a40;
       cursor: pointer;
       .icon {
         transition: transform 0.4s;

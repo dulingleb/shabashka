@@ -1,11 +1,11 @@
 import './bootstrap'
 import Vue from 'vue'
 import { install as storageInstall } from 'vue-storage-plus'
-import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin, AlertPlugin } from 'bootstrap-vue'
+import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin, AlertPlugin, SpinnerPlugin } from 'bootstrap-vue'
 import VueTheMask from 'vue-the-mask'
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+// import 'bootstrap/dist/css/bootstrap.css'
+// import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt } from '@fortawesome/free-solid-svg-icons'
@@ -27,12 +27,14 @@ import Avatar from './shared/Avatar.vue'
 import Message from './shared/Message.vue'
 import Tasks from './shared/Tasks.vue'
 import TaskEdit from './shared/TaskEdit.vue'
+import Loading from './shared/Loading.vue'
 
-Vue.component('drag-drop-images', DragDropImages)
-Vue.component('avatar', Avatar)
-Vue.component('message', Message)
-Vue.component('tasks', Tasks)
-Vue.component('task-edit', TaskEdit)
+Vue.component('app-drag-drop-images', DragDropImages)
+Vue.component('app-avatar', Avatar)
+Vue.component('app-message', Message)
+Vue.component('app-tasks', Tasks)
+Vue.component('app-task-edit', TaskEdit)
+Vue.component('app-loading', Loading)
 
 Vue.use(storageInstall)
 
@@ -43,6 +45,7 @@ Vue.use(FormInputPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(ButtonPlugin)
 Vue.use(AlertPlugin)
+Vue.use(SpinnerPlugin)
 
 Vue.use(VueTheMask)
 

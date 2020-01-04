@@ -1,7 +1,7 @@
  <template>
   <footer>
       <div class="container">
-        <p class="copyright text-center"><strong>shabashki.ru.</strong> Copyright © 2019</p>
+        <p class="copyright text-center text-secondary"><strong>shabashki.ru.</strong> Copyright © 2019</p>
       </div>
   </footer>
 </template>
@@ -15,8 +15,7 @@ export default {
 
 <style lang="scss" scoped>
   footer {
-    background: #f7f7f7;
-    box-shadow: inset 4px 24px 23px -34px rgba(0,0,0,0.2);
+    background: #fff;
     .copyright {
       margin: 0;
       padding: 20px 10px;

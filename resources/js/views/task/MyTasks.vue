@@ -5,7 +5,7 @@
         </div>
         <div class="col-md-8 col-lg-9">
            <div class="tasks">
-            <tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory"></tasks>
+            <app-tasks :task-options="taskOptions" :categories="categories" @change-category="changeCategory"></app-tasks>
           </div>
         </div>
       </div>

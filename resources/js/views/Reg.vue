@@ -1,64 +1,64 @@
  <template>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">Регистрация</div>
+  <div class="">
 
-        <div class="card-body">
-          <b-form @submit="onSubmit" @reset="onReset">
-            <b-form-group name="name" description="">
-              <div class="row">
-                <label class="col-md-3 col-form-label text-md-right" for="name">Имя</label>
-                <div class="col-md-7">
-                  <b-form-input class="" id="name" v-model="form.name" :state="validateName" type="text" required placeholder="Введите имя" autofocus :disabled="loading"></b-form-input>
-                  <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 3-х символов</b-form-invalid-feedback>
-                </div>
-              </div>
-            </b-form-group>
-
-            <b-form-group  name="email" description="">
-              <div class="row">
-                <label class="col-md-3 col-form-label text-md-right" for="email">Email</label>
-                <div class="col-md-7">
-                  <b-form-input class="" id="email" v-model="form.email" :state="validateEmail" type="email" required placeholder="Введите email" :disabled="loading"></b-form-input>
-                  <b-form-invalid-feedback :state="validateEmail">Некорректный email</b-form-invalid-feedback>
-                </div>
-              </div>
-            </b-form-group>
-
-            <b-form-group name="password" description="">
-              <div class="row">
-                <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
-                <div class="col-md-7">
-                  <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" required placeholder="Введите пароль" :disabled="loading"></b-form-input>
-                  <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
-                </div>
-              </div>
-            </b-form-group>
-
-            <b-form-group name="passwordConfirm" description="">
-              <div class="row">
-                <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль:</label>
-                <div class="col-md-7">
-                  <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" required placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
-                  <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
-                </div>
-              </div>
-            </b-form-group>
-
-            <b-form-group>
-              <div class="row">
-                <div class="offset-md-3 col-md-7">
-                  <b-button type="submit" variant="info" :disabled="loading">Зарегестрировать</b-button>
-                  <router-link class="btn btn-link text-info" :to="{ name: 'login' }">Вход</router-link>
-                </div>
-              </div>
-            </b-form-group>
-            
-          </b-form>
-        </div>
-      </div>
+    <div class="page-title">
+      <h2 class="title">Регистрация</h2>
     </div>
+
+    <div class="page-content">
+      <b-form @submit="onSubmit" @reset="onReset">
+        <b-form-group name="name" description="">
+          <div class="row">
+            <label class="col-md-3 col-form-label text-md-right" for="name">Имя</label>
+            <div class="col-md-7">
+              <b-form-input class="" id="name" v-model="form.name" :state="validateName" type="text" required placeholder="Введите имя" autofocus :disabled="loading"></b-form-input>
+              <b-form-invalid-feedback :state="validateName">Некорректное имя. Должено быть длинее 3-х символов</b-form-invalid-feedback>
+            </div>
+          </div>
+        </b-form-group>
+
+        <b-form-group  name="email" description="">
+          <div class="row">
+            <label class="col-md-3 col-form-label text-md-right" for="email">Email</label>
+            <div class="col-md-7">
+              <b-form-input class="" id="email" v-model="form.email" :state="validateEmail" type="email" required placeholder="Введите email" :disabled="loading"></b-form-input>
+              <b-form-invalid-feedback :state="validateEmail">Некорректный email</b-form-invalid-feedback>
+            </div>
+          </div>
+        </b-form-group>
+
+        <b-form-group name="password" description="">
+          <div class="row">
+            <label class="col-md-3 col-form-label text-md-right" for="password">Пароль:</label>
+            <div class="col-md-7">
+              <b-form-input id="password" v-model="form.password" :state="validatePassword" type="password" required placeholder="Введите пароль" :disabled="loading"></b-form-input>
+              <b-form-invalid-feedback :state="validatePassword">Некорректный пароль. Должен быть длинее 3-х символов</b-form-invalid-feedback>
+            </div>
+          </div>
+        </b-form-group>
+
+        <b-form-group name="passwordConfirm" description="">
+          <div class="row">
+            <label class="col-md-3 col-form-label text-md-right" for="passwordConfirm">Пароль:</label>
+            <div class="col-md-7">
+              <b-form-input id="passwordConfirm" v-model="form.passwordConfirm" :state="validatePasswordConfirm" type="password" required placeholder="Подтвердите пароль" :disabled="loading"></b-form-input>
+              <b-form-invalid-feedback :state="validatePasswordConfirm">Пароли не совпадают</b-form-invalid-feedback>
+            </div>
+          </div>
+        </b-form-group>
+
+        <b-form-group>
+          <div class="row">
+            <div class="offset-md-3 col-md-7">
+              <b-button type="submit" variant="outline-info" :disabled="loading">Зарегестрировать</b-button>
+              <router-link class="btn btn-link text-info" :to="{ name: 'login' }">Вход</router-link>
+            </div>
+          </div>
+        </b-form-group>
+        
+      </b-form>
+    </div>
+
   </div>
 </template>
 

@@ -1,6 +1,6 @@
  <template>
   <div>
-    <task-edit @saved-task="savedTask"></task-edit>
+    <app-task-edit @saved-task="savedTask"></app-task-edit>
   </div>
 </template>
 

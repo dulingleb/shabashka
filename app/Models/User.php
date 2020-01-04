@@ -39,7 +39,7 @@ class User extends Authenticatable
 
         $data = [
             'assessment' => Review::whereIn('task_id', $this->tasks->pluck('id'))->avg('assessment') ?? 0,
-            'count_assessment' => Review::where('task_id', $this->tasks->pluck('id'))->count(),
+            'count_assessment' => Review::whereIn('task_id', $this->tasks->pluck('id'))->count(),
             'count_done' => Task::where('executor_id', $this->id)->where('status', 'success')->count()
         ];
 

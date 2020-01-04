@@ -1,0 +1,33 @@
+.main-content {
+  flex: 1;
+}
+.aside-wrapp {
+  border-right: 1px solid #dee2e6;
+}
+
+.page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 -15px;
+  padding: 10px 20px;
+  border-bottom: 1px solid#dee2e6;
+  .title {
+    margin: 0;
+    padding-left: 5px;
+    color: #343a40;
+    font-size: 1.3rem;
+    small {
+      font-size: 0.8rem;
+    }
+  }
+  &.sub-title {
+    border-top: 1px solid#dee2e6;
+    background-color: #f7f7f7;
+  }
+}
+
+.page-content {
+  padding: 20px 10px;
+}
+

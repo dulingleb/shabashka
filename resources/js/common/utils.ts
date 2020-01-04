@@ -4,7 +4,8 @@ export function capitalizeFirst(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-export function stringToHslColor(str: string, s: number, l: number): string {
+export function stringToHslColor(title: string, s: number, l: number): string {
+  const str = title || ''
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)

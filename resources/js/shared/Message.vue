@@ -10,7 +10,7 @@
 import { stringToHslColor, isImage } from '../common/utils'
 
 export default {
-  name: 'message',
+  name: 'app-message',
   components: {},
   props: ['message', 'error'],
   data() {

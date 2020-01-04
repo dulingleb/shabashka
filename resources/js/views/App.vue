@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import Header from '../common/components/Header.vue';
-import Footer from '../common/components/Footer.vue';
+import Header from '../common/components/Header.vue'
+import Footer from '../common/components/Footer.vue'
 
 import apiService from '../common/api.service'
 import userService from '../common/user.service'
@@ -27,7 +27,7 @@ export default {
     apiService.init(this.csrfToken)
     this.$store.dispatch('GET_USER')
   },
-};
+}
 </script> 
 
 <style lang="scss" scoped>
@@ -35,11 +35,15 @@ export default {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #fdfff6;
+    background: #f2f8ff;
 
     > .container {
-      padding: 30px 0;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
+      background-color: #fff;
     }
   }
 </style>
