@@ -8,7 +8,7 @@ import VueTheMask from 'vue-the-mask'
 // import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import StarRating from 'vue-star-rating'
 
@@ -49,7 +49,7 @@ Vue.use(SpinnerPlugin)
 
 Vue.use(VueTheMask)
 
-library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt)
+library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('star-rating', StarRating)
 Vue.config.productionTip = false

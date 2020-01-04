@@ -51,6 +51,8 @@ export default {
       color: #343a40;
       cursor: pointer;
       .icon {
+        position: relative;
+        top: 3px;
         transition: transform 0.4s;
       }
       &.collapsed {

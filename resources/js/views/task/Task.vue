@@ -5,8 +5,8 @@
   <div class="page-title">
     <h2 class="title" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></h2>
     <div class="btns" v-if="task && user && task.userId === user.id">
-        <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info">Редактировать</router-link>
-        <button class="btn btn-link text-danger" @click="deleteTask">Удалить</button>
+        <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info"><font-awesome-icon :icon="['fas', 'edit']" class="icon" /> Редактировать</router-link>
+        <button class="btn btn-link text-danger" @click="deleteTask"><font-awesome-icon :icon="['fas', 'trash-alt']" class="icon" /> Удалить</button>
     </div>
   </div>
 
@@ -233,9 +233,10 @@ export default {
     margin: 0 5px;
     .img {
       display: flex;
-      max-height: 70px;
+      height: 70px;
       img {
         max-height: 100%;
+        max-width: 100%;
       }
     }
     .doc {

@@ -1,7 +1,7 @@
  <template>
   <div class="logo" :class="{ edited: isEdit, mini: mini }" :style="{ backgroundColor: userColor }">
 
-    <span class="logo-title">{{ logoTitle }}</span>
+    <span class="logo-title" :style="{ fontSize: fontSize }">{{ logoTitle }}</span>
 
     <div v-if="image && !filePreview" class="img">
       <img :src="image" alt />
@@ -30,7 +30,7 @@ import { stringToHslColor, isImage } from '../common/utils'
 export default {
   name: 'app-avatar',
   components: {},
-  props: ['title', 'image', 'isEdit', 'mini'],
+  props: ['title', 'image', 'isEdit', 'fontSize'],
   data() {
     return {
       userColor: '#17a2b8',
@@ -107,8 +107,6 @@ export default {
   }
 
   .logo-title {
-    margin-top: -10%;
-    font-size: 700%;
     color: #fff;
     line-height: 0;
   }
@@ -128,13 +126,6 @@ export default {
 
     input[type=file] {
       display: none;
-    }
-  }
-
-  &.mini {
-    .logo-title {
-      margin-top: -8%;
-      font-size: 42px;
     }
   }
 

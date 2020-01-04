@@ -25,7 +25,10 @@
 
             <b-nav-item-dropdown right v-if="user">
               <template v-slot:button-content>
-              <span class="text-white">{{ userName }}</span>
+                <div class="profile-wrapp">
+                  <app-avatar class="logo" :title="userName" :image="user.logo" :font-size="'12px'"></app-avatar>
+                  <span class="text-white">{{ userName }}</span>
+                </div>
               </template>
               <b-dropdown-item :to="{ name: 'settings' }"><font-awesome-icon :icon="['fas', 'cog']" class="mr-2 text-secondary" />Настройки</b-dropdown-item>
               <b-dropdown-item :to="{ name: 'profile' }"><font-awesome-icon :icon="['fas', 'user']" class="mr-2 text-secondary" />Профиль</b-dropdown-item>
@@ -81,10 +84,27 @@ export default {
 <style lang="scss" scoped>
   header {
     box-shadow: 0px 0px 12px -5px black;
+    ::v-deep .navbar {
+      > .container {
+        padding: 0;
+      }
+    }
     .add-task {
       height: 32px;
       line-height: 1;
       margin-top: 5px;
+    }
+    ::v-deep .nav-link {
+      display: flex;
+      align-items: center;
+      .profile-wrapp {
+        display: flex;
+        align-items: center;
+        .logo {
+          margin-right: 5px;
+          width: 25px;
+        }
+      }
     }
   }
 </style>

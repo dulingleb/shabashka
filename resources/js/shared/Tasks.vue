@@ -4,11 +4,12 @@
     <app-loading v-if="loading"></app-loading>
 
     <div v-if="!loading && tasks" class="tasks container">
-      <section class="row task" v-for="(task, index) in tasks" :key="index">
-        <div class="col-md-9">
+      <p v-if="!tasks.length" class="not-found">Нет заданий в этой категории</p>
+      <section class="task" v-for="(task, index) in tasks" :key="index">
+        <div class="task-data-wrapp">
           <div class="task-data">
             <div class="logo-wrapp">
-              <app-avatar :title="task.title" :image="getFirstImage(task.files)" :mini="true"></app-avatar>
+              <app-avatar :title="task.title" :image="getFirstImage(task.files)" :font-size="'42px'"></app-avatar>
             </div>
             <div class="data">
               <h5 class="title">
@@ -26,7 +27,7 @@
             <span class="btn btn-link text-info category-link" @click="changeUser(task.userId)">{{ task.userTitle }}</span>
           </footer>
         </div>
-        <div class="col-md-3 text-center text-secondary">
+        <div class="task-btns text-center text-secondary">
           <p class="price">{{ task.price }} руб.</p>
           <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
           <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-outline-info task-btn">Редактировать</router-link>
@@ -103,10 +104,24 @@ export default {
 
 <style lang="scss" scoped>
   .tasks {
-    padding: 15px 0;
+    padding: 5px 15px;
+    .not-found {
+      padding: 15px 5px;
+      text-align: center;
+    }
     .task {
-      padding: 10px 0;
+      display: flex;
+      padding: 20px 0;
       border-bottom: 1px solid #dee2e6;
+      .task-data-wrapp {
+        width: 100%;
+      }
+      .task-btns {
+
+      }
+      @media screen and (max-width: 570px){
+        display: block;
+      }
       .task-data {
         display: flex;
         align-items: flex-start;

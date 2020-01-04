@@ -35,6 +35,7 @@ export function getTextDate(date: Date): string {
   const nowTime = new Date().getTime()
   const dateTime = date.getTime()
   const diferendTime = Math.floor(nowTime - dateTime)
+  const fixDate = (date: number) => date > 9 ? date : `0${date}`
   switch (diferendTime) {
     case 0:
       return 'сегодня'
@@ -43,5 +44,5 @@ export function getTextDate(date: Date): string {
     case -1:
       return 'завтра'
   }
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+  return `${fixDate(date.getDate())}.${fixDate(date.getMonth() + 1)}.${date.getFullYear()}`
 }

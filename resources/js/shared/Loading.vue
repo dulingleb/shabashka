@@ -1,7 +1,7 @@
 <template>
   <div class="loading">
-    <b-spinner variant="info" label="Spinning"></b-spinner>
-    <b-spinner variant="info" type="grow" label="Spinning"></b-spinner>
+    <!-- <b-spinner variant="info" label="Spinning"></b-spinner> -->
+    <b-spinner class="spinner" variant="info" type="grow" label="Spinning"></b-spinner>
   </div>
 </template>
 
@@ -20,6 +20,10 @@ export default {
   .loading {
     padding: 15px;
     text-align: center;
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+    }
   }
 
 </style>

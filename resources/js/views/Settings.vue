@@ -9,7 +9,7 @@
       <b-form @submit="onSubmit" @reset="onReset">
         <div class="row" v-if="user">
           <div class="col-md-4 col-lg-2">
-            <app-avatar :title="userName" :is-edit="true" :image="user.logo" @change-file="changeAvatar"></app-avatar>
+            <app-avatar :title="userName" :is-edit="true" :image="user.logo" @change-file="changeAvatar" :font-size="'112px'"></app-avatar>
           </div>
           <div class="col-md-8 col-lg-10">
             <b-form-group name="name" description>
