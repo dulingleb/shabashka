@@ -11,7 +11,7 @@ class ResponseJson
     }
 
     public static function getError($error = [], $status = 419) {
-        return self::getResponse(true, $error, 1, $status);
+        return self::getResponse(false, $error, 1, $status);
     }
 
     private static function getResponse($success, $data = [], $total = 1, $status = 200) {

@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Category;
 use App\Company;
 use App\Func\ResponseJson;
-use App\Review;
-use App\Task;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class UserController extends Controller

@@ -25,6 +25,8 @@ Route::prefix('user')->namespace('User')->group(function() {
     });
 
     Route::get('{user}', 'UserController@show');
+
+    Route::get('/{user}/reviews', 'ReviewController@index');
 });
 
 
@@ -36,13 +38,12 @@ Route::middleware(['auth:api'])->prefix('task')->group(function() {
     Route::post('store', 'TaskController@store');
     Route::post('{task}', 'TaskController@update');
     Route::delete('{task}', 'TaskController@destroy');
-    
+    Route::post('{task}/done', 'TaskController@done');
+    Route::post('{task}/set-executor', 'TaskController@setExecutor');
+
     Route::post('{task}/response', 'User\ResponseController@store');
     Route::post('{task}/message', 'User\ResponseMessageController@store');
 });
-
-
-
 
 Route::get('categories', 'TaskController@categories');
 

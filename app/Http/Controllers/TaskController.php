@@ -6,6 +6,7 @@ use App\Category;
 use App\Func\Filter;
 use App\Func\ResponseJson;
 use App\Response;
+use App\Review;
 use App\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -113,6 +114,49 @@ class TaskController extends Controller
         return $this->getTaskResponse($task);
     }
 
+    public function setExecutor(Task $task, Request $request){
+        if ($task->user_id !== \auth('api')->id()){
+            return ResponseJson::getError(['message' => 'Это не ваше задание']);
+        }
+
+        $request->validate([
+            'executor_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $task->executor_id = $request->executor_id;
+        $task->status = 'doing';
+        $task->save();
+
+        return $this->getTaskResponse($task);
+    }
+
+    public function done(Task $task, Request $request){
+        if ($task->status !== 'doing') {
+            return ResponseJson::getError(['message' => 'Статус должен быть "в работе"']);
+        } elseif ($task->user_id !== \auth('api')->id()){
+            return ResponseJson::getError(['message' => 'Это не ваше задание']);
+        }
+
+        $request->validate([
+            'assessment' => 'required|integer|between:1,5',
+            'text' => 'required|string|min:5|max:1000'
+        ]);
+
+        $review = Review::create([
+            'user_id' => auth('api')->id(),
+            'task_id' => $task->id,
+            'text' => $request->text,
+            'assessment' => $request->assessment
+        ]);
+
+        $task->status = 'done';
+        $task->save();
+
+        $data = Review::getReviewArray($review);
+
+        return ResponseJson::getSuccess($data);
+    }
+
     public function destroy(Task $task) {
         if ($task->user_id === auth('api')->id() && $task->executor_id === null) {
             if (Storage::exists('public\tasks\\' . $task->id))
@@ -140,7 +184,7 @@ class TaskController extends Controller
       return ResponseJson::getSuccess($data);
     }
 
-    private function getTaskArray($task) {
+    private function getTaskArray(Task $task) {
       $data = [
           'id' => $task->id,
           'title' => $task->title,
@@ -151,7 +195,7 @@ class TaskController extends Controller
           'price' => $task->price,
           'category_id' => $task->category_id,
           'user_id' => $task->user_id,
-          'user_title' => $this->getUserTitle($task),
+          'user_title' => $task->user->title,
           'executor_id' => $task->executor_id,
           'status' => $task->status,
           'term' => $task->term,
@@ -159,12 +203,6 @@ class TaskController extends Controller
       ];
 
       return $data;
-    }
-
-    private function getUserTitle($task) {
-      return $task->user->company()->exists() && $task->user->company->is_active && $task->user->company->moderate_status === 'success'
-              ? $task->user->company->title
-              : $task->user->lastname . ' ' . $task->user->name;
     }
 
     private function getTaskPhone($task) {

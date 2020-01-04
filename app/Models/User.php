@@ -11,55 +11,44 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name', 'surname', 'email', 'password', 'logo', 'phone'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendsReviews(){
+        return $this->hasMany(Review::class);
+    }
 
     public function company(){
         return $this->hasOne(Company::class)->with('categories');
     }
 
-    public function reviews(){
-        return $this->hasMany(Review::class)->with('task');
+    public function tasks(){
+        return $this->hasMany(Task::class);
     }
 
     public function getRateAttribute(){
-        if ($this->reviews()->exists()){
-            $data = [
-                'assessment' => Review::where('user_id', $this->id)->avg('assessment'),
-                'count_assessment' => Review::where('user_id', $this->id)->count(),
-                'count_done' => Task::where('executor_id', $this->id)->where('status', 'success')->count()
-            ];
-        } else {
-            $data = [
-                'assessment' => 0,
-                'count_assessment' => 0,
-                'count_done' => 0
-            ];
-        }
+
+        $data = [
+            'assessment' => Review::whereIn('task_id', $this->tasks->pluck('id'))->avg('assessment') ?? 0,
+            'count_assessment' => Review::where('task_id', $this->tasks->pluck('id'))->count(),
+            'count_done' => Task::where('executor_id', $this->id)->where('status', 'success')->count()
+        ];
+
         return $data;
+    }
+
+    public function getTitleAttribute() {
+        return $this->company()->exists() && $this->company->is_active && $this->company->moderate_status === 'success'
+            ? $this->company->title
+            : $this->lastname . ' ' . $this->name;
     }
 }

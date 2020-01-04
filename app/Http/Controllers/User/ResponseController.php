@@ -77,13 +77,9 @@ class ResponseController extends Controller
             'created_at' => $response->created_at,
             'user' => [
                 'id' => $response->user_id,
-                'name' => ($response->user->company()->exists() && $response->user->company->is_active && $response->user->company->moderate_status === 'success') ? $response->user->company->title : $response->user->lastname . ' ' . $response->user->name,
+                'title' => $response->user->title,
                 'logo' => $response->user->logo,
-                'rate' => [
-                    'assessment' => Review::where('user_id', $response->user->id)->avg('assessment'),
-                    'count_assessment' => Review::where('user_id', $response->user->id)->count(),
-                    'count_done' => Task::where('executor_id', $response->user->id)->where('status', 'success')->count()
-                ]
+                'rate' => $response->user->rate
             ],
             'messages' => $messages ?? []
         ];
