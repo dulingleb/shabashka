@@ -40,13 +40,19 @@ export default {
     }
   },
   watch: {
-    title() {
-      this.setUserColor()
+    title: {
+      immediate: true,
+      handler() {
+        this.setUserColor()
+      }
     },
-    image() {
-      this.filePreview = ''
-      this.file = null
-      this.setUserColor()
+    image: {
+      immediate: true,
+      handler() {
+        this.filePreview = ''
+        this.file = null
+        this.setUserColor()
+      }
     }
   },
 
@@ -57,8 +63,9 @@ export default {
   methods: {
     setUserColor(): void {
       this.userColor = stringToHslColor(this.title, 30, 80)
-      if (this.title && this.title.length) {
-        this.logoTitle = this.title[0]
+      const title = this.title && this.title.trim()
+      if (title && title.length) {
+        this.logoTitle = title[0]
       }
     },
     previewFile() {

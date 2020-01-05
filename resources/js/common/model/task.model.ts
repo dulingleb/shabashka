@@ -1,4 +1,5 @@
 import { CategoryResponse } from './category.model'
+import { Rate, RateResponse } from './user.model'
 
 export interface Task {
   id: number
@@ -43,13 +44,9 @@ export interface TaskRes {
   createdAt: Date
   user: {
     id: number
-    name: string
+    title: string
     logo: string,
-    rate: {
-      assessment: number
-      countAssessment: number
-      countDone: number
-    }
+    rate: Rate
   }
 }
 
@@ -61,13 +58,9 @@ export interface TaskResResponse {
   created_at: string
   user: {
     id: number
-    name: string
+    title: string
     logo: string,
-    rate: {
-      assessment: number
-      count_assessment: number
-      count_done: number
-    }
+    rate: RateResponse
   }
 }
 

@@ -35,12 +35,15 @@ export default {
   },
   methods: {
     hiddenModal() {
+      this.clearMessages()
       this.loading = false
     },
     cancelModal() {
+      this.clearMessages()
       this.$refs['modal'].hide()
     },
     async handleOk(bvModalEvt) {
+      this.clearMessages()
       const response = await taskService.deleteTask(this.task.id)
       if (response.success) {
         this.messages = ['Задание удалено.']
@@ -52,6 +55,11 @@ export default {
       }
       this.errMessages = getErrTitles(response.error)
     },
+
+    clearMessages() {
+      this.messages = []
+      this.errMessages = []
+    }
   }
 }
 </script> 

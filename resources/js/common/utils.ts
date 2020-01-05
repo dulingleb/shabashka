@@ -46,3 +46,21 @@ export function getTextDate(date: Date): string {
   }
   return `${fixDate(date.getDate())}.${fixDate(date.getMonth() + 1)}.${date.getFullYear()}`
 }
+
+export function getAssessmentTitle(countRate: number): string {
+  if (!countRate) { return 'нет отзывов' }
+  if (countRate > 5 && countRate < 21) { return `${countRate} отзывов` }
+  const lastNumber = countRate % 10
+  if (lastNumber === 1) { return `${countRate} отзыв` }
+  if (lastNumber > 1 && lastNumber < 5) { return `${countRate} отзыва` }
+  return `${countRate} отзывов`
+}
+
+export function getOrderDoneTitle(countDone: number): string {
+  if (!countDone) { return 'нет заказов' }
+  if (countDone > 5 && countDone < 21) { return `выполнил ${countDone} заказов` }
+  const lastNumber = countDone % 10
+  if (lastNumber === 1) { return `выполнил ${countDone} заказ` }
+  if (lastNumber > 1 && lastNumber < 5) { return `выполнил ${countDone} заказа` }
+  return `выполнил ${countDone} заказов`
+}

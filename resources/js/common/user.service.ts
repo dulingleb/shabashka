@@ -1,4 +1,4 @@
-import { User, UserResponse } from './model/user.model'
+import { User, UserResponse, Rate, RateResponse } from './model/user.model'
 import apiService from './api.service'
 import jwtService from './jwt.service'
 import { CompanyResponse, Company } from './model/company.model'
@@ -62,7 +62,8 @@ class UserService {
       company: this.parseCompany(data.company),
       logo: data.logo !== null ? data.logo : '',
       phone: data.phone !== null ? data.phone : '',
-      settings: data.settings !== null ? data.settings : ''
+      settings: data.settings !== null ? data.settings : '',
+      rate: this.parseRate(data.rate)
     }
   }
 
@@ -78,6 +79,15 @@ class UserService {
       moderateStatus: data.moderate_status,
       documents: data.documents !== null ? data.documents : [],
       categories: data.categories !== null ? data.categories : []
+    }
+  }
+
+  private parseRate(data: RateResponse): Rate {
+    if (!data) { return {} as Rate }
+    return {
+      assessment: data.assessment,
+      countAssessment: data.count_assessment,
+      countDone: data.count_done
     }
   }
 
