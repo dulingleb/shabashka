@@ -54,7 +54,7 @@
   </div>
 
 
-  <div class="mt-4" v-if="!loading && (!user || (user && task.userId !== user.id))">
+  <div class="mt-4" v-if="!loading && !hideResponceForm && (!user || (user && task.userId !== user.id))">
     <div class="page-title sub-title">
       <h3 class="title">Откликнуться</h3>
     </div>
@@ -121,7 +121,6 @@
         </section>
       </div>
 
-      {{ responses }}
     </div>
 
 </div>
@@ -152,6 +151,7 @@ export default {
         price: 1,
         description: ''
       },
+      hideResponceForm: false,
       formDirty: false,
       responses: [],
       responsesCount: [],
@@ -184,6 +184,13 @@ export default {
     this.responses = res.responses
     this.responsesCount = res.total
     this.loadingResponses = false
+    if (!this.user || !this.responsesCount) { return }
+    for (let response of this.responses) {
+      if (response.user.id === this.user.id) {
+        this.hideResponceForm = true
+        break
+      }
+    }
   },
   computed: {
     user(): User {
@@ -205,20 +212,22 @@ export default {
       return categoryService.getCategoryName(this.categories, id)
     },
 
-    async onSubmit(evt) {
-      this.loading = true
-      this.loading = false
-    },
-
     onReset(evt) {
       this.form.email = ''
       this.form.password = ''
     },
 
     async onSubmitResponse() {
+      this.loadingResponse = true
       this.errReponseMessages = []
       const response = await taskService.responseTask(this.task.id, this.form.description, this.form.price)
-      if (response.success) { return }
+      this.loadingResponse = false
+      if (response.success) {
+        this.hideResponceForm = true
+        this.responsesCount++
+        this.responses.unshift(response.data)
+        return
+      }
       this.errReponseMessages = getErrTitles(response.error)
     },
 
@@ -296,6 +305,17 @@ export default {
     .doc {
       font-size: 58px;
       line-height: 1;
+    }
+  }
+}
+
+.responses {
+  .response {
+    margin-bottom: 20px;
+    border-bottom: 1px solid#dee2e6;
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
     }
   }
 }
