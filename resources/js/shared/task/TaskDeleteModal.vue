@@ -20,8 +20,8 @@
 
 <script lang="ts">
 
-import taskService from '../common/task.service'
-import { getErrTitles } from '../common/utils'
+import taskService from '../../common/task.service'
+import { getErrTitles } from '../../common/utils'
 
 export default {
   name: 'app-delete-modal',

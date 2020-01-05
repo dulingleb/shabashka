@@ -40,11 +40,11 @@
 <script lang="ts">
 import _ from 'lodash'
 
-import userService from '../common/user.service'
-import categoryService from '../common/category.service'
-import taskService from '../common/task.service'
-import { User } from '../common/model/user.model'
-import { getTextDate, isImage } from '../common/utils'
+import userService from '../../common/user.service'
+import categoryService from '../../common/category.service'
+import taskService from '../../common/task.service'
+import { User } from '../../common/model/user.model'
+import { getTextDate, isImage } from '../../common/utils'
 
 export default {
   name: 'app-tasks',

@@ -22,21 +22,7 @@ import { store } from './store'
 import router from './app.router'
 import App from './views/App.vue'
 
-import DragDropImages from './shared/DragDropImages.vue'
-import Avatar from './shared/Avatar.vue'
-import Message from './shared/Message.vue'
-import Tasks from './shared/Tasks.vue'
-import TaskEdit from './shared/TaskEdit.vue'
-import Loading from './shared/Loading.vue'
-import TaskDeleteModal from './shared/TaskDeleteModal.vue'
-
-Vue.component('app-drag-drop-images', DragDropImages)
-Vue.component('app-avatar', Avatar)
-Vue.component('app-message', Message)
-Vue.component('app-tasks', Tasks)
-Vue.component('app-task-edit', TaskEdit)
-Vue.component('app-loading', Loading)
-Vue.component('app-delete-modal', TaskDeleteModal)
+import './shared/index'
 
 Vue.use(storageInstall)
 

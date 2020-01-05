@@ -8,7 +8,6 @@ export interface Task {
   price: number
   phone: string
   createdAt: Date
-  created: string
   term: Date
   categoryId: number
   address: string
@@ -48,6 +47,7 @@ export interface TaskRes {
     logo: string,
     rate: Rate
   }
+  messages: TaskResMessage[]
 }
 
 export interface TaskResResponse {
@@ -62,6 +62,23 @@ export interface TaskResResponse {
     logo: string,
     rate: RateResponse
   }
+  messages: TaskResMessageResponse[]
+}
+
+export interface TaskResMessage {
+  id: number
+  responseId: number
+  userId: number
+  text: string
+  createdAt: Date
+}
+
+export interface TaskResMessageResponse {
+  id: number
+  response_id: number
+  user_id: number
+  text: string
+  created_at: string
 }
 
 export interface TaskOptions {
