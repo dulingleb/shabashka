@@ -61,7 +61,7 @@
 
     <div class="page-content">
 
-      <b-form @submit.prevent="onSubmitResponse" @reset.prevent="onReset">
+      <b-form @submit.prevent="onSubmitResponse">
 
         <b-form-group name="description" description="">
           <div>
@@ -118,6 +118,9 @@
             <p>{{ responce.text }}</p>
 
           <p>{{ responce.description }}</p>
+
+          <app-task-responce-messages :task-id="task.id" :response-id="responce.id" :customer="customer" :response-user="responce.user" :res-messages="responce.messages" @send-message="sendMessage"></app-task-responce-messages>
+
         </section>
       </div>
 
@@ -127,9 +130,9 @@
 </template>
 
 <script lang="ts">
-import { Task } from '../../common/model/task.model'
+import { Task, TaskResMessage } from '../../common/model/task.model'
 import { Category } from '../../common/model/category.model'
-import { User } from 'resources/js/common/model/user.model'
+import { User } from '../../common/model/user.model'
 
 import taskService from '../../common/task.service'
 import categoryService from '../../common/category.service'
@@ -201,7 +204,7 @@ export default {
       return !this.formDirty || (typeof price === 'number' && price > 0)
     },
     validateDescription() {
-      return !this.formDirty || (this.form.description.length > 19)
+      return !this.formDirty || (this.form.description.length > 19 && this.form.description.length < 1001)
     },
     userName() {
       return this.customer ? capitalizeFirst(this.customer.name) + ' ' + capitalizeFirst(this.customer.surname) : ''
@@ -210,11 +213,6 @@ export default {
   methods: {
     getCategoryName(id: number) {
       return categoryService.getCategoryName(this.categories, id)
-    },
-
-    onReset(evt) {
-      this.form.email = ''
-      this.form.password = ''
     },
 
     async onSubmitResponse() {
@@ -233,6 +231,14 @@ export default {
 
     deleteTask(idTask) {
       this.$router.push('/my-tasks')
+    },
+
+    sendMessage(idResponse, message: TaskResMessage) {
+      console.log(idResponse)
+      const responce = this.responses.find(res => res.id === idResponse)
+      if (!responce) { return }
+      responce.messages.push(message)
+      console.log(responce.messages)
     },
 
     isImage(url: string) {
@@ -312,6 +318,7 @@ export default {
 .responses {
   .response {
     margin-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid#dee2e6;
     &:last-child {
       margin-bottom: 0;

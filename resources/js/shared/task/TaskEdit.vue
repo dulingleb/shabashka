@@ -118,9 +118,9 @@
 </template>
 
 <script lang="ts">
-import taskService from '../common/task.service'
-import categoryService from '../common/category.service'
-import { getErrTitles } from '../common/utils'
+import taskService from '../../common/task.service'
+import categoryService from '../../common/category.service'
+import { getErrTitles, getStringInputDate } from '../../common/utils'
 
 export default {
   name: 'app-task-edit',
@@ -134,7 +134,7 @@ export default {
         title: '',
         description: '',
         address: '',
-        date: (new Date(new Date().getTime() + (24 * 60 * 60 * 1000))).toISOString().split('T')[0],
+        date: getStringInputDate(new Date(), 1),
         price: 0,
         phone: '',
         files: []
@@ -178,7 +178,7 @@ export default {
       this.form.title = this.task.title
       this.form.description = this.task.description
       this.form.address = this.task.address
-      this.form.date = new Date(this.task.term).toISOString().split('T')[0]
+      this.form.date = getStringInputDate(this.task.term)
       this.form.price = this.task.price
       this.form.phone = this.task.phone
     }

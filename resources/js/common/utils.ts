@@ -34,8 +34,9 @@ export function getTextDate(date: Date): string {
   if (!date) { return '' }
   const nowTime = new Date().getTime()
   const dateTime = date.getTime()
-  const diferendTime = Math.floor(nowTime - dateTime)
+  const diferendTime = Math.floor((nowTime - dateTime) / (24 * 60 * 60 * 1000))
   const fixDate = (date: number) => date > 9 ? date : `0${date}`
+  console.log(diferendTime)
   switch (diferendTime) {
     case 0:
       return 'сегодня'
@@ -45,6 +46,11 @@ export function getTextDate(date: Date): string {
       return 'завтра'
   }
   return `${fixDate(date.getDate())}.${fixDate(date.getMonth() + 1)}.${date.getFullYear()}`
+}
+
+export function getStringInputDate(date: Date, addDays = 0): string {
+  const dateRes = new Date(date.getTime() + (addDays * 24 * 60 * 60 * 1000))
+  return dateRes.toISOString().split('T')[0]
 }
 
 export function getAssessmentTitle(countRate: number): string {

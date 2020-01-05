@@ -1,4 +1,4 @@
-import { Task, TaskResponse, TaskOptions, TaskResResponse, TaskRes } from './model/task.model'
+import { Task, TaskResponse, TaskOptions, TaskResResponse, TaskRes, TaskResMessage, TaskResMessageResponse } from './model/task.model'
 import apiService from './api.service'
 import { ResponseApi } from './model/api.model'
 
@@ -62,6 +62,11 @@ class TaskService {
     return response
   }
 
+  async responseMessageTask(taskId: number, responseId: number, text: string): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.post(`task/${taskId}/message`, { response_id: responseId, text })
+    return response
+  }
+
   async deleteTask(id: number): Promise<ResponseApi> {
     const response: ResponseApi = await apiService.delete(`task/${id}`)
     return response
@@ -97,6 +102,16 @@ class TaskService {
     return bodyFormData
   }
 
+  convertResMessage(message: TaskResMessageResponse): TaskResMessage {
+    return {
+      id: message.id,
+      createdAt: new Date(message.created_at),
+      responseId: message.response_id,
+      text: message.text,
+      userId: message.user_id
+    }
+  }
+
   private convertResTask(resTask: TaskResponse): Task {
     return {
       id: resTask.id,
@@ -112,8 +127,8 @@ class TaskService {
       files: resTask.files || [],
       status: resTask.status,
       userId: resTask.user_id,
-      userTitle: resTask.user_title,
-    } as Task
+      userTitle: resTask.user_title
+    }
   }
 
   private convertRes(res: TaskResResponse): TaskRes {
@@ -133,8 +148,17 @@ class TaskService {
       price: res.price,
       userId: res.user_id,
       createdAt: new Date(res.created_at),
-      user
-    } as TaskRes
+      user,
+      messages: this.convertResMessages(res.messages)
+    }
+  }
+
+  private convertResMessages(messages: TaskResMessageResponse[]): TaskResMessage[] {
+    const result = []
+    for (let message of messages) {
+      result.push(this.convertResMessage(message))
+    }
+    return result
   }
 
 }

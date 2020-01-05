@@ -16,7 +16,7 @@ import Aside from '../../common/components/Aside.vue'
 import userService from '../../common/user.service'
 import categoryService from '../../common/category.service'
 import taskService from '../../common/task.service'
-import { User } from 'resources/js/common/model/user.model'
+import { User } from '../../common/model/user.model'
 
 export default {
   data() {
