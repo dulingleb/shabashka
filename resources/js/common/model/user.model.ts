@@ -9,6 +9,7 @@ export interface User {
   logo: string
   phone: string
   settings: string
+  rate: Rate
 }
 
 export interface UserResponse {
@@ -20,4 +21,17 @@ export interface UserResponse {
   logo: string
   phone: string
   settings: string
+  rate: RateResponse
+}
+
+export interface Rate {
+  assessment: number
+  countAssessment: number
+  countDone: number
+}
+
+export interface RateResponse {
+  assessment: number
+  count_assessment: number
+  count_done: number
 }

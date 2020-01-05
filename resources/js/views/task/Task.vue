@@ -23,8 +23,10 @@
           </div>
           <div class="user-data">
               <p class="m-0 name">{{ userName }}</p>
-              <star-rating v-model="rating" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
-              <p class="m-0 rating"> <a href="" class="text-secondary">нет отзывов</a></p>
+              <div class="user-data-info">
+                <star-rating v-if="customer" v-model="customer.rate.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
+                <p class="m-0 rating"> <a href="" class="text-secondary">{{ getAssessmentTitle(customer.rate.countAssessment) }}</a></p>
+              </div>
           </div>
         </div>
         <p>{{ task.description }}</p>
@@ -63,8 +65,8 @@
 
         <b-form-group name="description" description="">
           <div>
-            <b-form-textarea id="description" v-model="form.description" :state="validateDescription" rows="4" required placeholder="Описание, максимум 1000 символов" :disabled="loading || !user"></b-form-textarea>
-            <b-form-invalid-feedback :state="validateDescription">Некорректное описание</b-form-invalid-feedback>
+            <b-form-textarea id="description" v-model="form.description" :state="validateDescription" rows="4" required placeholder="Описание, максимум 1000 символов" :disabled="loading || loadingResponse || !user"></b-form-textarea>
+            <b-form-invalid-feedback :state="validateDescription">Некорректное описание. Должно быть не менее 20 символов.</b-form-invalid-feedback>
           </div>
         </b-form-group>
 
@@ -72,18 +74,17 @@
           <div class="row">
             <label class="col-md-2 col-lg-1 col-form-label" for="price">Цена:</label>
             <div class="col-md-10 col-lg-11">
-              <b-form-input id="price" v-model="form.price" :state="validatePrice" type="number" min="0" required placeholder="Цена" :disabled="loading || !user"></b-form-input>
+              <b-form-input id="price" v-model="form.price" :state="validatePrice" type="number" min="1" required placeholder="Цена" :disabled="loading || loadingResponse || !user"></b-form-input>
               <b-form-invalid-feedback :state="validatePrice">Некорректная цена</b-form-invalid-feedback>
             </div>
           </div>
         </b-form-group>
 
-        <button v-if="user" class="btn btn-outline-success mt-3">Откликнуться</button>
+        <app-message v-for="(error, key) in errReponseMessages" :key="key" :error="error" @dismiss="dismissErr(key)"></app-message>
+
+        <button v-if="user" :disabled="loading || loadingResponse || !user" class="btn btn-outline-success mt-3">Откликнуться</button>
         <router-link v-if="!user" :to="{ name: 'login' }" class="btn btn-outline-info task-btn mt-3">Логин / Регистрация</router-link>
       </b-form>
-
-      <div v-if="!user">
-      </div>
 
     </div>
 
@@ -96,6 +97,30 @@
     </div>
 
     <div class="page-content" v-if="!loadingResponses">
+
+      <div class="responses">
+        <section v-for="(responce, key) in responses" :key="key" class="response">
+          <div class="user-wrapp">
+            <div class="logo-wrapp">
+              <app-avatar :title="responce.user.title" :image="responce.user.logo" :font-size="'35px'"></app-avatar>
+            </div>
+            <div class="user-data">
+                <p class="m-0 name">{{ responce.user.title }}</p>
+                <div class="user-data-info">
+                  <star-rating v-model="responce.user.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
+                  <p class="m-0 rating">
+                    <a href="" class="text-secondary">{{ getAssessmentTitle(responce.user.countAssessment) }}, {{ getOrderDoneTitle(responce.user.countAssessment) }}</a>
+                  </p>
+                </div>
+            </div>
+            <p class="price">{{ responce.price }} р.</p>
+          </div>
+            <p>{{ responce.text }}</p>
+
+          <p>{{ responce.description }}</p>
+        </section>
+      </div>
+
       {{ responses }}
     </div>
 
@@ -109,7 +134,7 @@ import { User } from 'resources/js/common/model/user.model'
 
 import taskService from '../../common/task.service'
 import categoryService from '../../common/category.service'
-import { getFileNameByUrl, getTextDate, capitalizeFirst, isImage } from '../../common/utils'
+import { getFileNameByUrl, getTextDate, capitalizeFirst, isImage, getErrTitles, getAssessmentTitle, getOrderDoneTitle } from '../../common/utils'
 import userService from '../../common/user.service'
 
 export default {
@@ -118,18 +143,20 @@ export default {
   data() {
     return {
       loading: true,
+      loadingResponse: false,
       loadingResponses: true,
       task: null,
       customer: null,
       categories: [] as Category[],
       form: {
-        price: 0,
+        price: 1,
         description: ''
       },
       formDirty: false,
       responses: [],
       responsesCount: [],
-      rating: 3
+      rating: 3,
+      errReponseMessages: [],
     }
   },
   watch: {
@@ -164,7 +191,7 @@ export default {
     },
     validatePrice() {
       const price = +this.form.price
-      return !this.formDirty || (typeof price === 'number' && price >= 0)
+      return !this.formDirty || (typeof price === 'number' && price > 0)
     },
     validateDescription() {
       return !this.formDirty || (this.form.description.length > 19)
@@ -188,13 +215,14 @@ export default {
       this.form.password = ''
     },
 
-    onSubmitResponse() {
-      taskService.responseTask(this.task.id, this.form.description, this.form.price)
+    async onSubmitResponse() {
+      this.errReponseMessages = []
+      const response = await taskService.responseTask(this.task.id, this.form.description, this.form.price)
+      if (response.success) { return }
+      this.errReponseMessages = getErrTitles(response.error)
     },
 
-    async deleteTask(idTask) {
-      console.log(idTask)
-      // const response = await taskService.deleteTask(this.task.id)
+    deleteTask(idTask) {
       this.$router.push('/my-tasks')
     },
 
@@ -208,7 +236,16 @@ export default {
 
     getFileNameByUrl(url: string) {
       return getFileNameByUrl(url)
-    }
+    },
+
+    getAssessmentTitle(countRate) {
+      return getAssessmentTitle(countRate)
+    },
+
+    getOrderDoneTitle(countRate) {
+      return getOrderDoneTitle(countRate)
+    },
+
   }
 }
 </script> 
@@ -217,12 +254,27 @@ export default {
 .user-wrapp {
   padding-bottom: 10px;
   display: flex;
+  align-items: center;
   .logo-wrapp {
     margin-right: 10px;
     width: 70px;
   }
   .user-data {
-
+    flex: 1;
+    .user-data-info {
+      padding-top: 5px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      ::v-deep .vue-star-rating {
+        margin-right: 5px;
+        position: relative;
+        top: -1px;
+      }
+    }
+    .price {
+      margin: 0 0 0 5px;
+    }
   }
 }
 .files {

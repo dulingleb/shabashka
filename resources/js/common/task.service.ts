@@ -57,11 +57,9 @@ class TaskService {
     return response
   }
 
-  async responseTask(id: number, text: string, price: string): Promise<void> {
-    const response = await apiService.post(`task/${id}/response`, { text, price })
-    if (response.success) {
-      const resTask = response.data
-    }
+  async responseTask(id: number, text: string, price: string): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.post(`task/${id}/response`, { text, price })
+    return response
   }
 
   async deleteTask(id: number): Promise<ResponseApi> {
@@ -121,7 +119,7 @@ class TaskService {
   private convertRes(res: TaskResResponse): TaskRes {
     const user = {
       id: res.user.id,
-      name: res.user.name,
+      title: res.user.title,
       logo: res.user.logo,
       rate: {
         assessment: res.user.rate.assessment,
