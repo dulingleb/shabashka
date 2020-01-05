@@ -28,7 +28,7 @@
           </footer>
         </div>
         <div class="task-btns text-center text-secondary">
-          <p class="price">{{ task.price }} руб.</p>
+          <p class="price">{{ task.price ? `${task.price} руб.` : 'Договорная' }}</p>
           <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
           <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-outline-info task-btn">Редактировать</router-link>
         </div>

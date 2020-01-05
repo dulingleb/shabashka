@@ -8,7 +8,7 @@ import VueTheMask from 'vue-the-mask'
 // import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import StarRating from 'vue-star-rating'
 
@@ -38,7 +38,7 @@ Vue.use(ModalPlugin)
 
 Vue.use(VueTheMask)
 
-library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt)
+library.add(faClock, faFolder, faChevronUp, faChevronLeft, faMapMarkedAlt, faFolderOpen, faTimes, faUser, faCog, faTasks, faSignOutAlt, faFileAlt, faEdit, faTrashAlt, faDollarSign)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('star-rating', StarRating)
 Vue.config.productionTip = false

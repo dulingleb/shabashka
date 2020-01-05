@@ -43,12 +43,10 @@
 
       </div>
       <div class="col-md-4">
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ getTextDate(task.term) }}</p>
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fas', 'map-marked-alt']" class="mr-1 text-secondary" />{{ task.address }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />Выполнить до {{ getTextDate(task.term) }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fas', 'map-marked-alt']" class="mr-1 text-secondary" />{{ task.address }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fas', 'dollar-sign']" class="mr-2 text-secondary" /> Цена: {{ task.price ? task.price + ' р.' : 'договорная' }}</p>
       </div>
     </div>
   </div>

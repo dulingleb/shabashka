@@ -69,7 +69,7 @@ export default {
       return this.$store.getters.user
     },
     validateMessage() {
-      return !this.formDirty || (this.form.message.length > 4 && this.form.message.length < 201)
+      return !this.formDirty || !this.form.message.length || (this.form.message.length > 4 && this.form.message.length < 201)
     },
   },
   methods: {
@@ -88,6 +88,8 @@ export default {
       const response = await taskService.responseMessageTask(this.taskId, this.responseId, this.form.message)
       this.loading = false
       if (response.success) {
+        this.form.message = ''
+        this.formDirty = false
         this.$emit('send-message', this.responseId, taskService.convertResMessage(response.data))
         return
       }
@@ -108,7 +110,7 @@ export default {
 
 <style lang="scss" scoped>
   .messages {
-    max-height: 150px;
+    max-height: 250px;
     overflow-y: auto;
     .message {
       padding: 0 0 5px 0;
