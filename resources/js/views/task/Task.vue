@@ -6,7 +6,8 @@
     <h2 class="title" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></h2>
     <div class="btns" v-if="task && user && task.userId === user.id">
         <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info"><font-awesome-icon :icon="['fas', 'edit']" class="icon" /> Редактировать</router-link>
-        <button class="btn btn-link text-danger" @click="deleteTask"><font-awesome-icon :icon="['fas', 'trash-alt']" class="icon" /> Удалить</button>
+        <!-- <button class="btn btn-link text-danger" @click="deleteTask"><font-awesome-icon :icon="['fas', 'trash-alt']" class="icon" /> Удалить</button> -->
+        <app-delete-modal :task="task" @delete-task="deleteTask"></app-delete-modal>
     </div>
   </div>
 
@@ -18,7 +19,7 @@
       <div class="col-md-8">
         <div class="user-wrapp">
           <div class="logo-wrapp">
-            <app-avatar v-if="customer" :title="userName" :image="customer.logo" :mini="true"></app-avatar>
+            <app-avatar v-if="customer" :title="userName" :image="customer.logo" :font-size="'35px'"></app-avatar>
           </div>
           <div class="user-data">
               <p class="m-0 name">{{ userName }}</p>
@@ -191,8 +192,9 @@ export default {
       taskService.responseTask(this.task.id, this.form.description, this.form.price)
     },
 
-    async deleteTask() {
-      const response = await taskService.deleteTask(this.task.id)
+    async deleteTask(idTask) {
+      console.log(idTask)
+      // const response = await taskService.deleteTask(this.task.id)
       this.$router.push('/my-tasks')
     },
 
