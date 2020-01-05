@@ -41,16 +41,16 @@ export default {
       this.$refs['modal'].hide()
     },
     async handleOk(bvModalEvt) {
-      this.messages = ['Профиль обновлён.']
-      setTimeout(() => {
-        this.$refs['modal'].hide()
-        this.$emit('delete-task', this.task.id)
-      }, 1000)
-    },
-    async deleteTask() {
-      // const response = await taskService.deleteTask(this.task.id)
-      // this.errMessages = getErrTitles(response.error)
-      // this.$router.push('/my-tasks')
+      const response = await taskService.deleteTask(this.task.id)
+      if (response.success) {
+        this.messages = ['Задание удалено.']
+        setTimeout(() => {
+          this.$refs['modal'].hide()
+          this.$emit('delete-task', this.task.id)
+        }, 1000)
+        return
+      }
+      this.errMessages = getErrTitles(response.error)
     },
   }
 }
