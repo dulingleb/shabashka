@@ -1,7 +1,7 @@
 import './bootstrap'
 import Vue from 'vue'
 import { install as storageInstall } from 'vue-storage-plus'
-import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin, AlertPlugin, SpinnerPlugin } from 'bootstrap-vue'
+import { NavbarPlugin, FormPlugin, FormInputPlugin, FormTextareaPlugin, ButtonPlugin, FormGroupPlugin, AlertPlugin, SpinnerPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueTheMask from 'vue-the-mask'
 
 // import 'bootstrap/dist/css/bootstrap.css'
@@ -28,6 +28,7 @@ import Message from './shared/Message.vue'
 import Tasks from './shared/Tasks.vue'
 import TaskEdit from './shared/TaskEdit.vue'
 import Loading from './shared/Loading.vue'
+import TaskDeleteModal from './shared/TaskDeleteModal.vue'
 
 Vue.component('app-drag-drop-images', DragDropImages)
 Vue.component('app-avatar', Avatar)
@@ -35,6 +36,7 @@ Vue.component('app-message', Message)
 Vue.component('app-tasks', Tasks)
 Vue.component('app-task-edit', TaskEdit)
 Vue.component('app-loading', Loading)
+Vue.component('app-delete-modal', TaskDeleteModal)
 
 Vue.use(storageInstall)
 
@@ -46,6 +48,7 @@ Vue.use(FormTextareaPlugin)
 Vue.use(ButtonPlugin)
 Vue.use(AlertPlugin)
 Vue.use(SpinnerPlugin)
+Vue.use(ModalPlugin)
 
 Vue.use(VueTheMask)
 

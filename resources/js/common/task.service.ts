@@ -64,11 +64,9 @@ class TaskService {
     }
   }
 
-  async deleteTask(id: number): Promise<void> {
-    const response = await apiService.delete(`task/${id}`)
-    if (response.success) {
-      const resTask = response.data
-    }
+  async deleteTask(id: number): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.delete(`task/${id}`)
+    return response
   }
 
   async getResponses(id: number): Promise<{ responses: TaskRes[], total: number }> {

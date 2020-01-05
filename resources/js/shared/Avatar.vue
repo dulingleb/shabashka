@@ -1,5 +1,5 @@
  <template>
-  <div class="logo" :class="{ edited: isEdit, mini: mini }" :style="{ backgroundColor: userColor }">
+  <div class="logo" :class="{ edited: isEdit }" :style="{ backgroundColor: userColor }">
 
     <span class="logo-title" :style="{ fontSize: fontSize }">{{ logoTitle }}</span>
 
