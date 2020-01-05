@@ -43,12 +43,10 @@
 
       </div>
       <div class="col-md-4">
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />{{ getTextDate(task.term) }}</p>
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
-        <p class="mb-0">
-          <font-awesome-icon :icon="['fas', 'map-marked-alt']" class="mr-1 text-secondary" />{{ task.address }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fa', 'clock']" class="mr-1 text-secondary" />Выполнить до {{ getTextDate(task.term) }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fa', 'folder']" class="mr-1 text-secondary" />{{ getCategoryName(task.categoryId) }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fas', 'map-marked-alt']" class="mr-1 text-secondary" />{{ task.address }}</p>
+        <p class="mb-0"><font-awesome-icon :icon="['fas', 'dollar-sign']" class="mr-2 text-secondary" /> Цена: {{ task.price ? task.price + ' р.' : 'договорная' }}</p>
       </div>
     </div>
   </div>
@@ -115,9 +113,8 @@
             </div>
             <p class="price">{{ responce.price }} р.</p>
           </div>
-            <p>{{ responce.text }}</p>
-
-          <p>{{ responce.description }}</p>
+            <p class="mb-1">{{ responce.text }}</p>
+            <small class="text-secondary">{{ getTextDate(responce.createdAt) }}</small>
         </section>
       </div>
 
@@ -312,6 +309,7 @@ export default {
 .responses {
   .response {
     margin-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid#dee2e6;
     &:last-child {
       margin-bottom: 0;
