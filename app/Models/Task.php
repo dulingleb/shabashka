@@ -16,22 +16,22 @@ class Task extends Model
 
 
     public static function uploadFiles($files, $task_id){
-        if (!File::exists(storage_path('app\public\tasks\\' . $task_id))) {
-            File::makeDirectory(storage_path('app\public\tasks\\' . $task_id));
+        if (!File::exists(storage_path('app/public/tasks/' . $task_id))) {
+            File::makeDirectory(storage_path('app/public/tasks/' . $task_id));
         }
 
         $filesName = [];
         foreach ($files as $file){
             $name = $file->getClientOriginalName();
-            if (Storage::exists('public\tasks\\' . $task_id . '\\' . $name)){
+            if (Storage::exists('public/tasks/' . $task_id . '/' . $name)){
                 $item = 1;
                 do {
                     $name = substr($name, 0, strrpos($name, ".")) . '_' . $item . '.' . $file->getClientOriginalExtension();
                     $item++;
-                } while(Storage::exists('public\tasks\\' . $task_id . '\\' . $name));
+                } while(Storage::exists('public/tasks/' . $task_id . '/' . $name));
             }
 
-            $path = $file->move(storage_path('app\public\tasks\\' . $task_id . '\\'), $name );
+            $path = $file->move(storage_path('app/public/tasks/' . $task_id . '/'), $name );
             $filesName[] = basename($name);
         }
 

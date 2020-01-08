@@ -19,7 +19,9 @@ class ResponseMessageController extends Controller
             'response_id' => [
                 function ($attribute, $value, $fail) use ($task){
                     $response = Response::find($value);
-                    if(!$task || ($task->user_id !== \auth('api')->id() && $response->user_id !== \auth('api')->id())) $fail('Что-то пошло не так!');
+                    if (!$task || ($task->user_id !== \auth('api')->id() && $response->user_id !== \auth('api')->id())) {
+                        $fail('Что-то пошло не так!');
+                    }
                 },
                 'required'
             ]

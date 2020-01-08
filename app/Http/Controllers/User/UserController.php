@@ -101,7 +101,7 @@ class UserController extends Controller
                 \File::delete(public_path($user->logo));
             }
 
-            $user->logo = 'storage/users/' . \auth('api')->id() . '/' . $name;
+            $user->logo = '/storage/users/' . \auth('api')->id() . '/' . $name;
             $user->save();
         } elseif ($request->get('logo') === null) {
             if (\File::exists(public_path($user->logo))) {

@@ -52,7 +52,7 @@ class ResponseController extends Controller
     }
 
     private function getResponseArray(Response $response, $withMessage = false) {
-        if ($withMessage) {
+        if ($withMessage && (\auth('api')->id() === $response->user_id || \auth('api')->id() === $response->task->user_id)) {
             $_messages = ResponseMessage::where('response_id', $response->id)
                 ->orWhere('user_id', $response->user_id)
                 ->orWhere('user_id', $response->task->user_id)
@@ -62,7 +62,7 @@ class ResponseController extends Controller
             foreach ($_messages as $message){
                 $messages[] = [
                     'id' => $message->id,
-                    'response_id' => $message->responsee_id,
+                    'response_id' => $message->response_id,
                     'user_id' => $message->user_id,
                     'text' => $message->text,
                     'created_at' => $message->created_at
