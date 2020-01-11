@@ -1,13 +1,13 @@
  <template>
   <div>
-    <b-alert show dismissible fade variant="success" v-if="message" @dismiss-count-down="dismiss">{{ message }}</b-alert>
-    <b-alert show dismissible fade variant="danger" v-if="error" @dismiss-count-down="dismiss">{{ error }}</b-alert>
+    <b-alert show dismissible fade variant="success" v-if="message" @dismissed="dismissed">{{ message }}</b-alert>
+    <b-alert show dismissible fade variant="danger" v-if="error" @dismissed="dismissed">{{ error }}</b-alert>
   </div>
 </template>
 
 <script lang="ts">
 
-import { stringToHslColor, isImage } from '../common/utils'
+import { stringToHslColor, isImage } from '../../common/utils'
 
 export default {
   name: 'app-message',
@@ -27,7 +27,7 @@ export default {
   },
 
   methods: {
-    dismiss() {
+    dismissed() {
       this.$emit('dismiss')
     }
   }

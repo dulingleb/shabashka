@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="messages">
-      <div v-for="(message, keyM) in resMessages" :key="keyM" class="message" :class="{ 'castomer-message': isCustomer(message.userId) }">
+    <div class="messages" ref="messages">
+      <div v-for="(message, keyM) in response.messages" :key="keyM" class="message" :class="{ 'castomer-message': isCustomer(message.userId) }">
 
         <b-alert class="message-data" :variant="isCustomer(message.userId) ? 'success' : 'info'" show>
           <div class="user-data">
@@ -14,8 +14,8 @@
     </div>
 
 
-    <button type="button" v-b-toggle="`setMessage-${responseId}`" class="btn btn-link pl-0 text-info">Оставить сообщение</button>
-      <b-collapse :id="`setMessage-${responseId}`">
+    <button type="button" v-b-toggle="`setMessage-${response.id}`" class="btn btn-link pl-0 text-info">Оставить сообщение</button>
+      <b-collapse :id="`setMessage-${response.id}`">
         <b-form @submit.prevent="onSubmitMessage">
           <b-form-group name="message" description="">
             <div>
@@ -39,12 +39,13 @@
 <script lang="ts">
 
 import taskService from '../../common/task.service'
+import taskHelperService from '../../common/task-helper.service'
 import { User } from '../../common/model/user.model'
 import { getErrTitles, getTextDate } from '../../common/utils'
 
 export default {
-  name: 'app-task-responce-messages',
-  props: ['taskId', 'responseId', 'resMessages', 'customer', 'responseUser'],
+  name: 'app-task-response-messages',
+  props: ['task', 'response'],
   data() {
     return {
       loading: false,
@@ -64,6 +65,12 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    this.scrollToBottom()
+  },
+  updated() {
+    this.scrollToBottom()
+  },
   computed: {
     user(): User {
       return this.$store.getters.user
@@ -75,22 +82,22 @@ export default {
   methods: {
 
     getUserName(userId) {
-      return this.isCustomer(userId) ? this.user.name : this.responseUser.title
+      return this.isCustomer(userId) ? this.task.userTitle : this.response.user.title
     },
 
     isCustomer(userId) {
-      return userId !== this.responseUser.id
+      return userId !== this.response.user.id
     },
 
     async onSubmitMessage() {
       this.clearMessages()
       this.loading = true
-      const response = await taskService.responseMessageTask(this.taskId, this.responseId, this.form.message)
+      const response = await taskService.responseMessageTask(this.task.id, this.response.id, this.form.message)
       this.loading = false
       if (response.success) {
         this.form.message = ''
         this.formDirty = false
-        this.$emit('send-message', this.responseId, taskService.convertResMessage(response.data))
+        this.$emit('send-message', this.response.id, taskHelperService.convertResMessage(response.data))
         return
       }
       this.errMessages = getErrTitles(response.error)
@@ -103,6 +110,10 @@ export default {
     clearMessages() {
       this.messages = []
       this.errMessages = []
+    },
+
+    scrollToBottom() {
+      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
     }
   }
 }
@@ -117,6 +128,7 @@ export default {
       line-height: 1;
       font-size: 0.8rem;
       text-align: right;
+      background: #fff;
       .message-data {
         margin: 0;
         padding: 5px 10px;

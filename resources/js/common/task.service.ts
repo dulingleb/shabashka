@@ -1,5 +1,6 @@
 import { Task, TaskResponse, TaskOptions, TaskResResponse, TaskRes, TaskResMessage, TaskResMessageResponse } from './model/task.model'
 import apiService from './api.service'
+import taskHelperService from './task-helper.service'
 import { ResponseApi } from './model/api.model'
 
 class TaskService {
@@ -31,7 +32,7 @@ class TaskService {
     const response = await apiService.get('tasks', query)
     if (response.success) {
       const resTasks: TaskResponse[] = response.data
-      this._tasks = resTasks.map(dataTask => this.convertResTask(dataTask))
+      this._tasks = resTasks.map(dataTask => taskHelperService.convertResTask(dataTask))
     }
     return this.tasks
   }
@@ -40,19 +41,19 @@ class TaskService {
     const response = await apiService.get(`task/${id}`)
     if (response.success) {
       const resTask: TaskResponse = response.data
-      return this.convertResTask(resTask)
+      return taskHelperService.convertResTask(resTask)
     }
     return null
   }
 
   async addTask(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[]): Promise<ResponseApi> {
-    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files)
+    const bodyFormData = taskHelperService.parseChangedFields(categoryId, title, description, address, term, price, phone, files)
     const response: ResponseApi = await apiService.postFormData('task/store', bodyFormData)
     return response
   }
 
   async editTask(id: string, categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[], filesRemoved: File[]): Promise<ResponseApi> {
-    const bodyFormData = this.parseChangedFields(categoryId, title, description, address, term, price, phone, files, filesRemoved)
+    const bodyFormData = taskHelperService.parseChangedFields(categoryId, title, description, address, term, price, phone, files, filesRemoved)
     const response: ResponseApi = await apiService.postFormData(`task/${id}`, bodyFormData)
     return response
   }
@@ -67,6 +68,11 @@ class TaskService {
     return response
   }
 
+  async setExecutor(taskId: number, executorId: number): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.post(`task/${taskId}/set-executor`, { executor_id: executorId })
+    return response
+  }
+
   async deleteTask(id: number): Promise<ResponseApi> {
     const response: ResponseApi = await apiService.delete(`task/${id}`)
     return response
@@ -77,88 +83,11 @@ class TaskService {
     if (response.success) {
       const responses: TaskRes[] = []
       for (let res of response.data) {
-        responses.push(this.convertRes(res))
+        responses.push(taskHelperService.convertRes(res))
       }
       return { responses, total: response.total }
     }
     return { responses: [], total: -1 }
-  }
-
-  parseChangedFields(categoryId: string, title: string, description: string, address: string, term: Date, price: string, phone: string, files: File[], filesRemoved: File[] = []): FormData {
-    const bodyFormData = new FormData()
-    bodyFormData.set('category_id', categoryId)
-    bodyFormData.set('title', title)
-    bodyFormData.set('description', description)
-    bodyFormData.set('address', address)
-    bodyFormData.set('term', term.toISOString())
-    bodyFormData.set('price', price)
-    bodyFormData.set('phone', phone)
-    for (const file of files) {
-      bodyFormData.append('files[]', file)
-    }
-    for (const file of filesRemoved) {
-      bodyFormData.append('files_remove[]', file)
-    }
-    return bodyFormData
-  }
-
-  convertResMessage(message: TaskResMessageResponse): TaskResMessage {
-    return {
-      id: message.id,
-      createdAt: new Date(message.created_at),
-      responseId: message.response_id,
-      text: message.text,
-      userId: message.user_id
-    }
-  }
-
-  private convertResTask(resTask: TaskResponse): Task {
-    return {
-      id: resTask.id,
-      title: resTask.title,
-      description: resTask.description,
-      price: resTask.price,
-      phone: resTask.phone,
-      createdAt: new Date(resTask.created_at),
-      term: new Date(resTask.term),
-      categoryId: resTask.category_id,
-      address: resTask.address,
-      executorId: resTask.executor_id,
-      files: resTask.files || [],
-      status: resTask.status,
-      userId: resTask.user_id,
-      userTitle: resTask.user_title
-    }
-  }
-
-  private convertRes(res: TaskResResponse): TaskRes {
-    const user = {
-      id: res.user.id,
-      title: res.user.title,
-      logo: res.user.logo,
-      rate: {
-        assessment: res.user.rate.assessment,
-        countAssessment: res.user.rate.count_assessment,
-        countDone: res.user.rate.count_done
-      }
-    }
-    return {
-      id: res.id,
-      text: res.text,
-      price: res.price,
-      userId: res.user_id,
-      createdAt: new Date(res.created_at),
-      user,
-      messages: this.convertResMessages(res.messages)
-    }
-  }
-
-  private convertResMessages(messages: TaskResMessageResponse[]): TaskResMessage[] {
-    const result = []
-    for (let message of messages) {
-      result.push(this.convertResMessage(message))
-    }
-    return result
   }
 
 }
