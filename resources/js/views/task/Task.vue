@@ -95,7 +95,7 @@
     <div class="page-content" v-if="!loadingResponses">
 
       <div class="responses">
-        <section v-for="(response, key) in orderResponses" :key="key" class="response">
+        <section v-for="(response, key) in orderResponses" :key="key" class="response" :class="{ active: isExecutor(response) }">
           <div class="user-wrapp">
             <div class="logo-wrapp">
               <app-avatar :title="response.user.title" :image="response.user.logo" :font-size="'35px'"></app-avatar>
@@ -111,14 +111,15 @@
             </div>
             <div>
               <p class="price text-center">{{ response.price }} р.</p>
-              <button v-if="user && user.id === task.userId" class="btn btn-outline-info">Назначить</button>
+              <button v-if="user && user.id === task.userId && !task.executorId" @click="setExecutor(response)" :disabled="loadingExecutor" type="button" class="btn btn-outline-info">Назначить</button>
+              <p class="text-center text-info" v-if="isExecutor(response)">Назначен</p>
             </div>
           </div>
             <p>{{ response.text }}</p>
 
           <p>{{ response.description }}</p>
 
-          <app-task-response-messages v-if="showMessages(response)" :task-id="task.id" :response-id="response.id" :customer="customer" :response-user="response.user" :res-messages="response.messages" @send-message="sendMessage"></app-task-response-messages>
+          <app-task-response-messages v-if="showMessages(response)" :task="task" :response="response" @send-message="sendMessage"></app-task-response-messages>
 
         </section>
       </div>
@@ -146,6 +147,7 @@ export default {
       loading: true,
       loadingResponse: false,
       loadingResponses: true,
+      loadingExecutor: false,
       task: null,
       customer: null,
       categories: [] as Category[],
@@ -238,16 +240,22 @@ export default {
         this.orderResponses = this.responses
         return
       }
+
+      this.orderResponses = []
       const userResponses = []
       const otherResponses = []
       for (let response of responses) {
+        if (this.task.executorId && this.task.executorId === response.user.id) {
+          this.orderResponses.push(response)
+          continue
+        }
         if (response.user.id === this.user.id) {
           userResponses.push(response)
           continue
         }
         otherResponses.push(response)
       }
-      this.orderResponses = [...userResponses, ...otherResponses]
+      this.orderResponses.push(...userResponses, ...otherResponses)
     },
 
     deleteTask(idTask) {
@@ -260,8 +268,19 @@ export default {
       response.messages.push(message)
     },
 
+    async setExecutor(taskResponse: TaskRes) {
+      this.loadingExecutor = true
+      const response = await taskService.setExecutor(this.task.id, taskResponse.user.id)
+      console.log(response)
+      this.loadingExecutor = false
+    },
+
     showMessages(response: TaskRes) {
       return !this.user || (this.user && (this.user.id === this.task.userId || this.user.id === response.user.id))
+    },
+
+    isExecutor(response: TaskRes) {
+      return this.task.executorId && this.task.executorId === response.user.id
     },
 
     isImage(url: string) {
@@ -340,9 +359,12 @@ export default {
 
 .responses {
   .response {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin: -15px -25px 20px -25px;
+    padding: 15px 25px;
     border-bottom: 1px solid#dee2e6;
+    &.active {
+      background: #fff3cd;
+    }
     &:last-child {
       margin-bottom: 0;
       border-bottom: none;

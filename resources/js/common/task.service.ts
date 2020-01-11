@@ -67,6 +67,11 @@ class TaskService {
     return response
   }
 
+  async setExecutor(taskId: number, executorId: number): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.post(`task/${taskId}/set-executor`, { executor_id: executorId })
+    return response
+  }
+
   async deleteTask(id: number): Promise<ResponseApi> {
     const response: ResponseApi = await apiService.delete(`task/${id}`)
     return response
@@ -146,7 +151,6 @@ class TaskService {
       id: res.id,
       text: res.text,
       price: res.price,
-      userId: res.user_id,
       createdAt: new Date(res.created_at),
       user,
       messages: this.convertResMessages(res.messages)

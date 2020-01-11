@@ -39,7 +39,6 @@ export interface TaskRes {
   id: number
   text: string
   price: number
-  userId: number
   createdAt: Date
   user: {
     id: number
@@ -54,7 +53,6 @@ export interface TaskResResponse {
   id: number
   text: string
   price: number
-  user_id: number
   created_at: string
   user: {
     id: number
