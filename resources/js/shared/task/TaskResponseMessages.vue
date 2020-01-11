@@ -39,6 +39,7 @@
 <script lang="ts">
 
 import taskService from '../../common/task.service'
+import taskHelperService from '../../common/task-helper.service'
 import { User } from '../../common/model/user.model'
 import { getErrTitles, getTextDate } from '../../common/utils'
 
@@ -96,7 +97,7 @@ export default {
       if (response.success) {
         this.form.message = ''
         this.formDirty = false
-        this.$emit('send-message', this.response.id, taskService.convertResMessage(response.data))
+        this.$emit('send-message', this.response.id, taskHelperService.convertResMessage(response.data))
         return
       }
       this.errMessages = getErrTitles(response.error)

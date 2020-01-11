@@ -49,9 +49,6 @@
     </div>
   </div>
 
-  <app-messages :messages="errReponseMessages" ></app-messages>
-
-
   <div class="mt-4" v-if="!loading && !hideresponseForm && (!user || (user && task.userId !== user.id))">
     <div class="page-title sub-title">
       <h3 class="title">Откликнуться</h3>
@@ -137,6 +134,7 @@ import { Category } from '../../common/model/category.model'
 import { User } from '../../common/model/user.model'
 
 import taskService from '../../common/task.service'
+import taskHelperService from '../../common/task-helper.service'
 import categoryService from '../../common/category.service'
 import { getFileNameByUrl, getTextDate, capitalizeFirst, isImage, getErrTitles, getAssessmentTitle, getOrderDoneTitle } from '../../common/utils'
 import userService from '../../common/user.service'
@@ -178,11 +176,6 @@ export default {
     }
   },
   async mounted() {
-    let i = 0
-    setInterval(() => {
-      this.errReponseMessages.push({ text: '=== ' + i++, variant: 'danger' })
-      console.log(this.errReponseMessages)
-    }, 1500)
     this.task = await taskService.getTask(this.$route.params.id)
     if (!this.task) {
       this.$router.push('/')
@@ -278,7 +271,9 @@ export default {
     async setExecutor(taskResponse: TaskRes) {
       this.loadingExecutor = true
       const response = await taskService.setExecutor(this.task.id, taskResponse.user.id)
-      console.log(response)
+      if (response.success) {
+        this.task = taskHelperService.convertResTask(response.data)
+      }
       this.loadingExecutor = false
     },
 
