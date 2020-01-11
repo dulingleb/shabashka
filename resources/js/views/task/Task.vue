@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <div class="mt-4" v-if="!loading && !hideresponseForm && (!user || (user && task.userId !== user.id))">
+  <div class="mt-4" v-if="!loading && !hideresponseForm && (!user || (user && task.userId !== user.id)) && !task.executorId">
     <div class="page-title sub-title">
       <h3 class="title">Откликнуться</h3>
     </div>
@@ -365,11 +365,15 @@ export default {
     padding: 15px 25px;
     border-bottom: 1px solid#dee2e6;
     &.active {
-      background: #fff3cd;
+      border-bottom: 1px solid #84de99;
+      background: #f3fff6;
     }
     &:last-child {
       margin-bottom: 0;
       border-bottom: none;
+      &.active {
+        border-bottom: 2px solid #84de99;
+      }
     }
   }
 }

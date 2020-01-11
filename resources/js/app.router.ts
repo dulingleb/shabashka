@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-import Hello from './views/Hello.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Reg.vue'
@@ -22,11 +21,6 @@ const router = new VueRouter({
       path: '/',
       name: 'home',
       component: Home
-    },
-    {
-      path: '/hello',
-      name: 'hello',
-      component: Hello
     },
     {
       path: '/login',

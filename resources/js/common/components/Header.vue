@@ -7,18 +7,14 @@
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-            <b-nav-item :to="{ name: 'hello' }">Hello World</b-nav-item>
-          </b-navbar-nav>
-
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-            <b-nav-form>
-              <b-form-input size="sm" class="mr-sm-2" placeholder="Поиск" v-model="searchValue" @input="search()"></b-form-input>
-            </b-nav-form>
+<!--            <b-nav-form>-->
+<!--              <b-form-input size="sm" class="mr-sm-2" placeholder="Поиск" v-model="searchValue" @input="search()"></b-form-input>-->
+<!--            </b-nav-form>-->
 
             <b-navbar-nav right>
-              <router-link :to="{ name: 'newTask' }" size="sm" class="btn btn-warning add-task" type="submit">Создать задание</router-link>
+              <router-link :to="{ name: 'newTask' }" size="sm" class="btn btn-light add-task">Создать задание</router-link>
 
               <b-nav-item v-if="!user" :to="{ name: 'login' }">Вход</b-nav-item>
             </b-navbar-nav>

@@ -33,15 +33,14 @@ class UserController extends Controller
     }
 
     public function login(Request $request){
-        if(\Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])){
+        if (\Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])){
             $user = auth('web')->user();
             return response()->json([
                 'success' => true,
                 'token' => $user->createToken(config('app.name'))->accessToken
             ]);
-        }
-        else{
-            ResponseJson::getError(['message' => 'Не верный email или пароль']);
+        } else {
+            return ResponseJson::getError(['message' => 'Не верный email или пароль']);
         }
     }
 

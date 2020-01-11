@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="messages" ref="messages">
-      <div v-for="(message, keyM) in response.messages" :key="keyM" class="message" :class="{ 'castomer-message': isCustomer(message.userId) }">
+      <div v-for="(message, keyM) in response.messages" :key="keyM" class="message" :class="{ 'customer-message': isCustomer(message.userId) }">
 
         <b-alert class="message-data" :variant="isCustomer(message.userId) ? 'success' : 'info'" show>
           <div class="user-data">
@@ -121,25 +121,25 @@ export default {
 
 <style lang="scss" scoped>
   .messages {
+    padding: 15px;
     max-height: 250px;
     overflow-y: auto;
+    background: #fff;
     .message {
       padding: 0 0 5px 0;
       line-height: 1;
       font-size: 0.8rem;
       text-align: right;
-      background: #fff;
       .message-data {
         margin: 0;
         padding: 5px 10px;
         display: inline-flex;
         flex-direction: row-reverse;
-        width: 98%;
         .user-data {
           margin-left: 10px;
         }
       }
-      &.castomer-message {
+      &.customer-message {
         text-align: left;
         .message-data {
           flex-direction: row;
