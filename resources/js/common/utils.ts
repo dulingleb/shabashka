@@ -36,7 +36,6 @@ export function getTextDate(date: Date): string {
   const dateTime = date.getTime()
   const diferendTime = Math.floor((nowTime - dateTime) / (24 * 60 * 60 * 1000))
   const fixDate = (date: number) => date > 9 ? date : `0${date}`
-  console.log(diferendTime)
   switch (diferendTime) {
     case 0:
       return 'сегодня'

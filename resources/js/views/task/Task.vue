@@ -1,12 +1,10 @@
 <template>
 <div class="">
-  <!-- <div class="card-header" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></div> -->
 
   <div class="page-title">
     <h2 class="title" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></h2>
     <div class="btns" v-if="task && user && task.userId === user.id">
         <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info"><font-awesome-icon :icon="['fas', 'edit']" class="icon" /> Редактировать</router-link>
-        <!-- <button class="btn btn-link text-danger" @click="deleteTask"><font-awesome-icon :icon="['fas', 'trash-alt']" class="icon" /> Удалить</button> -->
         <app-delete-modal :task="task" @delete-task="deleteTask"></app-delete-modal>
     </div>
   </div>
@@ -52,7 +50,7 @@
   </div>
 
 
-  <div class="mt-4" v-if="!loading && !hideResponceForm && (!user || (user && task.userId !== user.id))">
+  <div class="mt-4" v-if="!loading && !hideresponseForm && (!user || (user && task.userId !== user.id))">
     <div class="page-title sub-title">
       <h3 class="title">Откликнуться</h3>
     </div>
@@ -97,27 +95,30 @@
     <div class="page-content" v-if="!loadingResponses">
 
       <div class="responses">
-        <section v-for="(responce, key) in responses" :key="key" class="response">
+        <section v-for="(response, key) in orderResponses" :key="key" class="response">
           <div class="user-wrapp">
             <div class="logo-wrapp">
-              <app-avatar :title="responce.user.title" :image="responce.user.logo" :font-size="'35px'"></app-avatar>
+              <app-avatar :title="response.user.title" :image="response.user.logo" :font-size="'35px'"></app-avatar>
             </div>
             <div class="user-data">
-                <p class="m-0 name">{{ responce.user.title }}</p>
+                <p class="m-0 name">{{ response.user.title }}</p>
                 <div class="user-data-info">
-                  <star-rating v-model="responce.user.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
+                  <star-rating v-model="response.user.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
                   <p class="m-0 rating">
-                    <a href="" class="text-secondary">{{ getAssessmentTitle(responce.user.countAssessment) }}, {{ getOrderDoneTitle(responce.user.countAssessment) }}</a>
+                    <a href="" class="text-secondary">{{ getAssessmentTitle(response.user.countAssessment) }}, {{ getOrderDoneTitle(response.user.countAssessment) }}</a>
                   </p>
                 </div>
             </div>
-            <p class="price">{{ responce.price }} р.</p>
+            <div>
+              <p class="price text-center">{{ response.price }} р.</p>
+              <button v-if="user && user.id === task.userId" class="btn btn-outline-info">Назначить</button>
+            </div>
           </div>
-            <p>{{ responce.text }}</p>
+            <p>{{ response.text }}</p>
 
-          <p>{{ responce.description }}</p>
+          <p>{{ response.description }}</p>
 
-          <app-task-responce-messages :task-id="task.id" :response-id="responce.id" :customer="customer" :response-user="responce.user" :res-messages="responce.messages" @send-message="sendMessage"></app-task-responce-messages>
+          <app-task-response-messages v-if="showMessages(response)" :task-id="task.id" :response-id="response.id" :customer="customer" :response-user="response.user" :res-messages="response.messages" @send-message="sendMessage"></app-task-response-messages>
 
         </section>
       </div>
@@ -128,7 +129,7 @@
 </template>
 
 <script lang="ts">
-import { Task, TaskResMessage } from '../../common/model/task.model'
+import { Task, TaskResMessage, TaskRes } from '../../common/model/task.model'
 import { Category } from '../../common/model/category.model'
 import { User } from '../../common/model/user.model'
 
@@ -152,9 +153,10 @@ export default {
         price: 1,
         description: ''
       },
-      hideResponceForm: false,
+      hideresponseForm: false,
       formDirty: false,
       responses: [],
+      orderResponses: [],
       responsesCount: [],
       rating: 3,
       errReponseMessages: [],
@@ -166,6 +168,9 @@ export default {
         this.formDirty = true
       },
       deep: true
+    },
+    responses() {
+      this.orderResponese(this.responses)
     }
   },
   async mounted() {
@@ -186,9 +191,10 @@ export default {
     this.responsesCount = res.total
     this.loadingResponses = false
     if (!this.user || !this.responsesCount) { return }
+
     for (let response of this.responses) {
       if (response.user.id === this.user.id) {
-        this.hideResponceForm = true
+        this.hideresponseForm = true
         break
       }
     }
@@ -219,7 +225,7 @@ export default {
       const response = await taskService.responseTask(this.task.id, this.form.description, this.form.price)
       this.loadingResponse = false
       if (response.success) {
-        this.hideResponceForm = true
+        this.hideresponseForm = true
         this.responsesCount++
         this.responses.unshift(response.data)
         return
@@ -227,16 +233,35 @@ export default {
       this.errReponseMessages = getErrTitles(response.error)
     },
 
+    orderResponese(responses: TaskRes[]) {
+      if (!this.user || this.user.id === this.task.userId) {
+        this.orderResponses = this.responses
+        return
+      }
+      const userResponses = []
+      const otherResponses = []
+      for (let response of responses) {
+        if (response.user.id === this.user.id) {
+          userResponses.push(response)
+          continue
+        }
+        otherResponses.push(response)
+      }
+      this.orderResponses = [...userResponses, ...otherResponses]
+    },
+
     deleteTask(idTask) {
       this.$router.push('/my-tasks')
     },
 
     sendMessage(idResponse, message: TaskResMessage) {
-      console.log(idResponse)
-      const responce = this.responses.find(res => res.id === idResponse)
-      if (!responce) { return }
-      responce.messages.push(message)
-      console.log(responce.messages)
+      const response = this.responses.find(res => res.id === idResponse)
+      if (!response) { return }
+      response.messages.push(message)
+    },
+
+    showMessages(response: TaskRes) {
+      return !this.user || (this.user && (this.user.id === this.task.userId || this.user.id === response.user.id))
     },
 
     isImage(url: string) {

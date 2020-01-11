@@ -43,7 +43,7 @@ import { User } from '../../common/model/user.model'
 import { getErrTitles, getTextDate } from '../../common/utils'
 
 export default {
-  name: 'app-task-responce-messages',
+  name: 'app-task-response-messages',
   props: ['taskId', 'responseId', 'resMessages', 'customer', 'responseUser'],
   data() {
     return {
