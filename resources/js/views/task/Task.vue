@@ -49,6 +49,8 @@
     </div>
   </div>
 
+  <app-messages :messages="errReponseMessages" ></app-messages>
+
 
   <div class="mt-4" v-if="!loading && !hideresponseForm && (!user || (user && task.userId !== user.id))">
     <div class="page-title sub-title">
@@ -176,6 +178,11 @@ export default {
     }
   },
   async mounted() {
+    let i = 0
+    setInterval(() => {
+      this.errReponseMessages.push({ text: '=== ' + i++, variant: 'danger' })
+      console.log(this.errReponseMessages)
+    }, 1500)
     this.task = await taskService.getTask(this.$route.params.id)
     if (!this.task) {
       this.$router.push('/')
