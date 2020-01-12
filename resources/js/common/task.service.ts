@@ -1,4 +1,4 @@
-import { Task, TaskResponse, TaskOptions, TaskResResponse, TaskRes, TaskResMessage, TaskResMessageResponse } from './model/task.model'
+import { Task, TaskResponse, TaskOptions, TaskRes } from './model/task.model'
 import apiService from './api.service'
 import taskHelperService from './task-helper.service'
 import { ResponseApi } from './model/api.model'
@@ -70,6 +70,11 @@ class TaskService {
 
   async setExecutor(taskId: number, executorId: number): Promise<ResponseApi> {
     const response: ResponseApi = await apiService.post(`task/${taskId}/set-executor`, { executor_id: executorId })
+    return response
+  }
+
+  async confirmTask(taskId: number, assessment: number, text: string): Promise<ResponseApi> {
+    const response: ResponseApi = await apiService.post(`task/${taskId}/done`, { assessment, text })
     return response
   }
 

@@ -35,3 +35,18 @@ export interface RateResponse {
   count_assessment: number
   count_done: number
 }
+
+export interface Review {
+  id: number
+  user: {
+    id: number
+    title: string
+    logo: string
+  }
+  task: {
+    id: number
+    title: string
+  }
+  text: string
+  assessment: number
+}

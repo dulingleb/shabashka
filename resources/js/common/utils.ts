@@ -27,7 +27,7 @@ export function getErrTitles(errData: any): string[] {
   const defaultErr = ['Ошибка. Проверьте данные и поробуйте ещё раз.']
   if (!errData) { return defaultErr }
   const res = Object.values(errData).filter(err => err && Array.isArray(err)).map(err => err[0])
-  return res.length ? res : defaultErr
+  return res.length ? res : errData.message ? [errData.message] : defaultErr
 }
 
 export function getTextDate(date: Date): string {
