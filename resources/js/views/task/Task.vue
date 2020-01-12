@@ -4,8 +4,10 @@
   <div class="page-title">
     <h2 class="title" v-if="task">{{ task.title }}, <small class="text-secondary">{{ getTextDate(task.createdAt) }}</small></h2>
     <div class="btns" v-if="task && user && task.userId === user.id">
-        <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info"><font-awesome-icon :icon="['fas', 'edit']" class="icon" /> Редактировать</router-link>
-        <app-delete-modal :task="task" @delete-task="deleteTask"></app-delete-modal>
+        <router-link v-if="!task.executorId" :to="{ name: 'myTaskEdit', params: { id: task.id } }" class="btn btn-link text-info"><font-awesome-icon :icon="['fas', 'edit']" class="icon" /> Редактировать</router-link>
+        <app-delete-modal v-if="!task.executorId" :task="task" @delete-task="deleteTask"></app-delete-modal>
+        <app-confirm-modal v-if="task.executorId && task.status === taskStatus.doing" :task="task" @confirm-task="confirmTask"></app-confirm-modal>
+        <span class="text-info" v-if="task.status === taskStatus.done">Завершено</span>
     </div>
   </div>
 
@@ -23,7 +25,7 @@
               <p class="m-0 name">{{ userName }}</p>
               <div class="user-data-info">
                 <star-rating v-if="customer" v-model="customer.rate.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
-                <p class="m-0 rating"> <a href="" class="text-secondary">{{ getAssessmentTitle(customer.rate.countAssessment) }}</a></p>
+                <p class="m-0 rating"> <router-link :to="{ name: 'profile', params: { id: customer.id } }" class="text-secondary">{{ getAssessmentTitle(customer.rate.countAssessment) }}</router-link></p>
               </div>
           </div>
         </div>
@@ -110,7 +112,8 @@
             </div>
             <div>
               <p class="price text-center">{{ response.price }} р.</p>
-              <button v-if="user && user.id === task.userId && !task.executorId" @click="setExecutor(response)" :disabled="loadingExecutor" type="button" class="btn btn-outline-info">Назначить</button>
+              <!-- <button v-if="user && user.id === task.userId && !task.executorId" @click="setExecutor(response)" :disabled="loadingExecutor" type="button" class="btn btn-outline-info">Назначить</button> -->
+              <app-set-executor-modal v-if="user && user.id === task.userId && !task.executorId" :full-btn="true" :task="task" :response="response" @execut-task="setExecutor"></app-set-executor-modal>
               <p class="text-center text-info" v-if="isExecutor(response)">Назначен</p>
             </div>
           </div>
@@ -129,7 +132,7 @@
 </template>
 
 <script lang="ts">
-import { Task, TaskResMessage, TaskRes } from '../../common/model/task.model'
+import { Task, TaskResMessage, TaskRes, TaskStatus } from '../../common/model/task.model'
 import { Category } from '../../common/model/category.model'
 import { User } from '../../common/model/user.model'
 
@@ -140,7 +143,7 @@ import { getFileNameByUrl, getTextDate, capitalizeFirst, isImage, getErrTitles, 
 import userService from '../../common/user.service'
 
 export default {
-  name: 'app-register',
+  name: 'app-task',
   components: {},
   data() {
     return {
@@ -214,6 +217,9 @@ export default {
     },
     userName() {
       return this.customer ? capitalizeFirst(this.customer.name) + ' ' + capitalizeFirst(this.customer.surname) : ''
+    },
+    taskStatus() {
+      return TaskStatus
     }
   },
   methods: {
@@ -262,19 +268,18 @@ export default {
       this.$router.push('/my-tasks')
     },
 
+    confirmTask(taskReview) {
+      this.$router.push('/my-tasks')
+    },
+
     sendMessage(idResponse, message: TaskResMessage) {
       const response = this.responses.find(res => res.id === idResponse)
       if (!response) { return }
       response.messages.push(message)
     },
 
-    async setExecutor(taskResponse: TaskRes) {
-      this.loadingExecutor = true
-      const response = await taskService.setExecutor(this.task.id, taskResponse.user.id)
-      if (response.success) {
-        this.task = taskHelperService.convertResTask(response.data)
-      }
-      this.loadingExecutor = false
+    setExecutor(task: Task) {
+      this.task = task
     },
 
     showMessages(response: TaskRes) {

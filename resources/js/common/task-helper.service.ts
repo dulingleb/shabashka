@@ -22,7 +22,7 @@ class TaskHelperService {
 
   convertResMessage(message: TaskResMessageResponse): TaskResMessage {
     return {
-      id: message.id,
+      id: +message.id,
       createdAt: new Date(message.created_at),
       responseId: message.response_id,
       text: message.text,
@@ -32,38 +32,38 @@ class TaskHelperService {
 
   convertResTask(resTask: TaskResponse): Task {
     return {
-      id: resTask.id,
+      id: +resTask.id,
       title: resTask.title,
       description: resTask.description,
-      price: resTask.price,
+      price: +resTask.price,
       phone: resTask.phone,
       createdAt: new Date(resTask.created_at),
       term: new Date(resTask.term),
-      categoryId: resTask.category_id,
+      categoryId: +resTask.category_id,
       address: resTask.address,
-      executorId: resTask.executor_id,
+      executorId: +resTask.executor_id,
       files: resTask.files || [],
       status: resTask.status,
-      userId: resTask.user_id,
+      userId: +resTask.user_id,
       userTitle: resTask.user_title
     }
   }
 
   convertRes(res: TaskResResponse): TaskRes {
     const user = {
-      id: res.user.id,
+      id: +res.user.id,
       title: res.user.title,
       logo: res.user.logo,
       rate: {
-        assessment: res.user.rate.assessment,
-        countAssessment: res.user.rate.count_assessment,
-        countDone: res.user.rate.count_done
+        assessment: +res.user.rate.assessment,
+        countAssessment: +res.user.rate.count_assessment,
+        countDone: +res.user.rate.count_done
       }
     }
     return {
-      id: res.id,
+      id: +res.id,
       text: res.text,
-      price: res.price,
+      price: +res.price,
       createdAt: new Date(res.created_at),
       user,
       messages: this.convertResMessages(res.messages)

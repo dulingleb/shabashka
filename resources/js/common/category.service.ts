@@ -54,7 +54,7 @@ class CategoryService {
 
   private convertResCategory(resCategory: CategoryResponse): Category {
     return {
-      id: resCategory.id,
+      id: +resCategory.id,
       title: resCategory.title,
       children: []
     } as Category

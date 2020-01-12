@@ -1,5 +1,10 @@
-import { CategoryResponse } from './category.model'
 import { Rate, RateResponse } from './user.model'
+
+export enum TaskStatus {
+  done = 'done',
+  searchExecutor = 'search_executor',
+  doing = 'doing'
+}
 
 export interface Task {
   id: number
@@ -13,7 +18,7 @@ export interface Task {
   address: string
   executorId: number
   files: string[]
-  status: string
+  status: TaskStatus
   userId: number
   userTitle: string
 }
@@ -30,7 +35,7 @@ export interface TaskResponse {
   address: string
   executor_id: number
   files: string[]
-  status: string
+  status: TaskStatus
   user_id: number
   user_title: string
 }

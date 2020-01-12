@@ -1,6 +1,9 @@
 <template>
 <div class="">
   {{ userProfile }}
+
+  <p>Отзывы</p>
+  {{ reviews }}
 </div>
 </template>
 
@@ -13,8 +16,9 @@ export default {
   name: 'app-profile',
   data() {
     return {
-      loading: false,
-      userProfile: null
+      userProfile: null,
+      reviews: null,
+      errReponseMessages: [],
     }
   },
   computed: {
@@ -29,7 +33,15 @@ export default {
     this.userProfile = await userService.getUserById(this.$route.params.id)
     if (!this.userProfile) {
       this.$router.push('/')
+      return
     }
+
+    const reviewsResponse = await userService.getReviews(this.userProfile.id)
+    this.reviews = reviewsResponse.reviews
+    if (reviewsResponse.total === -1) {
+      this.errReponseMessages.push('Возможно проблемы с интернет-соединением. Перезагрузите страницу.')
+    }
+
   },
   methods: {
 
