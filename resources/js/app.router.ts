@@ -35,7 +35,7 @@ const router = new VueRouter({
       component: Register
     },
     {
-      path: '/profile',
+      path: '/profile/:id',
       name: 'profile',
       meta: { requiresAuth: true },
       component: Profile
@@ -49,6 +49,7 @@ const router = new VueRouter({
     {
       path: '/task/new',
       name: 'newTask',
+      meta: { requiresAuth: true },
       component: NewTask
     },
     {
@@ -59,6 +60,7 @@ const router = new VueRouter({
     {
       path: '/my-task/:id',
       name: 'myTaskEdit',
+      meta: { requiresAuth: true },
       component: MyTaskEdit
     },
     {

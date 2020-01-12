@@ -14,7 +14,7 @@
 <!--            </b-nav-form>-->
 
             <b-navbar-nav right>
-              <router-link :to="{ name: 'newTask' }" size="sm" class="btn btn-light add-task">Создать задание</router-link>
+              <router-link v-if="user" :to="{ name: 'newTask' }" size="sm" class="btn btn-light add-task">Создать задание</router-link>
 
               <b-nav-item v-if="!user" :to="{ name: 'login' }">Вход</b-nav-item>
             </b-navbar-nav>
@@ -27,7 +27,7 @@
                 </div>
               </template>
               <b-dropdown-item :to="{ name: 'settings' }"><font-awesome-icon :icon="['fas', 'cog']" class="mr-2 text-secondary" />Настройки</b-dropdown-item>
-              <b-dropdown-item :to="{ name: 'profile' }"><font-awesome-icon :icon="['fas', 'user']" class="mr-2 text-secondary" />Профиль</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'profile', params: { id: user.id } }"><font-awesome-icon :icon="['fas', 'user']" class="mr-2 text-secondary" />Профиль</b-dropdown-item>
               <b-dropdown-item :to="{ name: 'myTasks' }"><font-awesome-icon :icon="['fas', 'tasks']" class="mr-2 text-secondary" />Мои задания</b-dropdown-item>
               <b-dropdown-item @click="logout()"><font-awesome-icon :icon="['fas', 'sign-out-alt']" class="mr-2 text-secondary" />Выход </b-dropdown-item>
             </b-nav-item-dropdown>

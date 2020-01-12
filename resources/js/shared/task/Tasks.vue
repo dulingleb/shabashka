@@ -29,7 +29,7 @@
         </div>
         <div class="task-btns text-center text-secondary">
           <p class="price">{{ task.price ? `${task.price} руб.` : 'Договорная' }}</p>
-          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="!user || user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
+          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="user && user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
           <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-outline-info task-btn">Редактировать</router-link>
         </div>
       </section>
@@ -117,7 +117,7 @@ export default {
         width: 100%;
       }
       .task-btns {
-
+        min-width: 120px;
       }
       @media screen and (max-width: 570px){
         display: block;
@@ -129,6 +129,7 @@ export default {
         .logo-wrapp {
           margin-right: 10px;
           width: 70px;
+          min-width: 70px;
         }
       }
       small {

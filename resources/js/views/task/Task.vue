@@ -100,11 +100,11 @@
               <app-avatar :title="response.user.title" :image="response.user.logo" :font-size="'35px'"></app-avatar>
             </div>
             <div class="user-data">
-                <p class="m-0 name">{{ response.user.title }}</p>
+                <p class="m-0"><router-link :to="{ name: 'profile', params: { id: response.user.id } }" class="name">{{ response.user.title }}</router-link></p>
                 <div class="user-data-info">
                   <star-rating v-model="response.user.assessment" :read-only="true" :show-rating="false" :star-size="20"></star-rating>
                   <p class="m-0 rating">
-                    <a href="" class="text-secondary">{{ getAssessmentTitle(response.user.countAssessment) }}, {{ getOrderDoneTitle(response.user.countAssessment) }}</a>
+                    <router-link :to="{ name: 'profile', params: { id: response.user.id } }" class="text-secondary">{{ getAssessmentTitle(response.user.countAssessment) }}, {{ getOrderDoneTitle(response.user.countAssessment) }}</router-link>
                   </p>
                 </div>
             </div>
@@ -320,6 +320,9 @@ export default {
   }
   .user-data {
     flex: 1;
+    .name {
+      color: #212529;
+    }
     .user-data-info {
       padding-top: 5px;
       display: flex;
