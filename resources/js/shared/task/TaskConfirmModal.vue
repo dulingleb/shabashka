@@ -1,9 +1,9 @@
 <template>
   <div v-if="task" class="d-inline-block">
-    <button v-if="!fullBtn" class="btn btn-link text-info" v-b-modal.modal-prevent-closing><font-awesome-icon :icon="['fas', 'check']" class="icon" /> Подтвердить</button>
-    <button v-if="fullBtn" class="btn btn-outline-info" v-b-modal.modal-prevent-closing><font-awesome-icon :icon="['fas', 'check']" class="icon" /> Подтвердить</button>
+    <button v-if="!fullBtn" class="btn btn-link text-info" v-b-modal.modal-confirm><font-awesome-icon :icon="['fas', 'check']" class="icon" /> Подтвердить</button>
+    <button v-if="fullBtn" class="btn btn-outline-info" v-b-modal.modal-confirm><font-awesome-icon :icon="['fas', 'check']" class="icon" /> Подтвердить</button>
 
-    <b-modal id="modal-prevent-closing" ref="modal" title="Подтверждение задания" hide-footer @hide="hiddenModal">
+    <b-modal id="modal-confirm" ref="modal" title="Подтверждение задания" hide-footer @hide="hiddenModal">
 
       <b-form @submit.prevent="handleOk">
 
@@ -69,7 +69,9 @@ export default {
     },
     async handleOk(bvModalEvt) {
       this.clearMessages()
+      this.loading = true
       const response = await taskService.confirmTask(this.task.id, this.form.rating, this.form.text)
+      this.loading = false
       if (response.success) {
         this.messages = ['Задание подтверждено.']
         setTimeout(() => {

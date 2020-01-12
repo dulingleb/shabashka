@@ -112,7 +112,8 @@
             </div>
             <div>
               <p class="price text-center">{{ response.price }} р.</p>
-              <button v-if="user && user.id === task.userId && !task.executorId" @click="setExecutor(response)" :disabled="loadingExecutor" type="button" class="btn btn-outline-info">Назначить</button>
+              <!-- <button v-if="user && user.id === task.userId && !task.executorId" @click="setExecutor(response)" :disabled="loadingExecutor" type="button" class="btn btn-outline-info">Назначить</button> -->
+              <app-set-executor-modal v-if="user && user.id === task.userId && !task.executorId" :full-btn="true" :task="task" :response="response" @execut-task="setExecutor"></app-set-executor-modal>
               <p class="text-center text-info" v-if="isExecutor(response)">Назначен</p>
             </div>
           </div>
@@ -277,13 +278,8 @@ export default {
       response.messages.push(message)
     },
 
-    async setExecutor(taskResponse: TaskRes) {
-      this.loadingExecutor = true
-      const response = await taskService.setExecutor(this.task.id, taskResponse.user.id)
-      if (response.success) {
-        this.task = taskHelperService.convertResTask(response.data)
-      }
-      this.loadingExecutor = false
+    setExecutor(task: Task) {
+      this.task = task
     },
 
     showMessages(response: TaskRes) {
