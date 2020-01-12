@@ -50,7 +50,7 @@ class UserService {
   }
 
   async getReviews(id: number): Promise<{ reviews: Review[], total: number }> {
-    const response: ResponseApi = await apiService.get(`task/${id}/reviews`)
+    const response: ResponseApi = await apiService.get(`user/${id}/reviews`)
     if (response.success) {
       return { reviews: response.data, total: response.total }
     }
