@@ -29,6 +29,9 @@ class TaskService {
     if (taskOptions.userId || taskOptions.userId === 0) {
       query += `&user_id=${taskOptions.userId}`
     }
+    if (taskOptions.status) {
+      query += `&status=${taskOptions.status}`
+    }
     const response = await apiService.get('tasks', query)
     if (response.success) {
       const resTasks: TaskResponse[] = response.data

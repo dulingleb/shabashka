@@ -16,6 +16,7 @@ import Aside from '../common/components/Aside.vue'
 import userService from '../common/user.service'
 import categoryService from '../common/category.service'
 import taskService from '../common/task.service'
+import { TaskStatus } from '../common/model/task.model'
 
 export default {
   data() {
@@ -28,7 +29,8 @@ export default {
         sort: 'DESC',
         categories: [],
         search: '',
-        userId: ''
+        userId: '',
+        status: TaskStatus.searchExecutor
       }
     }
   },

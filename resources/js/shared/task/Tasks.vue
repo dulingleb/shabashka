@@ -29,8 +29,10 @@
         </div>
         <div class="task-btns text-center text-secondary">
           <p class="price">{{ task.price ? `${task.price} руб.` : 'Договорная' }}</p>
-          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="user && user.id !== task.userId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
-          <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId" class="btn btn-outline-info task-btn">Редактировать</router-link>
+          <router-link :to="{ name: 'task', params: { id: task.id } }" v-if="user && user.id !== task.userId && !task.executorId" class="btn btn-outline-info task-btn">Откликнуться</router-link>
+          <router-link :to="{ name: 'myTaskEdit', params: { id: task.id } }" v-if="user && user.id === task.userId && !task.executorId" class="btn btn-outline-info task-btn">Редактировать</router-link>
+          <span class="text-info" v-if="task.status === taskStatus.doing">В процессе</span>
+          <span class="text-info" v-if="task.status === taskStatus.done">Завершено</span>
         </div>
       </section>
     </div>
@@ -45,6 +47,7 @@ import categoryService from '../../common/category.service'
 import taskService from '../../common/task.service'
 import { User } from '../../common/model/user.model'
 import { getTextDate, isImage } from '../../common/utils'
+import { TaskStatus } from '../../common/model/task.model'
 
 export default {
   name: 'app-tasks',
@@ -68,6 +71,9 @@ export default {
   computed: {
     user(): User {
       return this.$store.getters.user
+    },
+    taskStatus() {
+      return TaskStatus
     }
   },
   methods: {
@@ -117,7 +123,7 @@ export default {
         width: 100%;
       }
       .task-btns {
-        min-width: 120px;
+        min-width: 135px;
       }
       @media screen and (max-width: 570px){
         display: block;

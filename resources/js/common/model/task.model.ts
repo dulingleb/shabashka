@@ -91,4 +91,5 @@ export interface TaskOptions {
   categories: number[]
   search: string
   userId: number
+  status: TaskStatus
 }
