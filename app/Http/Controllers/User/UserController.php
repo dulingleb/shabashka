@@ -46,18 +46,6 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load('company');
-
-        $company = null;
-        if($user->company && $user->company->is_active && $user->company->moderate_status=='active'){
-            $company = [
-                'id' => $user->company->id,
-                'title' => $user->company->title,
-                'address' => $user->company->address,
-                'description' => $user->company->description,
-            ];
-        }
-
         return $this->getUserArray($user);
     }
 

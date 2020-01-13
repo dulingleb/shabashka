@@ -36,6 +36,8 @@ class TaskController extends Controller
             $tasks = $tasks->where('user_id', (int)$request->user_id);
         if ($request->status)
             $tasks = $tasks->where('status', $request->status);
+        if ($request->executor_id)
+            $tasks = $tasks->where('executor_id', $request->executor_id);
 
         $tasks = Filter::SLS($tasks, $request);
 
@@ -143,7 +145,8 @@ class TaskController extends Controller
         ]);
 
         $review = Review::create([
-            'user_id' => auth('api')->id(),
+            'author_id' => auth('api')->id(),
+            'user_id' => $task->executor_id,
             'task_id' => $task->id,
             'text' => $request->text,
             'assessment' => $request->assessment

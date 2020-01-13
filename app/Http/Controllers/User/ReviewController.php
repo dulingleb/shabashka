@@ -12,7 +12,7 @@ use http\Client\Request;
 class ReviewController extends Controller
 {
     public function index(User $user){
-        $reviews = Review::whereIn('task_id', $user->tasks->pluck('id'))->get();
+        $reviews = Review::where('user_id', $user->id)->get();
         $data = [];
 
         foreach ($reviews as $review) {

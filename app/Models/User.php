@@ -38,8 +38,8 @@ class User extends Authenticatable
     public function getRateAttribute(){
 
         $data = [
-            'assessment' => Review::whereIn('task_id', $this->tasks->pluck('id'))->avg('assessment') ?? 0,
-            'count_assessment' => Review::whereIn('task_id', $this->tasks->pluck('id'))->count(),
+            'assessment' => Review::where('user_id', $this->id)->avg('assessment') ?? 0,
+            'count_assessment' => Review::where('user_id', $this->id)->count(),
             'count_done' => Task::where('executor_id', $this->id)->where('status', 'success')->count()
         ];
 
