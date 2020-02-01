@@ -23,24 +23,20 @@ class UserService {
     return null
   }
 
-  async auth(email: string, password: string): Promise<boolean> {
+  async auth(email: string, password: string): Promise<ResponseApiAuth> {
     const response: ResponseApiAuth = await apiService.post('oauth/login', { email, password })
     if (response.success) {
       jwtService.saveToken(response.token)
-      const user = await this.getTestUser()
-      return !!user
     }
-    return false
+    return response
   }
 
-  async register(name: string, email: string, password: string, Cpassword: string): Promise<boolean> {
+  async register(name: string, email: string, password: string, Cpassword: string): Promise<ResponseApiAuth> {
     const response: ResponseApiAuth = await apiService.post('oauth/register', { name, email, password, c_password: Cpassword })
     if (response.success) {
       jwtService.saveToken(response.token)
-      const user = await this.getTestUser()
-      return !!user
     }
-    return false
+    return response
   }
 
   async editUser(name: string, email: string, surname: string, phone: string, logo: File, password: string, cPassword: string, company: Company, companyFiles: File[], companyFilesRemoved: File[]): Promise<ResponseApi> {

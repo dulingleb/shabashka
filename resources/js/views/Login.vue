@@ -26,6 +26,10 @@
           </div>
         </b-form-group>
 
+        <div class="row">
+          <app-messages class="offset-md-3 col-md-7" :messages="errReponseMessages"></app-messages>
+        </div>
+
         <b-form-group>
           <div class="row">
             <div class="offset-md-3 col-md-7">
@@ -45,6 +49,7 @@
 <script lang="ts">
 import userService from '../common/user.service'
 import appRouter from '../app.router'
+import { getMessage } from '../common/utils'
 
 export default {
   name: 'app-login',
@@ -54,25 +59,37 @@ export default {
       form: {
         email: '',
         password: ''
-      }
+      },
+      formDirty: false,
+      errReponseMessages: [],
     }
   },
   computed: {
     validateEmail() {
-      return !!this.form.email.match(/\S+@\S+\.\S+/)
+      return !this.formDirty || !!this.form.email.match(/\S+@\S+\.\S+/)
     },
     validatePassword() {
-      return this.form.password.length > 5
+      return !this.formDirty || this.form.password.length > 5
+    }
+  },
+  watch: {
+    form: {
+      handler() {
+        this.formDirty = true
+      },
+      deep: true
     }
   },
   methods: {
     async onSubmit(evt) {
       this.loading = true
       const result = await userService.auth(this.form.email, this.form.password)
-      if (result) {
+      if (!result.error) {
         await this.$store.dispatch('GET_USER')
         appRouter.push({ name: 'home' })
+        return
       }
+      this.errReponseMessages.push(getMessage(true, '', result.error))
       this.loading = false
     },
     onReset(evt) {

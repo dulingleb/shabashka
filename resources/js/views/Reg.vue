@@ -47,6 +47,10 @@
           </div>
         </b-form-group>
 
+        <div class="row">
+          <app-messages class="offset-md-3 col-md-7" :messages="errReponseMessages"></app-messages>
+        </div>
+
         <b-form-group>
           <div class="row">
             <div class="offset-md-3 col-md-7">
@@ -65,6 +69,7 @@
 <script lang="ts">
 import userService from '../common/user.service'
 import appRouter from '../app.router'
+import { getMessage } from '../common/utils'
 
 export default {
   name: 'app-register',
@@ -78,22 +83,32 @@ export default {
         password: '',
         passwordConfirm: ''
       },
+      formDirty: false,
+      errReponseMessages: [],
       foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
       show: true
     }
   },
+  watch: {
+    form: {
+      handler() {
+        this.formDirty = true
+      },
+      deep: true
+    }
+  },
   computed: {
     validateName() {
-      return this.form.name.length > 3
+      return !this.formDirty || this.form.name.length > 3
     },
     validateEmail() {
-      return !!this.form.email.match(/\S+@\S+\.\S+/)
+      return !this.formDirty || !!this.form.email.match(/\S+@\S+\.\S+/)
     },
     validatePassword() {
-      return this.form.password.length > 5
+      return !this.formDirty || this.form.password.length > 5
     },
     validatePasswordConfirm() {
-      return this.form.passwordConfirm === this.form.password
+      return !this.formDirty || this.form.passwordConfirm === this.form.password
     }
   },
   methods: {
@@ -101,10 +116,12 @@ export default {
       evt.preventDefault()
       this.loading = true
       const result = await userService.register(this.form.name, this.form.email, this.form.password, this.form.passwordConfirm)
-      if (result) {
+      if (!result.error) {
         await this.$store.dispatch('GET_USER')
         appRouter.push({ name: 'home' })
+        return
       }
+      this.errReponseMessages.push(getMessage(true, '', result.error))
       this.loading = false
     },
     onReset(evt) {

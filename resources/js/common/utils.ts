@@ -23,11 +23,24 @@ export function getFileNameByUrl(url: string): string {
   return url ? url.replace(/^.*[\\\/]/, '') : ''
 }
 
+// TODO: Need to refactor
 export function getErrTitles(errData: any): string[] {
   const defaultErr = ['Ошибка. Проверьте данные и поробуйте ещё раз.']
   if (!errData) { return defaultErr }
   const res = Object.values(errData).filter(err => err && Array.isArray(err)).map(err => err[0])
   return res.length ? res : errData.message ? [errData.message] : defaultErr
+}
+
+// TODO: Need to refactor
+export function getMessage(isError = false, text = '', errData: any): { variant: string, text: string} {
+  const message = {
+    variant: isError ? 'danger' : '',
+    text
+  }
+  if (!text) {
+    message.text = getErrTitles(errData)[0]
+  }
+  return message
 }
 
 export function getTextDate(date: Date): string {
